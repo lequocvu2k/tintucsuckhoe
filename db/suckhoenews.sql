@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 31, 2025 lúc 03:51 PM
+-- Thời gian đã tạo: Th10 04, 2025 lúc 12:49 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -172,37 +172,24 @@ INSERT INTO `chuyenmuc` (`ma_chuyen_muc`, `ten_chuyen_muc`, `mo_ta`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `dangky`
---
-
-CREATE TABLE `dangky` (
-  `id_tk` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `confirm_password` varchar(255) DEFAULT NULL,
-  `ngay_tao` datetime DEFAULT current_timestamp(),
-  `id_kh` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `dangky`
---
-
-INSERT INTO `dangky` (`id_tk`, `username`, `password`, `confirm_password`, `ngay_tao`, `id_kh`) VALUES
-(1, 'peak', 'takina412', NULL, '2025-10-30 13:44:31', 2);
-
--- --------------------------------------------------------
-
---
 -- Cấu trúc bảng cho bảng `dangnhap`
 --
 
 CREATE TABLE `dangnhap` (
   `id_dn` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
+  `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `ngay_dn` datetime DEFAULT current_timestamp()
+  `ngay_dn` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `dangnhap`
+--
+
+INSERT INTO `dangnhap` (`id_dn`, `username`, `password`, `ngay_dn`) VALUES
+(1, 'admin', 'baka', '2025-11-01 12:13:17'),
+(2, 'admin', 'baka', '2025-11-01 12:33:12'),
+(3, 'admin', 'baka', '2025-11-03 09:27:57');
 
 -- --------------------------------------------------------
 
@@ -220,16 +207,46 @@ CREATE TABLE `khachhang` (
   `ngay_sinh` date DEFAULT NULL,
   `quoc_gia` varchar(50) DEFAULT 'Việt Nam',
   `tinh_thanh` varchar(50) DEFAULT NULL,
-  `vai_tro` enum('Khach','NhanVien','QuanTri') DEFAULT 'Khach'
+  `vai_tro` enum('Khach','NhanVien','QuanTri') DEFAULT 'Khach',
+  `so_diem` int(11) DEFAULT 0,
+  `avatar_url` varchar(255) DEFAULT NULL,
+  `avatar_frame` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `khachhang`
 --
 
-INSERT INTO `khachhang` (`id_kh`, `ho_ten`, `email`, `sdt`, `dia_chi`, `gioi_tinh`, `ngay_sinh`, `quoc_gia`, `tinh_thanh`, `vai_tro`) VALUES
-(1, 'Hayase Yuuka', 'takina412a@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach'),
-(2, 'Hayase Yuuka', 'vuliztva1@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach');
+INSERT INTO `khachhang` (`id_kh`, `ho_ten`, `email`, `sdt`, `dia_chi`, `gioi_tinh`, `ngay_sinh`, `quoc_gia`, `tinh_thanh`, `vai_tro`, `so_diem`, `avatar_url`, `avatar_frame`) VALUES
+(1, 'Hayase Yuuka', 'takina412a@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
+(2, 'Hayase Yuuka', 'vuliztva1@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
+(3, 'a', 'a@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
+(4, 'a', 'c@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
+(5, 'b', 'b@gmai.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
+(6, 'ac', 'ac@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
+(7, 'Hayase Yuuka', 'baka@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `taotaikhoan`
+--
+
+CREATE TABLE `taotaikhoan` (
+  `id_tk` int(11) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `confirm_password` varchar(255) NOT NULL,
+  `ngay_tao` timestamp NOT NULL DEFAULT current_timestamp(),
+  `id_kh` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `taotaikhoan`
+--
+
+INSERT INTO `taotaikhoan` (`id_tk`, `username`, `password`, `confirm_password`, `ngay_tao`, `id_kh`) VALUES
+(1, 'admin', 'baka', 'baka', '2025-11-01 12:10:09', 7);
 
 -- --------------------------------------------------------
 
@@ -325,13 +342,6 @@ ALTER TABLE `chuyenmuc`
   ADD UNIQUE KEY `ten_chuyen_muc` (`ten_chuyen_muc`);
 
 --
--- Chỉ mục cho bảng `dangky`
---
-ALTER TABLE `dangky`
-  ADD PRIMARY KEY (`id_tk`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
 -- Chỉ mục cho bảng `dangnhap`
 --
 ALTER TABLE `dangnhap`
@@ -343,6 +353,13 @@ ALTER TABLE `dangnhap`
 ALTER TABLE `khachhang`
   ADD PRIMARY KEY (`id_kh`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Chỉ mục cho bảng `taotaikhoan`
+--
+ALTER TABLE `taotaikhoan`
+  ADD PRIMARY KEY (`id_tk`),
+  ADD KEY `id_kh` (`id_kh`);
 
 --
 -- Chỉ mục cho bảng `teptin`
@@ -381,22 +398,22 @@ ALTER TABLE `chuyenmuc`
   MODIFY `ma_chuyen_muc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT cho bảng `dangky`
---
-ALTER TABLE `dangky`
-  MODIFY `id_tk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT cho bảng `dangnhap`
 --
 ALTER TABLE `dangnhap`
-  MODIFY `id_dn` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_dn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `khachhang`
 --
 ALTER TABLE `khachhang`
-  MODIFY `id_kh` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_kh` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT cho bảng `taotaikhoan`
+--
+ALTER TABLE `taotaikhoan`
+  MODIFY `id_tk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `teptin`
@@ -434,6 +451,12 @@ ALTER TABLE `bai_the`
 ALTER TABLE `binhluan`
   ADD CONSTRAINT `binhluan_ibfk_1` FOREIGN KEY (`ma_bai_viet`) REFERENCES `baiviet` (`ma_bai_viet`) ON DELETE CASCADE,
   ADD CONSTRAINT `binhluan_ibfk_2` FOREIGN KEY (`ma_nguoi_dung`) REFERENCES `nguoidung` (`ma_nguoi_dung`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `taotaikhoan`
+--
+ALTER TABLE `taotaikhoan`
+  ADD CONSTRAINT `taotaikhoan_ibfk_1` FOREIGN KEY (`id_kh`) REFERENCES `khachhang` (`id_kh`);
 
 --
 -- Các ràng buộc cho bảng `teptin`

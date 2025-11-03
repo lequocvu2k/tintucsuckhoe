@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once './db.php'; // file bạn đã có
+// Lấy thông tin user
+$user_id = $_SESSION['user_id'] ?? null; // Đảm bảo user_id đã được lưu trong session
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"] ?? "");
@@ -66,6 +68,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Location: index.php");
     exit;
 }
+
+if ($user_id) {
+    try {
+        $stmt = $pdo->prepare("SELECT ho_ten, email, so_diem, dia_chi, sdt, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
+        $stmt->execute([$user_id]);
+        $fetchedUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($fetchedUser) {
+            $user = $fetchedUser; // Gán dữ liệu thực tế
+        }
+    } catch (PDOException $e) {
+        die("Lỗi kết nối cơ sở dữ liệu: " . $e->getMessage());
+    }
+}
+function tinhDiem($so_diem)
+{
+    return floor($so_diem / 10000); // 1 điểm = 10.000đ
+}
+
+// Hàm xác định cấp độ
+function xacDinhCapDo($so_diem)
+{
+    if ($so_diem >= 1000000)
+        return 'Siêu Kim Cương';
+    if ($so_diem >= 500000)
+        return 'Kim Cương';
+    if ($so_diem >= 100000)
+        return 'Vàng';
+    if ($so_diem >= 50000)
+        return 'Bạc';
+    return 'Member';
+}
+
+$so_diem = isset($user['so_diem']) && is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
+
+$diem = tinhDiem($so_diem);
+$tier = xacDinhCapDo($so_diem);
+
 // Lấy bài nổi bật (6 bài mới nhất)
 $stmt = $pdo->query("
     SELECT * FROM BaiViet
@@ -126,16 +166,52 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </a>
         </div>
 
-        <!-- Menu điều hướng -->
         <nav class="main-nav" aria-label="Main navigation">
-            <a href="#">Trang chủ</a>
-            <a href="#">Dinh dưỡng</a>
-            <a href="#">Tập luyện</a>
-            <a href="#">Nghỉ ngơi</a>
-            <a href="#">Tinh thần</a>
-            <a href="#">Mẹo mắt - lưng</a>
-        </nav>
+            <ul class="nav-menu">
+                <li><a href="#">Trang chủ</a></li>
 
+                <li class="dropdowns">
+                    <a href="#">Xếp hạng ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Nhiều lượt xem hôm nay</a></li>
+                        <li><a href="#">Nhiều lượt xem tuần</a></li>
+                        <li><a href="#">Nhiều lượt xem tháng</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdowns">
+                    <a href="#">Tin tức ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Tập luyện</a></li>
+                        <li><a href="#">Nghỉ ngơi</a></li>
+                        <li><a href="#">Thủ thuật</a></li>
+                        <li><a href="#">Dinh dưỡng</a></li>
+                        <li><a href="#">Tinh thần</a></li>
+                        <li><a href="#">Mẹo mắt - lưng</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdowns">
+                    <a href="#">Chương trình tập luyện ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Nhóm cơ</a></li>
+                        <li><a href="#">Theo mục tiêu</a></li>
+                        <li><a href="#">Tự tạo kế hoạch</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdowns">
+                    <a href="#">Dinh dưỡng ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Giảm cân</a></li>
+                        <li><a href="#">Tăng cơ</a></li>
+                        <li><a href="#">Ăn uống lành mạnh</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Thư viện video</a></li>
+                <li><a href="#">Liên hệ</a></li>
+            </ul>
+        </nav>
         <!-- Bên phải header -->
         <div class="right">
             <!-- Nút tìm kiếm -->
@@ -146,57 +222,61 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
                 <button id="searchSubmit"><i class="fas fa-arrow-right"></i></button>
             </div>
+            <div class="user-info">
+                <?php if (isset($_SESSION['username'])): ?>
+                    <div class="avatar-container">
+                        <?php
+                        // Avatar người dùng có sẵn hoặc mặc định
+                        if (!empty($user['avatar_url']) && file_exists($user['avatar_url'])) {
+                            echo '<img src="' . htmlspecialchars($user['avatar_url']) . '" alt="Avatar" class="avatar">';
+                        }
+                        // Nếu là người dùng (mọi người)
+                        else {
+                            echo '<img src="../img/avt.jpg" alt="Default Avatar" class="avatar">';
+                        }
 
-            <!-- Nút thông báo -->
-            <button class="icon-btn" aria-label="Thông báo">
-                <i class="fas fa-bell"></i>
-            </button>
+                        // Khung avatar (nếu có)
+                        if (!empty($user['avatar_frame'])) {
+                            $framePath = '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png';
+                            if (file_exists(realpath(__DIR__ . '/' . $framePath))) {
+                                echo '<img src="' . htmlspecialchars($framePath) . '" alt="Frame" class="frame-overlay">';
+                            }
+                        }
+                        ?>
+                    </div>
 
-            <!-- Khu vực người dùng -->
-            <?php if (isset($_SESSION['username'])): ?>
-                <div class="user-menu">
-                    <button class="user-toggle" id="userToggle" aria-haspopup="true" aria-expanded="false">
-                        <img src="<?= htmlspecialchars($_SESSION['avatar'] ?? '../img/default-avatar.jpg') ?>" alt="Avatar"
-                            class="user-avatar" />
-                        <span class="user-name"><?= htmlspecialchars($_SESSION['ho_ten'] ?? $_SESSION['username']) ?></span>
-                        <i class="arrow">▾</i>
-                    </button>
-
-                    <!-- Dropdown -->
-                    <div class="dropdown" id="dropdownMenu" role="menu" aria-hidden="true">
-                        <div class="user-header">
-                            <img src="<?= htmlspecialchars($_SESSION['avatar'] ?? '../img/default-avatar.jpg') ?>"
-                                alt="Avatar" />
-                            <div class="uh-info">
-                                <strong><?= htmlspecialchars($_SESSION['ho_ten'] ?? $_SESSION['username']) ?></strong>
-                                <div class="uh-sub"><?= htmlspecialchars($_SESSION['email'] ?? '') ?></div>
+                    <div class="account-info">
+                        <div class="name-container">
+                            <p class="name"><?= htmlspecialchars($user['ho_ten']) ?></p>
+                            <div class="dropdown-menu">
+                                <ul>
+                                    <li>
+                                        <a href="./user.php">
+                                            <i class="fas fa-user"></i> Tài khoản
+                                            <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                                <?= htmlspecialchars($tier) ?>
+                                            </b>
+                                        </a>
+                                    </li>
+                                    <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
+                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a></li>
+                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
+                                    </li>
+                                    <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+                                </ul>
                             </div>
                         </div>
+                        <br>
+                        <?php if ($user['email'] == 'takina412@gmail.com'): ?>
+                            <span class="role-badge">ADMIN</span>
+                        <?php endif; ?>
 
-                        <ul class="menu-list">
-                            <li>
-                                <a href="#"><i class="fas fa-user"></i> Tài khoản</a>
-                                <span class="tag vip">VIP 0</span>
-                            </li>
-                            <li>
-                                <a href="#"><i class="fas fa-history"></i> Lịch sử</a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="fas fa-bookmark"></i> Đã lưu</a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="fas fa-bell"></i> Thông báo</a>
-                            </li>
-                            <li>
-                                <a href="./logout.php" class="logout-link"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-                            </li>
-                        </ul>
                     </div>
-                </div>
-            <?php else: ?>
-                <label for="showLogin" class="switch-link">Đăng nhập</label>
-            <?php endif; ?>
-        </div>
+
+                <?php else: ?>
+                    <label for="showLogin">Đăng nhập</label>
+                <?php endif; ?>
+            </div>
     </header>
 
     <!-- Overlay tìm kiếm -->
@@ -351,19 +431,20 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </section>
 
             <aside class="popular">
-                <h2>POPULAR POSTS</h2>
-                <ul>
-                    <?php foreach ($popular as $p): ?>
-                        <li>
-                            <img src="<?= htmlspecialchars($p['anh_dai_dien']) ?>" alt="">
-                            <div>
-                                <a
-                                    href="post.php?slug=<?= urlencode($p['duong_dan']) ?>"><?= htmlspecialchars($p['tieu_de']) ?></a>
-                                <p class="meta"><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></p>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                <section class="latest">
+                    <h2>POPULAR POSTS</h2>
+                    <ul>
+                        <?php foreach ($popular as $p): ?>
+                            <li>
+                                <img src="<?= htmlspecialchars($p['anh_dai_dien']) ?>" alt="">
+                                <div>
+                                    <a
+                                        href="post.php?slug=<?= urlencode($p['duong_dan']) ?>"><?= htmlspecialchars($p['tieu_de']) ?></a>
+                                    <p class="meta"><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></p>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
             </aside>
         </div>
     </main>

@@ -2,7 +2,8 @@ body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: #fff;
   color: #222;
-  margin: 0;
+  margin: 0 10px;
+  padding: 0;
 }
 
 /* === TOP GRID === */
@@ -28,7 +29,7 @@ body {
   display: flex;
   gap: 10px;
   border-bottom: 1px solid #ddd;
-  padding: 8px 0;
+  padding: 30px 0;
 }
 .editor-item img {
   width: 90px;
@@ -120,8 +121,13 @@ body {
   background: #e60023;
   color: white;
   padding: 8px;
+  text-align: center;
   font-size: 16px;
   margin-bottom: 10px;
+}
+.popular h2{
+  position: relative;
+  top: -20px;
 }
 .latest-grid {
   display: grid;
@@ -176,7 +182,7 @@ body {
 /* --- Popular Posts --- */
 .popular {
   background: #fff;
-  padding: 10px;
+  padding: 20px;
   border-radius: 5px;
   border: 1px solid #eee;
 }
@@ -206,6 +212,14 @@ body {
 .popular .meta {
   font-size: 11px;
   color: #777;
+}
+.popular ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px; /* Khoảng cách giữa ảnh và nội dung */
+  margin-bottom: 25px; /* Khoảng cách giữa các bài */
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f2f2f2;
 }
 
 /* === FOOTER === */
@@ -574,7 +588,7 @@ footer {
   justify-content: space-between;
   align-items: center;
   background: #fff;
-  padding: 8px 20px;
+  padding: 4px 20px;
   border-bottom: 1px solid #eee;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   position: sticky;
@@ -584,7 +598,7 @@ footer {
 
 /* Logo */
 .logo-link img {
-  height: 40px;
+  height: 20px;
   display: block;
 }
 
@@ -644,8 +658,8 @@ footer {
 }
 
 .user-avatar {
-  width: 34px;
-  height: 34px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: 2px solid #e60023;
   object-fit: cover;
@@ -801,7 +815,7 @@ footer {
 .search-bar {
   position: absolute;
   top: 50%;
-  right: 150px; /* đẩy sang trái một chút để không che avatar */
+  right: 300px; /* đẩy sang trái một chút để không che avatar */
   transform: translateY(-50%);
   background: #fff;
   border-radius: 25px;
@@ -841,4 +855,313 @@ footer {
 
 .search-bar button:hover {
   color: #e60023;
+}
+header .user-info a {
+  color: black;
+  text-decoration: none;
+  margin-left: 10px;
+}
+header .user-info strong {
+  color: transparent;
+  background-color: #00dbde;
+  background-image: linear-gradient(135deg, #fcd34d, #f97316, #ec4899);
+  font-size: 20px;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+}
+.account-info {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  flex-grow: 1;
+  position: relative; /* Thêm vị trí để chứa menu dropdown */
+}
+.name-container {
+  display: flex;
+  align-items: center;
+  position: relative; /* Cần đảm bảo menu dropdown hiển thị đúng */
+}
+.name {
+  font-weight: bold;
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+  top: 11px;
+  transition: color 0.3s ease;
+}
+.name:hover {
+  color: #ff3385; /* Màu thay đổi khi hover vào tên */
+}
+.dropdown-menu {
+  display: none; /* Ẩn menu ban đầu */
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ff66b2;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 20px;
+  z-index: 1;
+}
+.name-container:hover .dropdown-menu {
+  display: block; /* Hiển thị menu khi hover vào tên */
+}
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dropdown-menu li {
+  padding: 8px 0;
+}
+.dropdown-menu a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+  font-size: 14px;
+}
+.dropdown-menu a:hover {
+  background-color: #ff66b2;
+  color: white;
+} /* Avatar and other styles */
+.avatar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.frame-overlay {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 82px;
+  height: 82px;
+  pointer-events: none;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.account-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 10px;
+}
+.name-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.name {
+  font-weight: bold;
+  font-size: 26px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.name:hover {
+  color: #ff3385;
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 180px;
+  z-index: 1;
+}
+.name-container:hover .dropdown-menu {
+  display: block;
+}
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dropdown-menu li {
+  padding: 8px 0;
+}
+.dropdown-menu a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  padding: 5px;
+}
+.dropdown-menu a i {
+  margin-right: 10px;
+}
+.dropdown-menu a:hover {
+  background-color: #d0d5da;
+  color: white;
+}
+
+.avatar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.frame-overlay {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 82px;
+  height: 82px;
+  pointer-events: none;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.vip-tier {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  display: inline-block;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 11px; /* Nhỏ hơn để cân đối với chữ “Tài khoản” */
+  margin-left: 6px; /* Cách nhẹ với chữ */
+  vertical-align: middle;
+}
+
+/* Member - màu xanh lá mạ nhạt */
+.vip-tier.member {
+  background: #98ff98;
+}
+
+/* Bạc */
+.vip-tier.bạc {
+  background: linear-gradient(90deg, #c0c0c0, #e0e0e0);
+}
+
+/* Vàng */
+.vip-tier.vàng {
+  background: linear-gradient(90deg, #ffd700, #ffec70);
+}
+
+/* Kim Cương */
+.vip-tier.kim-cương {
+  background: linear-gradient(270deg, #00bfff, #1cefff);
+}
+
+/* Siêu Kim Cương - hiệu ứng cầu vồng động */
+.vip-tier.siêu-kim-cương {
+  background: linear-gradient(
+    270deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  background-size: 400% 400%;
+  animation: rainbow 5s linear infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+/* ===== Menu chính ===== */
+.nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* cho menu nhiều item */
+    gap: 10px;
+    font-family: Arial, sans-serif;
+}
+
+/* Liên kết menu */
+.nav-menu > li {
+    position: relative;
+}
+
+.nav-menu a {
+    display: block;
+    padding: 12px 16px;
+    color: black;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.nav-menu a:hover {
+    background-color: #555;
+}
+
+/* Dropdown menu */
+.dropdowns .dropdown-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #444;
+    min-width: 200px;
+    z-index: 100;
+    border-radius: 0 0 5px 5px;
+}
+
+/* Dropdown item */
+.dropdowns .dropdown-nav li a {
+    padding: 10px 15px;
+    color: #fff;
+}
+
+.dropdowns .dropdown-nav li a:hover {
+    background-color: #666;
+}
+
+/* Hiển thị dropdown khi hover */
+.dropdowns:hover .dropdown-nav {
+    display: block;
+}
+
+/* Responsive cơ bản */
+@media (max-width: 1024px) {
+    .nav-menu {
+        flex-direction: column;
+    }
+
+    .dropdowns .dropdown-nav {
+        position: static;
+    }
 }

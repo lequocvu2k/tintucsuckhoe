@@ -28,29 +28,26 @@ document.querySelectorAll(".toggle-password").forEach((toggle) => {
   });
 });
 document.addEventListener("DOMContentLoaded", () => {
-  const userToggle = document.getElementById("userToggle");
-  const dropdown = document.getElementById("dropdownMenu");
+  const accountInfo = document.querySelector(".account-info");
+  const nameContainer = accountInfo?.querySelector(".name-container");
+  const dropdown = nameContainer?.querySelector(".dropdown-menu");
 
-  if (userToggle && dropdown) {
-    userToggle.addEventListener("click", (e) => {
+  if (nameContainer && dropdown) {
+    // Khi click vào tên hoặc avatar (nếu thêm sau này)
+    nameContainer.addEventListener("click", (e) => {
       e.stopPropagation();
       dropdown.classList.toggle("show");
-      userToggle.setAttribute(
-        "aria-expanded",
-        dropdown.classList.contains("show")
-      );
-      dropdown.setAttribute("aria-hidden", !dropdown.classList.contains("show"));
     });
 
+    // Ẩn dropdown khi click ra ngoài
     document.addEventListener("click", (e) => {
-      if (!dropdown.contains(e.target) && !userToggle.contains(e.target)) {
+      if (!accountInfo.contains(e.target)) {
         dropdown.classList.remove("show");
-        userToggle.setAttribute("aria-expanded", "false");
-        dropdown.setAttribute("aria-hidden", "true");
       }
     });
   }
 });
+
 // ==================== SEARCH BAR ====================
 const openSearch = document.getElementById("openSearch");
 const searchBar = document.getElementById("searchBar");
