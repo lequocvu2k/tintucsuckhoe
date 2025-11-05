@@ -141,6 +141,37 @@ $stmt = $pdo->query("
     LIMIT 5
 ");
 $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Rankings (3 bài thuộc chuyên mục 'ranking')
+$stmt = $pdo->query("
+    SELECT * FROM BaiViet
+    WHERE trang_thai = 'da_dang' 
+      AND danh_muc = 'ranking'
+    ORDER BY ngay_dang DESC
+    LIMIT 3
+");
+$rankings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Interviews (3 bài thuộc chuyên mục 'interview')
+$stmt = $pdo->query("
+    SELECT * FROM BaiViet
+    WHERE trang_thai = 'da_dang' 
+      AND danh_muc = 'interview'
+    ORDER BY ngay_dang DESC
+    LIMIT 3
+");
+$interviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Recommendations (3 bài thuộc chuyên mục 'recommendation')
+$stmt = $pdo->query("
+    SELECT * FROM baiviet
+    WHERE trang_thai = 'da_dang' 
+      AND danh_muc = 'recommendation'
+    ORDER BY ngay_dang DESC
+    LIMIT 3
+");
+$recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -151,6 +182,7 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/menu.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
@@ -158,17 +190,19 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
     <canvas class="fireworks"></canvas>
+    <!-- ✅ HEADER -->
     <header class="site-header">
-        <!-- Logo -->
+        <!-- LOGO -->
         <div class="left">
             <a href="index.php" class="logo-link">
                 <img src="../img/logo.svg" alt="Logo" class="logo-img" />
             </a>
         </div>
 
+        <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">
             <ul class="nav-menu">
-                <li><a href="#">Trang chủ</a></li>
+                <li><a href="index.php">Trang chủ</a></li>
 
                 <li class="dropdowns">
                     <a href="#">Xếp hạng ▾</a>
@@ -208,39 +242,44 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <li><a href="#">Ăn uống lành mạnh</a></li>
                     </ul>
                 </li>
-                <li><a href="#">Thư viện video</a></li>
+
+                <li><a href="#">Giới thiệu </a></li>
                 <li><a href="#">Liên hệ</a></li>
             </ul>
         </nav>
-        <!-- Bên phải header -->
+
+        <!-- PHẦN BÊN PHẢI -->
         <div class="right">
             <!-- Nút tìm kiếm -->
             <button class="icon-btn" id="openSearch" aria-label="Tìm kiếm">
                 <i class="fas fa-search"></i>
             </button>
+
+            <!-- Thanh tìm kiếm -->
             <div class="search-bar" id="searchBar">
                 <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
                 <button id="searchSubmit"><i class="fas fa-arrow-right"></i></button>
             </div>
-            <div class="user-info">
-                <?php if (isset($_SESSION['username'])): ?>
+
+            <!-- USER INFO -->
+            <?php if (isset($_SESSION['username'])): ?>
+                <div class="header-user">
                     <div class="avatar-container">
                         <?php
-                        // Avatar người dùng có sẵn hoặc mặc định
-                        if (!empty($user['avatar_url']) && file_exists($user['avatar_url'])) {
-                            echo '<img src="' . htmlspecialchars($user['avatar_url']) . '" alt="Avatar" class="avatar">';
-                        }
-                        // Nếu là người dùng (mọi người)
-                        else {
-                            echo '<img src="../img/avt.jpg" alt="Default Avatar" class="avatar">';
-                        }
+                        // Lấy avatar: nếu có thì dùng avatar của user, nếu không thì dùng avt.jpg mặc định
+                        $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
+                            ? htmlspecialchars($user['avatar_url'])
+                            : '../img/avt.jpg';
 
-                        // Khung avatar (nếu có)
-                        if (!empty($user['avatar_frame'])) {
-                            $framePath = '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png';
-                            if (file_exists(realpath(__DIR__ . '/' . $framePath))) {
-                                echo '<img src="' . htmlspecialchars($framePath) . '" alt="Frame" class="frame-overlay">';
-                            }
+                        // Khung avatar (frame)
+                        $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
+                            ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
+                            : '';
+
+                        // Hiển thị avatar
+                        echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
+                        if ($frame) {
+                            echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
                         }
                         ?>
                     </div>
@@ -248,6 +287,15 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="account-info">
                         <div class="name-container">
                             <p class="name"><?= htmlspecialchars($user['ho_ten']) ?></p>
+                            <?php if ($user['email'] == 'takina412@gmail.com'): ?>
+                                <span class="vip-tier admin">ADMIN</span>
+                            <?php else: ?>
+                                <span class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                    <?= htmlspecialchars($tier) ?>
+                                </span>
+                            <?php endif; ?>
+
+                            <!-- Dropdown menu -->
                             <div class="dropdown-menu">
                                 <ul>
                                     <li>
@@ -266,17 +314,12 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </ul>
                             </div>
                         </div>
-                        <br>
-                        <?php if ($user['email'] == 'takina412@gmail.com'): ?>
-                            <span class="role-badge">ADMIN</span>
-                        <?php endif; ?>
-
                     </div>
-
-                <?php else: ?>
-                    <label for="showLogin">Đăng nhập</label>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php else: ?>
+                <label for="showLogin">Đăng nhập</label>
+            <?php endif; ?>
+        </div>
     </header>
 
     <!-- Overlay tìm kiếm -->
@@ -287,8 +330,6 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <button id="closeSearch" class="btn-close" aria-label="Đóng">✕</button>
         </div>
     </div>
-
-
     <!-- Popup -->
     <?php $popupChecked = isset($_GET['error']) ? 'checked' : ''; ?>
     <input type="radio" name="popup" id="showLogin" hidden>
@@ -446,6 +487,69 @@ $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php endforeach; ?>
                     </ul>
             </aside>
+        </div>
+
+        <div class="triple-section">
+            <!-- Rankings -->
+            <section class="rankings">
+                <h2>RANKINGS</h2>
+                <?php foreach ($rankings as $r): ?>
+                    <div class="post-item">
+                        <img src="<?= htmlspecialchars($r['anh_dai_dien']) ?>" alt="">
+                        <div class="post-info">
+                            <p class="category">Rankings • <?= htmlspecialchars($r['chuyen_muc']) ?></p>
+                            <h3>
+                                <a href="post.php?slug=<?= urlencode($r['duong_dan']) ?>">
+                                    <?= htmlspecialchars($r['tieu_de']) ?>
+                                </a>
+                            </h3>
+                            <p class="meta">by <?= htmlspecialchars($r['tac_gia']) ?> |
+                                <?= date("F d, Y", strtotime($r['ngay_dang'])) ?>
+                            </p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </section>
+
+            <section class="interviews">
+                <h2>INTERVIEWS</h2>
+                <?php foreach ($interviews as $i): ?>
+                    <div class="post-item">
+                        <img src="<?= htmlspecialchars($i['anh_dai_dien']) ?>" alt="">
+                        <div class="post-info">
+                            <p class="category">Interview</p>
+                            <h3>
+                                <a href="post.php?slug=<?= urlencode($i['duong_dan']) ?>">
+                                    <?= htmlspecialchars($i['tieu_de']) ?>
+                                </a>
+                            </h3>
+                            <p class="meta">by <?= htmlspecialchars($i['tac_gia']) ?> |
+                                <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
+                            </p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </section>
+            <!-- Recommendations -->
+            <section class="recommendations">
+                <h2>RECOMMENDATIONS</h2>
+                <?php foreach ($recommendations as $rec): ?>
+                    <div class="post-item">
+                        <img src="<?= htmlspecialchars($rec['anh_dai_dien']) ?>" alt="">
+                        <div class="post-info">
+                            <p class="category">Recommendation</p>
+                            <h3>
+                                <a href="post.php?slug=<?= urlencode($rec['duong_dan']) ?>">
+                                    <?= htmlspecialchars($rec['tieu_de']) ?>
+                                </a>
+                            </h3>
+                            <p class="meta">by <?= htmlspecialchars($rec['tac_gia']) ?> |
+                                <?= date("F d, Y", strtotime($rec['ngay_dang'])) ?>
+                            </p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </section>
         </div>
     </main>
 

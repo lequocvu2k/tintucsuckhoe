@@ -1,0 +1,523 @@
+<?php
+session_start();
+require_once './db.php';
+
+// ====================== KIỂM TRA ĐĂNG NHẬP ======================
+if (!isset($_SESSION['user_id'])) {
+    header('Location: index.php');
+    exit;
+}
+$id_kh = $_SESSION['user_id'];
+
+// ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
+$stmt = $pdo->prepare("
+    SELECT kh.*, tk.ngay_tao
+    FROM khachhang kh
+    LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
+    WHERE kh.id_kh = :id
+");
+$stmt->bindParam(':id', $id_kh);
+$stmt->execute();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    die("Không tìm thấy người dùng!");
+}
+$isMale = ($user['gioi_tinh'] ?? '') === 'Nam' ? 'checked' : '';
+$isFemale = ($user['gioi_tinh'] ?? '') === 'Nữ' ? 'checked' : '';
+// ====================== HÀM TÍNH ĐIỂM VÀ CẤP ĐỘ ======================
+function tinhDiem($so_diem)
+{
+    return floor($so_diem / 10000);
+}
+
+function xacDinhCapDo($so_diem)
+{
+    if ($so_diem >= 1000000)
+        return 'Siêu Kim Cương';
+    if ($so_diem >= 500000)
+        return 'Kim Cương';
+    if ($so_diem >= 100000)
+        return 'Vàng';
+    if ($so_diem >= 50000)
+        return 'Bạc';
+    return 'Member';
+}
+
+$so_diem = isset($user['so_diem']) && is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
+$diem = tinhDiem($so_diem);
+$tier = xacDinhCapDo($so_diem);
+
+// ====================== XỬ LÝ POST ======================
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // --- Upload avatar ---
+    if (isset($_POST['upload_avatar']) && isset($_FILES['avatar'])) {
+        $file = $_FILES['avatar'];
+        if ($file['error'] === 0) {
+            $targetDir = "../uploads/avatars/";
+            if (!is_dir($targetDir))
+                mkdir($targetDir, 0777, true);
+
+            $fileName = time() . "_" . basename($file["name"]);
+            $targetFile = $targetDir . $fileName;
+            $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
+            if (!in_array($fileType, $allowedTypes)) {
+                $_SESSION['error'] = "❌ Chỉ cho phép ảnh JPG, PNG hoặc GIF.";
+            } elseif (move_uploaded_file($file["tmp_name"], $targetFile)) {
+                $stmt = $pdo->prepare("UPDATE khachhang SET avatar_url=? WHERE id_kh=?");
+                $stmt->execute([$targetFile, $user['id_kh']]);
+                $user['avatar_url'] = $targetFile;
+                $_SESSION['success'] = "✅ Cập nhật ảnh đại diện thành công!";
+            } else {
+                $_SESSION['error'] = "⚠️ Lỗi khi tải ảnh lên.";
+            }
+        } else {
+            $_SESSION['error'] = "⚠️ Chưa chọn ảnh hợp lệ.";
+        }
+        header("Location: user.php");
+        exit;
+    }
+
+    // --- Chọn khung avatar ---
+    if (isset($_POST['save_frame']) && isset($_POST['avatar_frame'])) {
+        $avatar_frame = $_POST['avatar_frame'];
+        $stmt = $pdo->prepare("UPDATE khachhang SET avatar_frame=? WHERE id_kh=?");
+        $stmt->execute([$avatar_frame, $user['id_kh']]);
+        $user['avatar_frame'] = $avatar_frame;
+        $_SESSION['success'] = "✅ Cập nhật khung thành công!";
+        header("Location: user.php");
+        exit;
+    }
+
+    // --- Cập nhật thông tin cá nhân ---
+    if (isset($_POST['update_info'])) {
+        $ho_ten = $_POST['ho_ten'] ?? '';
+        $sdt = $_POST['sdt'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $ngay_sinh = $_POST['ngay_sinh'] ?? '';
+        $gioi_tinh = $_POST['gioi_tinh'] ?? '';
+        $dia_chi = $_POST['dia_chi'] ?? '';
+        $tinh_thanh = $_POST['tinh_thanh'] ?? '';
+        $quoc_gia = $_POST['quoc_gia'] ?? '';
+
+        $update = $pdo->prepare("
+            UPDATE khachhang 
+            SET ho_ten = :ho_ten,
+                sdt = :sdt,
+                email = :email,
+                ngay_sinh = :ngay_sinh,
+                gioi_tinh = :gioi_tinh,
+                dia_chi = :dia_chi,
+                tinh_thanh = :tinh_thanh,
+                quoc_gia = :quoc_gia
+            WHERE id_kh = :id
+        ");
+        $update->execute([
+            ':ho_ten' => $ho_ten,
+            ':sdt' => $sdt,
+            ':email' => $email,
+            ':ngay_sinh' => $ngay_sinh,
+            ':gioi_tinh' => $gioi_tinh,
+            ':dia_chi' => $dia_chi,
+            ':tinh_thanh' => $tinh_thanh,
+            ':quoc_gia' => $quoc_gia,
+            ':id' => $id_kh
+        ]);
+
+        $_SESSION['success'] = "✅ Cập nhật thông tin cá nhân thành công!";
+        header("Location: user.php");
+        exit;
+    }
+
+    // --- Đổi mật khẩu ---
+    if (isset($_POST['update_pass'])) {
+        $matkhau_cu = $_POST['matkhau_cu'] ?? '';
+        $matkhau_moi = $_POST['matkhau_moi'] ?? '';
+
+        $stmt = $pdo->prepare("SELECT mat_khau FROM doimatkhau WHERE id_kh = :id ORDER BY id_dmk DESC LIMIT 1");
+        $stmt->execute([':id' => $id_kh]);
+        $matkhau = $stmt->fetchColumn();
+
+        if ($matkhau && password_verify($matkhau_cu, $matkhau)) {
+            $hash = password_hash($matkhau_moi, PASSWORD_DEFAULT);
+            $up = $pdo->prepare("INSERT INTO doimatkhau (id_kh, mat_khau, ngay_tao) VALUES (:id, :matkhau, NOW())");
+            $up->execute([':matkhau' => $hash, ':id' => $id_kh]);
+            $_SESSION['success'] = "✅ Đổi mật khẩu thành công!";
+        } else {
+            $_SESSION['error'] = "❌ Mật khẩu hiện tại không đúng!";
+        }
+        header("Location: user.php");
+        exit;
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin cá nhân</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/fw.css">
+    <link rel="stylesheet" href="../css/user.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <script src="../resources/js/anime.min.js"></script>
+    <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
+    <script src="../js/fireworks.js" async defer></script>
+    <script src="../js/user.js" defer></script>
+</head>
+
+<body>
+    <canvas class="fireworks"></canvas>
+    <!-- ✅ HEADER -->
+    <header class="site-header">
+        <!-- LOGO -->
+        <div class="left">
+            <a href="index.php" class="logo-link">
+                <img src="../img/logo.svg" alt="Logo" class="logo-img" />
+            </a>
+        </div>
+
+        <!-- NAVIGATION -->
+        <nav class="main-nav" aria-label="Main navigation">
+            <ul class="nav-menu">
+                <li><a href="index.php">Trang chủ</a></li>
+
+                <li class="dropdowns">
+                    <a href="#">Xếp hạng ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Nhiều lượt xem hôm nay</a></li>
+                        <li><a href="#">Nhiều lượt xem tuần</a></li>
+                        <li><a href="#">Nhiều lượt xem tháng</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdowns">
+                    <a href="#">Tin tức ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Tập luyện</a></li>
+                        <li><a href="#">Nghỉ ngơi</a></li>
+                        <li><a href="#">Thủ thuật</a></li>
+                        <li><a href="#">Dinh dưỡng</a></li>
+                        <li><a href="#">Tinh thần</a></li>
+                        <li><a href="#">Mẹo mắt - lưng</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdowns">
+                    <a href="#">Chương trình tập luyện ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Nhóm cơ</a></li>
+                        <li><a href="#">Theo mục tiêu</a></li>
+                        <li><a href="#">Tự tạo kế hoạch</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdowns">
+                    <a href="#">Dinh dưỡng ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Giảm cân</a></li>
+                        <li><a href="#">Tăng cơ</a></li>
+                        <li><a href="#">Ăn uống lành mạnh</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Liên hệ</a></li>
+            </ul>
+        </nav>
+
+        <!-- PHẦN BÊN PHẢI -->
+        <div class="right">
+            <!-- Nút tìm kiếm -->
+            <button class="icon-btn" id="openSearch" aria-label="Tìm kiếm">
+                <i class="fas fa-search"></i>
+            </button>
+
+            <!-- Thanh tìm kiếm -->
+            <div class="search-bar" id="searchBar">
+                <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
+                <button id="searchSubmit"><i class="fas fa-arrow-right"></i></button>
+            </div>
+
+            <!-- USER INFO -->
+            <?php if (isset($_SESSION['username'])): ?>
+                <div class="header-user">
+                    <div class="avatar-container">
+                        <?php
+                        // Lấy avatar: nếu có thì dùng avatar của user, nếu không thì dùng avt.jpg mặc định
+                        $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
+                            ? htmlspecialchars($user['avatar_url'])
+                            : '../img/avt.jpg';
+
+                        // Khung avatar (frame)
+                        $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
+                            ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
+                            : '';
+
+                        // Hiển thị avatar
+                        echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
+                        if ($frame) {
+                            echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
+                        }
+                        ?>
+                    </div>
+
+                    <div class="account-info">
+                        <div class="name-container">
+                            <p class="name"><?= htmlspecialchars($user['ho_ten']) ?></p>
+                            <?php if ($user['email'] == 'takina412@gmail.com'): ?>
+                                <span class="vip-tier admin">ADMIN</span>
+                            <?php else: ?>
+                                <span class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                    <?= htmlspecialchars($tier) ?>
+                                </span>
+                            <?php endif; ?>
+
+                            <!-- Dropdown menu -->
+                            <div class="dropdown-menu">
+                                <ul>
+                                    <li>
+                                        <a href="./user.php">
+                                            <i class="fas fa-user"></i> Tài khoản
+                                            <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                                <?= htmlspecialchars($tier) ?>
+                                            </b>
+                                        </a>
+                                    </li>
+                                    <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
+                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a></li>
+                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
+                                    </li>
+                                    <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <label for="showLogin">Đăng nhập</label>
+            <?php endif; ?>
+        </div>
+    </header>
+    <div class="notification">
+        <?php
+        if (isset($_SESSION['success'])) {
+            echo '<p class="success-msg">' . $_SESSION['success'] . '</p>';
+            unset($_SESSION['success']);
+        }
+        if (isset($_SESSION['error'])) {
+            echo '<p class="error-msg">' . $_SESSION['error'] . '</p>';
+            unset($_SESSION['error']);
+        }
+        ?>
+    </div>
+    <div class="profile-container">
+        <!-- KHUNG TRÁI -->
+        <div class="profile-left">
+            <div class="user-info">
+                <div class="avatar-wrapper">
+                    <?php
+                    // Lấy avatar: nếu có thì dùng avatar của user, nếu không thì dùng avt.jpg mặc định
+                    $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
+                        ? htmlspecialchars($user['avatar_url'])
+                        : '../img/avt.jpg';
+
+                    // Khung avatar (frame)
+                    $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
+                        ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
+                        : '';
+
+                    // Hiển thị avatar
+                    echo '<div class="avatar-container">';
+                    echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
+                    if ($frame) {
+                        echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
+                    }
+                    echo '</div>';
+                    ?>
+
+                    <!-- Nút nhỏ đổi avatar -->
+                    <form method="post" enctype="multipart/form-data" class="avatar-form">
+                        <input type="hidden" name="upload_avatar" value="1">
+                        <label for="avatarInput" class="camera-btn">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" name="avatar" id="avatarInput" accept="image/*"
+                            onchange="this.form.submit()">
+                    </form>
+                </div>
+
+                <div class="user-name"><?= htmlspecialchars($user['ho_ten']) ?></div>
+                <div class="user-email">
+                    <?php if ($user['email'] == 'takina412@gmail.com'): ?>
+                        <span class="vip-tier">ADMIN</span>
+                    <?php else: ?>
+                        <?= htmlspecialchars($user['email']) ?>
+                    <?php endif; ?>
+                    <p>
+                        <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                            <?= htmlspecialchars($tier) ?>
+                        </b>
+                    </p>
+                </div>
+                <div class="level-bar">
+                    <?php
+                    $xp = $user['so_diem'] ?? 0;
+                    $level = floor($xp / 100); // Mỗi 100 điểm = 1 cấp
+                    $nextLevelXP = ($level + 1) * 100;
+                    $percent = min(100, ($xp / $nextLevelXP) * 100);
+                    ?>
+                    <p>Level <?= $level ?> - XP: <?= $xp ?> / <?= $nextLevelXP ?></p>
+                    <div class="progress">
+                        <div class="progress-fill" style="width: <?= $percent ?>%;"></div>
+                    </div>
+                </div>
+
+                <p><b>Điểm:</b> <?= number_format($xp) ?></p>
+                <p><b>Ngày sinh:</b> <?= htmlspecialchars($user['ngay_sinh']) ?></p>
+                <p><b>Ngày tạo:</b> <?= htmlspecialchars($user['ngay_tao']) ?></p>
+
+                <button class="logout-btn" onclick="window.location.href='logout.php'">Đăng xuất</button>
+            </div>
+            <div class="frame-selection">
+                <br><br><br>
+                <h2>Chọn khung avatar của bạn</h2>
+                <form method="post" action="">
+                    <div class="frame-list">
+                        <label>
+                            <input type="radio" name="avatar_frame" value="game" <?= ($user['avatar_frame'] == 'game') ? 'checked' : '' ?>>
+                            <img src="../frames/game.png" alt="Fire Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="fire" <?= ($user['avatar_frame'] == 'fire') ? 'checked' : '' ?>>
+                            <img src="../frames/fire.png" alt="Fire Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="fire1" <?= ($user['avatar_frame'] == 'fire1') ? 'checked' : '' ?>>
+                            <img src="../frames/fire1.png" alt="Fire Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="ice" <?= ($user['avatar_frame'] == 'ice') ? 'checked' : '' ?>>
+                            <img src="../frames/ice.png" alt="Ice Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="nahida" <?= ($user['avatar_frame'] == 'nahida') ? 'checked' : '' ?>>
+                            <img src="../frames/nahida.png" alt="Gold Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="raiden" <?= ($user['avatar_frame'] == 'raiden') ? 'checked' : '' ?>>
+                            <img src="../frames/raiden.png" alt="Gold Frame">
+                        </label>
+                    </div>
+                    <button type="submit" name="save_frame">Lưu khung</button>
+                </form>
+            </div>
+        </div>
+        <div class="profile-content">
+            <!-- HÀNG TIÊU ĐỀ + TAB -->
+            <div class="profile-header">
+                <div class="profile-tabs">
+                    <button class="tab-btn active" data-tab="info"><i class="fas fa-user"></i> Thông tin</button>
+                    <button class="tab-btn" data-tab="history"><i class="fas fa-history"></i> Lịch sử</button>
+                    <button class="tab-btn" data-tab="saved"><i class="fas fa-bookmark"></i> Đã lưu</button>
+                    <button class="tab-btn" data-tab="notifications"><i class="fas fa-bell"></i> Thông báo</button>
+                    <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Cài đặt</button>
+                </div>
+            </div>
+
+            <!-- TAB: THÔNG TIN -->
+            <div class="tab-content active" id="info">
+                <form method="POST" class="info-form">
+                    <h2 class="profile-title">Thông tin cá nhân</h2>
+                    <div class="form-columns">
+                        <div class="form-left">
+                            <label>Họ tên:</label>
+                            <input type="text" name="ho_ten" value="<?= htmlspecialchars($user['ho_ten']) ?>" required>
+
+                            <label>Số điện thoại:</label>
+                            <input type="text" name="sdt" value="<?= htmlspecialchars($user['sdt']) ?>">
+
+                            <label>Email:</label>
+                            <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+
+                            <label>Ngày sinh:</label>
+                            <input type="date" name="ngay_sinh" value="<?= htmlspecialchars($user['ngay_sinh']) ?>">
+                        </div>
+
+                        <div class="form-right">
+                            <label>Địa chỉ:</label>
+                            <input type="text" name="dia_chi" value="<?= htmlspecialchars($user['dia_chi']) ?>">
+
+                            <label>Thành phố / Tỉnh:</label>
+                            <input type="text" name="tinh_thanh" value="<?= htmlspecialchars($user['tinh_thanh']) ?>">
+
+                            <label>Quốc gia:</label>
+                            <input type="text" name="quoc_gia" value="<?= htmlspecialchars($user['quoc_gia']) ?>">
+
+                            <label>Giới tính:</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="gioi_tinh" value="Nam" <?= $isMale ?>> Nam
+                                </label>
+                                <label>
+                                    <input type="radio" name="gioi_tinh" value="Nữ" <?= $isFemale ?>> Nữ
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" name="update_info" class="save-btn">💾 Lưu thay đổi</button>
+                </form>
+
+                <h2>Đổi mật khẩu</h2>
+                <form method="POST" class="password-form">
+                    <div class="password-group">
+                        <label>Mật khẩu hiện tại:</label>
+                        <div class="password-field">
+                            <input type="password" id="matkhau_cu" name="matkhau_cu" required>
+                            <i class="fa-solid fa-eye" onclick="togglePass('matkhau_cu', this)"></i>
+                        </div>
+
+                        <label>Mật khẩu mới:</label>
+                        <div class="password-field">
+                            <input type="password" id="matkhau_moi" name="matkhau_moi" required>
+                            <i class="fa-solid fa-eye" onclick="togglePass('matkhau_moi', this)"></i>
+                        </div>
+
+                        <button type="submit" name="update_pass" class="save-btn">🔑 Đổi mật khẩu</button>
+                </form>
+
+                <?php if (!empty($msg)): ?>
+                    <p class="msg"><?= $msg ?></p>
+                <?php endif; ?>
+            </div>
+
+            <!-- TAB KHÁC -->
+            <div class="tab-content" id="history">
+                <h2>Lịch sử hoạt động</h2>
+                <p>Bạn chưa có hoạt động nào gần đây.</p>
+            </div>
+
+            <div class="tab-content" id="saved">
+                <h2>Bài viết đã lưu</h2>
+                <p>Danh sách các bài viết bạn lưu sẽ hiển thị ở đây.</p>
+            </div>
+
+            <div class="tab-content" id="notifications">
+                <h2>Thông báo</h2>
+                <p>Không có thông báo mới.</p>
+            </div>
+
+            <div class="tab-content" id="settings">
+                <h2>Cài đặt tài khoản</h2>
+                <p>Bạn có thể tùy chỉnh hiển thị, bảo mật và các thiết lập khác ở đây.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

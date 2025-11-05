@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 04, 2025 lúc 12:49 AM
+-- Thời gian đã tạo: Th10 05, 2025 lúc 11:21 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -38,44 +38,45 @@ CREATE TABLE `baiviet` (
   `ngay_dang` datetime DEFAULT current_timestamp(),
   `ngay_cap_nhat` datetime DEFAULT NULL,
   `trang_thai` enum('nhap','da_dang','luu_tru') DEFAULT 'nhap',
-  `luot_xem` int(11) DEFAULT 0
+  `luot_xem` int(11) DEFAULT 0,
+  `danh_muc` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `baiviet`
 --
 
-INSERT INTO `baiviet` (`ma_bai_viet`, `tieu_de`, `duong_dan`, `noi_dung`, `anh_dai_dien`, `ma_tac_gia`, `ma_chuyen_muc`, `ngay_dang`, `ngay_cap_nhat`, `trang_thai`, `luot_xem`) VALUES
-(1, 'Top 7 thực phẩm tốt cho mắt', 'top-7-thuc-pham-cho-mat', 'Nội dung demo', '/anh/dinhduong1.jpg', 4, 1, '2025-08-01 00:00:00', NULL, 'da_dang', 120),
-(2, 'Ăn nhẹ lành mạnh khi chơi game', 'an-nhe-lanh-manh', 'Nội dung demo', '/anh/dinhduong2.jpg', 4, 1, '2025-08-02 00:00:00', NULL, 'da_dang', 80),
-(3, 'Vitamin cần thiết cho mắt', 'vitamin-can-thiet', 'Nội dung demo', '/anh/dinhduong3.jpg', 4, 1, '2025-08-03 00:00:00', NULL, 'da_dang', 60),
-(4, 'Thực phẩm nên tránh khi mỏi mắt', 'thuc-pham-nen-tranh', 'Nội dung demo', '/anh/dinhduong4.jpg', 4, 1, '2025-08-04 00:00:00', NULL, 'da_dang', 40),
-(5, 'Uống nước đúng cách', 'uong-nuoc-dung-cach', 'Nội dung demo', '/anh/dinhduong5.jpg', 4, 1, '2025-08-05 00:00:00', NULL, 'da_dang', 35),
-(6, 'Thực đơn ngày thi', 'thuc-don-ngay-thi', 'Nội dung demo', '/anh/dinhduong6.jpg', 4, 1, '2025-08-06 00:00:00', NULL, 'da_dang', 25),
-(7, '5 bài tập giãn cơ sau khi chơi game', '5-bai-tap-gian-co', 'Nội dung demo', '/anh/tap1.jpg', 5, 2, '2025-08-01 00:00:00', NULL, 'da_dang', 200),
-(8, 'Tư thế ngồi đúng chống đau lưng', 'tu-the-ngoi-dung', 'Nội dung demo', '/anh/tap2.jpg', 5, 2, '2025-08-02 00:00:00', NULL, 'da_dang', 180),
-(9, 'Chuỗi bài tập 10 phút', 'chuoi-bai-tap-10p', 'Nội dung demo', '/anh/tap3.jpg', 5, 2, '2025-08-03 00:00:00', NULL, 'da_dang', 150),
-(10, 'Bài tập cổ vai gáy', 'bai-tap-co-vai', 'Nội dung demo', '/anh/tap4.jpg', 5, 2, '2025-08-04 00:00:00', NULL, 'da_dang', 100),
-(11, 'Tập thở giảm stress', 'tap-tho-giam-stress', 'Nội dung demo', '/anh/tap5.jpg', 5, 2, '2025-08-05 00:00:00', NULL, 'da_dang', 90),
-(12, 'Lịch luyện 4 tuần cải thiện tư thế', 'lich-luyen-4-tuan', 'Nội dung demo', '/anh/tap6.jpg', 5, 2, '2025-08-06 00:00:00', NULL, 'da_dang', 70),
-(13, 'Kỹ thuật nghỉ 5 phút mỗi giờ', 'ky-thuat-nghi-5p', 'Nội dung demo', '/anh/nghi1.jpg', 6, 3, '2025-08-01 00:00:00', NULL, 'da_dang', 140),
-(14, 'Cải thiện giấc ngủ cho game thủ', 'cai-thien-giac-ngu', 'Nội dung demo', '/anh/nghi2.jpg', 6, 3, '2025-08-02 00:00:00', NULL, 'da_dang', 120),
-(15, 'Ánh sáng phòng khi giải trí', 'anh-sang-phong', 'Nội dung demo', '/anh/nghi3.jpg', 6, 3, '2025-08-03 00:00:00', NULL, 'da_dang', 90),
-(16, 'Thói quen trước khi ngủ', 'thoi-quen-truoc-ngu', 'Nội dung demo', '/anh/nghi4.jpg', 6, 3, '2025-08-04 00:00:00', NULL, 'da_dang', 70),
-(17, 'Thử thách 7 ngày không thiết bị', 'thu-thach-7-ngay', 'Nội dung demo', '/anh/nghi5.jpg', 6, 3, '2025-08-05 00:00:00', NULL, 'da_dang', 55),
-(18, 'Không gian ngủ lý tưởng', 'khong-gian-ngu', 'Nội dung demo', '/anh/nghi6.jpg', 6, 3, '2025-08-06 00:00:00', NULL, 'da_dang', 40),
-(19, 'Quản lý stress hiệu quả', 'quan-ly-stress', 'Nội dung demo', '/anh/tinh1.jpg', 5, 4, '2025-08-01 00:00:00', NULL, 'da_dang', 60),
-(20, 'Giữ cân bằng giải trí và học tập', 'giu-can-bang', 'Nội dung demo', '/anh/tinh2.jpg', 5, 4, '2025-08-02 00:00:00', NULL, 'da_dang', 50),
-(21, 'Thiền 5 phút mỗi ngày', 'thien-5-phut', 'Nội dung demo', '/anh/tinh3.jpg', 5, 4, '2025-08-03 00:00:00', NULL, 'da_dang', 40),
-(22, 'Dấu hiệu quá tải tinh thần', 'dau-hieu-qua-tai', 'Nội dung demo', '/anh/tinh4.jpg', 5, 4, '2025-08-04 00:00:00', NULL, 'da_dang', 35),
-(23, 'Thói quen nhỏ – tác động lớn', 'thoi-quen-nho', 'Nội dung demo', '/anh/tinh5.jpg', 5, 4, '2025-08-05 00:00:00', NULL, 'da_dang', 30),
-(24, 'Podcast chia sẻ chuyên gia', 'podcast-chuyen-gia', 'Nội dung demo', '/anh/tinh6.jpg', 5, 4, '2025-08-06 00:00:00', NULL, 'da_dang', 20),
-(25, 'Thiết lập ánh sáng màn hình', 'thiet-lap-anh-sang', 'Nội dung demo', '/anh/meo1.jpg', 4, 5, '2025-08-01 00:00:00', NULL, 'da_dang', 160),
-(26, 'Ghế ngồi phù hợp', 'ghe-ngoi-phu-hop', 'Nội dung demo', '/anh/meo2.jpg', 4, 5, '2025-08-02 00:00:00', NULL, 'da_dang', 140),
-(27, 'Kính lọc ánh sáng xanh', 'kinh-loc-anh-sang', 'Nội dung demo', '/anh/meo3.jpg', 4, 5, '2025-08-03 00:00:00', NULL, 'da_dang', 110),
-(28, 'Setup bàn làm việc', 'setup-ban-lam-viec', 'Nội dung demo', '/anh/meo4.jpg', 4, 5, '2025-08-04 00:00:00', NULL, 'da_dang', 90),
-(29, 'Bảo vệ cổ tay khi gõ phím', 'bao-ve-co-tay', 'Nội dung demo', '/anh/meo5.jpg', 4, 5, '2025-08-05 00:00:00', NULL, 'da_dang', 70),
-(30, 'Kiểm tra thị lực tại nhà', 'kiem-tra-thi-luc', 'Nội dung demo', '/anh/meo6.jpg', 4, 5, '2025-08-06 00:00:00', NULL, 'da_dang', 50);
+INSERT INTO `baiviet` (`ma_bai_viet`, `tieu_de`, `duong_dan`, `noi_dung`, `anh_dai_dien`, `ma_tac_gia`, `ma_chuyen_muc`, `ngay_dang`, `ngay_cap_nhat`, `trang_thai`, `luot_xem`, `danh_muc`) VALUES
+(1, 'Top 7 thực phẩm tốt cho mắt', 'top-7-thuc-pham-cho-mat', 'Nội dung demo', '/anh/dinhduong1.jpg', 4, 1, '2025-08-01 00:00:00', NULL, 'da_dang', 120, NULL),
+(2, 'Ăn nhẹ lành mạnh khi chơi game', 'an-nhe-lanh-manh', 'Nội dung demo', '/anh/dinhduong2.jpg', 4, 1, '2025-08-02 00:00:00', NULL, 'da_dang', 80, NULL),
+(3, 'Vitamin cần thiết cho mắt', 'vitamin-can-thiet', 'Nội dung demo', '/anh/dinhduong3.jpg', 4, 1, '2025-08-03 00:00:00', NULL, 'da_dang', 60, NULL),
+(4, 'Thực phẩm nên tránh khi mỏi mắt', 'thuc-pham-nen-tranh', 'Nội dung demo', '/anh/dinhduong4.jpg', 4, 1, '2025-08-04 00:00:00', NULL, 'da_dang', 40, NULL),
+(5, 'Uống nước đúng cách', 'uong-nuoc-dung-cach', 'Nội dung demo', '/anh/dinhduong5.jpg', 4, 1, '2025-08-05 00:00:00', NULL, 'da_dang', 35, NULL),
+(6, 'Thực đơn ngày thi', 'thuc-don-ngay-thi', 'Nội dung demo', '/anh/dinhduong6.jpg', 4, 1, '2025-08-06 00:00:00', NULL, 'da_dang', 25, NULL),
+(7, '5 bài tập giãn cơ sau khi chơi game', '5-bai-tap-gian-co', 'Nội dung demo', '/anh/tap1.jpg', 5, 2, '2025-08-01 00:00:00', NULL, 'da_dang', 200, NULL),
+(8, 'Tư thế ngồi đúng chống đau lưng', 'tu-the-ngoi-dung', 'Nội dung demo', '/anh/tap2.jpg', 5, 2, '2025-08-02 00:00:00', NULL, 'da_dang', 180, NULL),
+(9, 'Chuỗi bài tập 10 phút', 'chuoi-bai-tap-10p', 'Nội dung demo', '/anh/tap3.jpg', 5, 2, '2025-08-03 00:00:00', NULL, 'da_dang', 150, NULL),
+(10, 'Bài tập cổ vai gáy', 'bai-tap-co-vai', 'Nội dung demo', '/anh/tap4.jpg', 5, 2, '2025-08-04 00:00:00', NULL, 'da_dang', 100, NULL),
+(11, 'Tập thở giảm stress', 'tap-tho-giam-stress', 'Nội dung demo', '/anh/tap5.jpg', 5, 2, '2025-08-05 00:00:00', NULL, 'da_dang', 90, NULL),
+(12, 'Lịch luyện 4 tuần cải thiện tư thế', 'lich-luyen-4-tuan', 'Nội dung demo', '/anh/tap6.jpg', 5, 2, '2025-08-06 00:00:00', NULL, 'da_dang', 70, NULL),
+(13, 'Kỹ thuật nghỉ 5 phút mỗi giờ', 'ky-thuat-nghi-5p', 'Nội dung demo', '/anh/nghi1.jpg', 6, 3, '2025-08-01 00:00:00', NULL, 'da_dang', 140, NULL),
+(14, 'Cải thiện giấc ngủ cho game thủ', 'cai-thien-giac-ngu', 'Nội dung demo', '/anh/nghi2.jpg', 6, 3, '2025-08-02 00:00:00', NULL, 'da_dang', 120, NULL),
+(15, 'Ánh sáng phòng khi giải trí', 'anh-sang-phong', 'Nội dung demo', '/anh/nghi3.jpg', 6, 3, '2025-08-03 00:00:00', NULL, 'da_dang', 90, NULL),
+(16, 'Thói quen trước khi ngủ', 'thoi-quen-truoc-ngu', 'Nội dung demo', '/anh/nghi4.jpg', 6, 3, '2025-08-04 00:00:00', NULL, 'da_dang', 70, NULL),
+(17, 'Thử thách 7 ngày không thiết bị', 'thu-thach-7-ngay', 'Nội dung demo', '/anh/nghi5.jpg', 6, 3, '2025-08-05 00:00:00', NULL, 'da_dang', 55, NULL),
+(18, 'Không gian ngủ lý tưởng', 'khong-gian-ngu', 'Nội dung demo', '/anh/nghi6.jpg', 6, 3, '2025-08-06 00:00:00', NULL, 'da_dang', 40, NULL),
+(19, 'Quản lý stress hiệu quả', 'quan-ly-stress', 'Nội dung demo', '/anh/tinh1.jpg', 5, 4, '2025-08-01 00:00:00', NULL, 'da_dang', 60, NULL),
+(20, 'Giữ cân bằng giải trí và học tập', 'giu-can-bang', 'Nội dung demo', '/anh/tinh2.jpg', 5, 4, '2025-08-02 00:00:00', NULL, 'da_dang', 50, NULL),
+(21, 'Thiền 5 phút mỗi ngày', 'thien-5-phut', 'Nội dung demo', '/anh/tinh3.jpg', 5, 4, '2025-08-03 00:00:00', NULL, 'da_dang', 40, NULL),
+(22, 'Dấu hiệu quá tải tinh thần', 'dau-hieu-qua-tai', 'Nội dung demo', '/anh/tinh4.jpg', 5, 4, '2025-08-04 00:00:00', NULL, 'da_dang', 35, NULL),
+(23, 'Thói quen nhỏ – tác động lớn', 'thoi-quen-nho', 'Nội dung demo', '/anh/tinh5.jpg', 5, 4, '2025-08-05 00:00:00', NULL, 'da_dang', 30, NULL),
+(24, 'Podcast chia sẻ chuyên gia', 'podcast-chuyen-gia', 'Nội dung demo', '/anh/tinh6.jpg', 5, 4, '2025-08-06 00:00:00', NULL, 'da_dang', 20, NULL),
+(25, 'Thiết lập ánh sáng màn hình', 'thiet-lap-anh-sang', 'Nội dung demo', '/anh/meo1.jpg', 4, 5, '2025-08-01 00:00:00', NULL, 'da_dang', 160, NULL),
+(26, 'Ghế ngồi phù hợp', 'ghe-ngoi-phu-hop', 'Nội dung demo', '/anh/meo2.jpg', 4, 5, '2025-08-02 00:00:00', NULL, 'da_dang', 140, NULL),
+(27, 'Kính lọc ánh sáng xanh', 'kinh-loc-anh-sang', 'Nội dung demo', '/anh/meo3.jpg', 4, 5, '2025-08-03 00:00:00', NULL, 'da_dang', 110, NULL),
+(28, 'Setup bàn làm việc', 'setup-ban-lam-viec', 'Nội dung demo', '/anh/meo4.jpg', 4, 5, '2025-08-04 00:00:00', NULL, 'da_dang', 90, NULL),
+(29, 'Bảo vệ cổ tay khi gõ phím', 'bao-ve-co-tay', 'Nội dung demo', '/anh/meo5.jpg', 4, 5, '2025-08-05 00:00:00', NULL, 'da_dang', 70, NULL),
+(30, 'Kiểm tra thị lực tại nhà', 'kiem-tra-thi-luc', 'Nội dung demo', '/anh/meo6.jpg', 4, 5, '2025-08-06 00:00:00', NULL, 'da_dang', 50, NULL);
 
 -- --------------------------------------------------------
 
@@ -189,7 +190,25 @@ CREATE TABLE `dangnhap` (
 INSERT INTO `dangnhap` (`id_dn`, `username`, `password`, `ngay_dn`) VALUES
 (1, 'admin', 'baka', '2025-11-01 12:13:17'),
 (2, 'admin', 'baka', '2025-11-01 12:33:12'),
-(3, 'admin', 'baka', '2025-11-03 09:27:57');
+(3, 'admin', 'baka', '2025-11-03 09:27:57'),
+(4, 'admin', 'baka', '2025-11-04 06:42:11'),
+(5, 'admin', 'baka', '2025-11-04 08:41:03'),
+(6, 'admin', 'baka', '2025-11-04 09:56:51'),
+(7, 'admin', 'baka', '2025-11-05 01:46:47'),
+(8, 'admin', 'baka', '2025-11-05 09:44:58');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `doimatkhau`
+--
+
+CREATE TABLE `doimatkhau` (
+  `id_dmk` int(11) NOT NULL,
+  `id_kh` int(11) NOT NULL,
+  `mat_khau` varchar(255) NOT NULL,
+  `ngay_tao` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -224,7 +243,7 @@ INSERT INTO `khachhang` (`id_kh`, `ho_ten`, `email`, `sdt`, `dia_chi`, `gioi_tin
 (4, 'a', 'c@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
 (5, 'b', 'b@gmai.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
 (6, 'ac', 'ac@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL),
-(7, 'Hayase Yuuka', 'baka@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, NULL);
+(7, 'Hayase Yuuka', 'baka@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'Khach', 0, NULL, 'nahida');
 
 -- --------------------------------------------------------
 
@@ -348,6 +367,13 @@ ALTER TABLE `dangnhap`
   ADD PRIMARY KEY (`id_dn`);
 
 --
+-- Chỉ mục cho bảng `doimatkhau`
+--
+ALTER TABLE `doimatkhau`
+  ADD PRIMARY KEY (`id_dmk`),
+  ADD KEY `id_kh` (`id_kh`);
+
+--
 -- Chỉ mục cho bảng `khachhang`
 --
 ALTER TABLE `khachhang`
@@ -401,7 +427,13 @@ ALTER TABLE `chuyenmuc`
 -- AUTO_INCREMENT cho bảng `dangnhap`
 --
 ALTER TABLE `dangnhap`
-  MODIFY `id_dn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_dn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT cho bảng `doimatkhau`
+--
+ALTER TABLE `doimatkhau`
+  MODIFY `id_dmk` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `khachhang`
@@ -451,6 +483,12 @@ ALTER TABLE `bai_the`
 ALTER TABLE `binhluan`
   ADD CONSTRAINT `binhluan_ibfk_1` FOREIGN KEY (`ma_bai_viet`) REFERENCES `baiviet` (`ma_bai_viet`) ON DELETE CASCADE,
   ADD CONSTRAINT `binhluan_ibfk_2` FOREIGN KEY (`ma_nguoi_dung`) REFERENCES `nguoidung` (`ma_nguoi_dung`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `doimatkhau`
+--
+ALTER TABLE `doimatkhau`
+  ADD CONSTRAINT `doimatkhau_ibfk_1` FOREIGN KEY (`id_kh`) REFERENCES `khachhang` (`id_kh`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `taotaikhoan`
