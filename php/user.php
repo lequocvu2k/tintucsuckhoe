@@ -9,6 +9,41 @@ if (!isset($_SESSION['user_id'])) {
 }
 $id_kh = $_SESSION['user_id'];
 
+// Xử lý hủy yêu cầu
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_request'])) {
+    // Lấy ID yêu cầu từ form
+    $cancel_request_id = $_POST['cancel_request_id'] ?? '';
+
+    if ($cancel_request_id) {
+        // Xóa yêu cầu khỏi bảng nhanvien_yc
+        $stmt = $pdo->prepare("DELETE FROM nhanvien_yc WHERE id = :id");
+        $stmt->bindParam(':id', $cancel_request_id);
+        $stmt->execute();
+
+        // Thông báo thành công và reload lại trang
+        echo "<script>alert('Yêu cầu đã bị hủy thành công!'); window.location.reload();</script>";
+    } else {
+        echo "<script>alert('Có lỗi khi xóa yêu cầu!'); window.location.reload();</script>";
+    }
+}
+
+// Xử lý xóa tài khoản khi người dùng nhấn nút
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
+    // Xóa thông tin người dùng khỏi bảng "khachhang"
+    $stmt = $pdo->prepare("DELETE FROM khachhang WHERE id_kh = :id");
+    $stmt->bindParam(':id', $id_kh);
+    $stmt->execute();
+
+    // Xóa thông tin người dùng khỏi bảng "taotaikhoan" nếu có
+    $stmt = $pdo->prepare("DELETE FROM taotaikhoan WHERE id_kh = :id");
+    $stmt->bindParam(':id', $id_kh);
+    $stmt->execute();
+
+    // Đăng xuất người dùng và chuyển hướng về trang chủ
+    session_destroy();
+    header('Location: index.php');
+    exit;
+}
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
 $stmt = $pdo->prepare("
     SELECT kh.*, tk.ngay_tao
@@ -292,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <?php if ($user['email'] == 'baka@gmail.com'): ?>
                                     <span class="role-badge">ADMIN</span>
                                 <?php else: ?>
-                                    <?= htmlspecialchars($user['email']) ?>
+
                                 <?php endif; ?>
 
                                 <!-- Ẩn VIP tier nếu là admin -->
@@ -312,15 +347,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <a href="./user.php">
                                             <i class="fas fa-user"></i> Tài khoản
                                             <!-- Kiểm tra nếu người dùng là ADMIN, hiển thị ADMIN -->
-                                            <b class="vip-tier">
+                                            <b
+                                                class="vip-tier <?= ($_SESSION['username'] === 'admin') ? 'admin' : strtolower(str_replace(' ', '-', $tier)) ?>">
                                                 <?php
                                                 if ($_SESSION['username'] === 'admin') {
-                                                    echo '<span class="role-badge">ADMIN</span>';  // Hiển thị "ADMIN" với hiệu ứng màu sắc cầu vồng
+                                                    echo '<span class="role-badge">ADMIN</span>';  // Hiển thị "ADMIN" cho người dùng admin
                                                 } else {
                                                     echo htmlspecialchars($tier);  // Hiển thị cấp độ thành viên cho người dùng khác
                                                 }
                                                 ?>
                                             </b>
+
                                         </a>
                                     </li>
 
@@ -495,10 +532,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button class="btn-health club">
                     🧘 Tham gia Câu lạc bộ Sức khỏe
                 </button>
+                <!-- Nút để mở popup "Trở thành nhân viên" -->
+                <button class="btn-health share" onclick="openEmployeeModal()">Trở thành nhân viên</button>
 
-                <button class="btn-health share">
-                    💬 Gửi bài viết / chia sẻ kinh nghiệm
-                </button>
+                <!-- Modal "Trở thành nhân viên" -->
+                <div id="employeeModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEmployeeModal()">&times;</span>
+                        <h3>Đăng ký trở thành nhân viên - Gia nhập đội ngũ chúng tôi!</h3>
+
+                        <p>Chúng tôi đang tìm kiếm những cá nhân năng động, đam mê và sẵn sàng tham gia vào đội ngũ của
+                            mình. Hãy điền thông tin dưới đây để chúng tôi có thể liên hệ với bạn ngay!</p>
+
+                        <!-- Form yêu cầu trở thành nhân viên -->
+                        <form method="POST" action="xac_nhan.php">
+                            <label for="ho_ten">Họ và tên:</label>
+                            <input type="text" id="ho_ten" name="ho_ten" placeholder="Nhập họ tên của bạn" required>
+
+                            <label for="sdt">Số điện thoại:</label>
+                            <input type="text" id="sdt" name="sdt" placeholder="Số điện thoại liên hệ" required>
+
+                            <label for="the_loai">Bạn muốn đăng ký thể loại công việc nào?</label>
+                            <input type="text" id="the_loai" name="the_loai"
+                                placeholder="Chọn thể loại công việc bạn muốn tham gia" required>
+
+                            <p class="note">💡 Hãy cho chúng tôi biết công việc mà bạn đang tìm kiếm, và chúng tôi sẽ
+                                xem xét yêu cầu của bạn nhanh nhất có thể.</p>
+
+                            <button type="submit" name="submit_employee_request" class="confirm-btn">Gửi yêu
+                                cầu</button>
+                            <button type="button" class="cancel-btn" onclick="closeEmployeeModal()">Hủy bỏ</button>
+                        </form>
+                    </div>
+                </div>
             </div>
             <div class="history-box">
                 <h3 class="history-title">🔁 Lịch sử yêu cầu</h3>
@@ -513,11 +579,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h4 class="history-subtitle">🧘 Yêu cầu tham gia Câu lạc bộ Sức khỏe</h4>
                     <p>Hiện tại chưa có yêu cầu nào</p>
                 </div>
-
                 <div class="history-section">
-                    <h4 class="history-subtitle">💬 Yêu cầu gửi bài viết / chia sẻ kinh nghiệm</h4>
-                    <p>Hiện tại chưa có yêu cầu nào</p>
+                    <h4 class="history-subtitle">💬 Yêu cầu trở thành nhân viên</h4>
+                    <?php
+                    // Lấy yêu cầu "Trở thành nhân viên"
+                    if ($id_kh) {
+                        $stmt = $pdo->prepare("SELECT ho_ten, sdt, the_loai, ngay_tao, trang_thai, id FROM nhanvien_yc WHERE id_kh = :id_kh ORDER BY ngay_tao DESC");
+                        $stmt->bindParam(':id_kh', $id_kh);
+                        $stmt->execute();
+                        $yeu_cau = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        // Nếu có yêu cầu, hiển thị thông tin
+                        if ($yeu_cau) {
+                            foreach ($yeu_cau as $cau) {
+                                // Chọn lớp CSS dựa trên trạng thái
+                                $statusClass = '';
+                                if ($cau['trang_thai'] == 'chờ duyệt') {
+                                    $statusClass = 'status-pending';
+                                } elseif ($cau['trang_thai'] == 'đã duyệt') {
+                                    $statusClass = 'status-approved';
+                                } elseif ($cau['trang_thai'] == 'bị từ chối') {
+                                    $statusClass = 'status-rejected';
+                                }
+
+                                echo '<div class="history-item">';
+                                echo '<h4 class="history-subtitle">📝 Yêu cầu: ' . htmlspecialchars($cau['the_loai']) . '</h4>';
+                                echo '<p><b>Họ tên:</b> ' . htmlspecialchars($cau['ho_ten']) . '</p>';
+                                echo '<p><b>Số điện thoại:</b> ' . htmlspecialchars($cau['sdt']) . '</p>';
+                                echo '<p><b>Ngày gửi yêu cầu:</b> ' . htmlspecialchars($cau['ngay_tao']) . '</p>';
+                                echo '<p><b>Trạng thái:</b> <span class="' . $statusClass . '">' . htmlspecialchars($cau['trang_thai']) . '</span></p>';
+                                echo '<form method="POST" style="display:inline;">
+                        <input type="hidden" name="cancel_request_id" value="' . $cau['id'] . '">
+                        <button type="submit" name="cancel_request" class="cancel-btn">Hủy yêu cầu</button>
+                      </form>';
+                                echo '</div>';
+                            }
+                        } else {
+                            echo '<p>Hiện tại chưa có yêu cầu nào</p>';
+                        }
+                    } else {
+                        echo '<p>Vui lòng đăng nhập để xem lịch sử yêu cầu.</p>';
+                    }
+                    ?>
                 </div>
+
             </div>
         </div>
         <div class="profile-content">
@@ -530,96 +635,122 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button class="tab-btn" data-tab="notifications"><i class="fas fa-bell"></i> Thông báo</button>
                     <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Cài đặt</button>
                 </div>
+
+                <!-- TAB KHÁC -->
+                <div class="tab-content" id="history">
+                    <h2>Lịch sử hoạt động</h2>
+                    <p>Bạn chưa có hoạt động nào gần đây.</p>
+                </div>
+
+                <div class="tab-content" id="saved">
+                    <h2>Bài viết đã lưu</h2>
+                    <p>Danh sách các bài viết bạn lưu sẽ hiển thị ở đây.</p>
+                </div>
+
+                <div class="tab-content" id="notifications">
+                    <h2>Thông báo</h2>
+                    <p>Không có thông báo mới.</p>
+                </div>
+
+                <div class="tab-content" id="settings">
+                    <h2>Cài đặt tài khoản</h2>
+                    <p>Bạn có thể tùy chỉnh hiển thị, bảo mật và các thiết lập khác ở đây.</p>
+
+                    <h2>Đổi mật khẩu</h2>
+                    <form method="POST" class="password-form">
+                        <div class="password-group">
+                            <label>Mật khẩu hiện tại:</label>
+                            <div class="password-field">
+                                <input type="password" id="matkhau_cu" name="matkhau_cu" required>
+                                <i class="fa-solid fa-eye" onclick="togglePass('matkhau_cu', this)"></i>
+                            </div>
+
+                            <label>Mật khẩu mới:</label>
+                            <div class="password-field">
+                                <input type="password" id="matkhau_moi" name="matkhau_moi" required>
+                                <i class="fa-solid fa-eye" onclick="togglePass('matkhau_moi', this)"></i>
+                            </div>
+
+                            <button type="submit" name="update_pass" class="save-btn">🔑 Đổi mật khẩu</button>
+                    </form>
+
+                    <?php if (!empty($msg)): ?>
+                        <p class="msg"><?= $msg ?></p>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Cài đặt thông báo -->
+                <div class="notification-settings">
+                    <h3>Cài đặt thông báo</h3>
+                    <label>
+                        <input type="checkbox" name="email_notifications" <?= $user['email_notifications'] ? 'checked' : '' ?>> Nhận thông báo qua email
+                    </label>
+                    <label>
+                        <input type="checkbox" name="sms_notifications" <?= $user['sms_notifications'] ? 'checked' : '' ?>>
+                        Nhận thông báo qua SMS
+                    </label>
+                    <button type="submit" name="update_notifications" class="save-btn">Lưu thay đổi</button>
+                </div>
+
+                <!-- Xóa tài khoản -->
+                <div class="delete-account">
+                    <h3>Xóa tài khoản</h3>
+                    <p>Chú ý: Việc xóa tài khoản sẽ không thể hoàn tác. Bạn muốn xóa tài khoản?</p>
+
+                    <!-- Form để xóa tài khoản -->
+                    <form method="POST" action="">
+                        <button type="submit" name="delete_account" class="delete-btn">Xóa tài khoản</button>
+                    </form>
+                </div>
+
             </div>
 
-            <!-- TAB: THÔNG TIN -->
-            <div class="tab-content active" id="info">
-                <form method="POST" class="info-form">
-                    <h2 class="profile-title">Thông tin cá nhân</h2>
-                    <div class="form-columns">
-                        <div class="form-left">
-                            <label>Họ tên:</label>
-                            <input type="text" name="ho_ten" value="<?= htmlspecialchars($user['ho_ten']) ?>" required>
+        </div>
+        <!-- TAB: THÔNG TIN -->
+        <div class="tab-content active" id="info">
+            <form method="POST" class="info-form">
+                <h2 class="profile-title">Thông tin cá nhân</h2>
+                <div class="form-columns">
+                    <div class="form-left">
+                        <label>Họ tên:</label>
+                        <input type="text" name="ho_ten" value="<?= htmlspecialchars($user['ho_ten']) ?>" required>
 
-                            <label>Số điện thoại:</label>
-                            <input type="text" name="sdt" value="<?= htmlspecialchars($user['sdt']) ?>">
+                        <label>Số điện thoại:</label>
+                        <input type="text" name="sdt" value="<?= htmlspecialchars($user['sdt']) ?>">
 
-                            <label>Email:</label>
-                            <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+                        <label>Email:</label>
+                        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
 
-                            <label>Ngày sinh:</label>
-                            <input type="date" name="ngay_sinh" value="<?= htmlspecialchars($user['ngay_sinh']) ?>">
-                        </div>
+                        <label>Ngày sinh:</label>
+                        <input type="date" name="ngay_sinh" value="<?= htmlspecialchars($user['ngay_sinh']) ?>">
+                    </div>
 
-                        <div class="form-right">
-                            <label>Địa chỉ:</label>
-                            <input type="text" name="dia_chi" value="<?= htmlspecialchars($user['dia_chi']) ?>">
+                    <div class="form-right">
+                        <label>Địa chỉ:</label>
+                        <input type="text" name="dia_chi" value="<?= htmlspecialchars($user['dia_chi']) ?>">
 
-                            <label>Thành phố / Tỉnh:</label>
-                            <input type="text" name="tinh_thanh" value="<?= htmlspecialchars($user['tinh_thanh']) ?>">
+                        <label>Thành phố / Tỉnh:</label>
+                        <input type="text" name="tinh_thanh" value="<?= htmlspecialchars($user['tinh_thanh']) ?>">
 
-                            <label>Quốc gia:</label>
-                            <input type="text" name="quoc_gia" value="<?= htmlspecialchars($user['quoc_gia']) ?>">
+                        <label>Quốc gia:</label>
+                        <input type="text" name="quoc_gia" value="<?= htmlspecialchars($user['quoc_gia']) ?>">
 
-                            <label>Giới tính:</label>
-                            <div class="radio-group">
-                                <label>
-                                    <input type="radio" name="gioi_tinh" value="Nam" <?= $isMale ?>> Nam
-                                </label>
-                                <label>
-                                    <input type="radio" name="gioi_tinh" value="Nữ" <?= $isFemale ?>> Nữ
-                                </label>
-                            </div>
+                        <label>Giới tính:</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="gioi_tinh" value="Nam" <?= $isMale ?>> Nam
+                            </label>
+                            <label>
+                                <input type="radio" name="gioi_tinh" value="Nữ" <?= $isFemale ?>> Nữ
+                            </label>
                         </div>
                     </div>
-                    <button type="submit" name="update_info" class="save-btn">Lưu thay đổi</button>
-                </form>
+                </div>
+                <button type="submit" name="update_info" class="save-btn">Lưu thay đổi</button>
+            </form>
 
-                <h2>Đổi mật khẩu</h2>
-                <form method="POST" class="password-form">
-                    <div class="password-group">
-                        <label>Mật khẩu hiện tại:</label>
-                        <div class="password-field">
-                            <input type="password" id="matkhau_cu" name="matkhau_cu" required>
-                            <i class="fa-solid fa-eye" onclick="togglePass('matkhau_cu', this)"></i>
-                        </div>
 
-                        <label>Mật khẩu mới:</label>
-                        <div class="password-field">
-                            <input type="password" id="matkhau_moi" name="matkhau_moi" required>
-                            <i class="fa-solid fa-eye" onclick="togglePass('matkhau_moi', this)"></i>
-                        </div>
-
-                        <button type="submit" name="update_pass" class="save-btn">🔑 Đổi mật khẩu</button>
-                </form>
-
-                <?php if (!empty($msg)): ?>
-                    <p class="msg"><?= $msg ?></p>
-                <?php endif; ?>
-            </div>
-
-            <!-- TAB KHÁC -->
-            <div class="tab-content" id="history">
-                <h2>Lịch sử hoạt động</h2>
-                <p>Bạn chưa có hoạt động nào gần đây.</p>
-            </div>
-
-            <div class="tab-content" id="saved">
-                <h2>Bài viết đã lưu</h2>
-                <p>Danh sách các bài viết bạn lưu sẽ hiển thị ở đây.</p>
-            </div>
-
-            <div class="tab-content" id="notifications">
-                <h2>Thông báo</h2>
-                <p>Không có thông báo mới.</p>
-            </div>
-
-            <div class="tab-content" id="settings">
-                <h2>Cài đặt tài khoản</h2>
-                <p>Bạn có thể tùy chỉnh hiển thị, bảo mật và các thiết lập khác ở đây.</p>
-            </div>
         </div>
-    </div>
 
 </body>
 

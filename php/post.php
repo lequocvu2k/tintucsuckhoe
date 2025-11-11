@@ -244,7 +244,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                 <?php if ($user['email'] == 'baka@gmail.com'): ?>
                                     <span class="role-badge">ADMIN</span>
                                 <?php else: ?>
-                                    <?= htmlspecialchars($user['email']) ?>
+
                                 <?php endif; ?>
 
                                 <!-- Ẩn VIP tier nếu là admin -->
@@ -264,15 +264,17 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                         <a href="./user.php">
                                             <i class="fas fa-user"></i> Tài khoản
                                             <!-- Kiểm tra nếu người dùng là ADMIN, hiển thị ADMIN -->
-                                            <b class="vip-tier">
+                                            <b
+                                                class="vip-tier <?= ($_SESSION['username'] === 'admin') ? 'admin' : strtolower(str_replace(' ', '-', $tier)) ?>">
                                                 <?php
                                                 if ($_SESSION['username'] === 'admin') {
-                                                    echo '<span class="role-badge">ADMIN</span>';  // Hiển thị "ADMIN" với hiệu ứng màu sắc cầu vồng
+                                                    echo '<span class="role-badge">ADMIN</span>';  // Hiển thị "ADMIN" cho người dùng admin
                                                 } else {
                                                     echo htmlspecialchars($tier);  // Hiển thị cấp độ thành viên cho người dùng khác
                                                 }
                                                 ?>
                                             </b>
+
                                         </a>
                                     </li>
 

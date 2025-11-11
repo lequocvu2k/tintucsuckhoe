@@ -181,7 +181,6 @@
   height: 42px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #0073e6;
 }
 
 .account-info {
@@ -258,9 +257,9 @@
 }
 .frame-overlay {
   position: absolute;
-  top: -7px; /* bằng border của avatar */
-  left: -9px; /* bằng border của avatar */
-  width: 126px; /* avatar 120px + border 3px * 2 */
+  top: -11px; /* bằng border của avatar */
+  left: -1px; /* bằng border của avatar */
+  width: 106px; /* avatar 120px + border 3px * 2 */
   height: 126px;
   border-radius: 50%;
   pointer-events: none;
@@ -277,8 +276,6 @@
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #ff4081;
-  box-shadow: 0 0 10px rgba(255, 64, 129, 0.4);
 }
 
 /* ============================
