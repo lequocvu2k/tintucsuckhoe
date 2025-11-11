@@ -367,7 +367,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="popup-content">
             <!-- Thêm hình ảnh tròn -->
             <div class="avatar-container">
-                <img src="../img/avt.jpg" alt="Avatar" class="avatar-circle">
+                <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
             </div>
             <h2>Đăng nhập</h2>
             <form method="post" action="./login.php" autocomplete="off">
@@ -390,7 +390,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="popup-content">
             <!-- Thêm hình ảnh tròn -->
             <div class="avatar-container">
-                <img src="../img/avt.jpg" alt="Avatar" class="avatar-circle">
+                <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
             </div>
             <h2>Đăng ký</h2>
             <form method="POST" action="./signup.php" autocomplete="off">

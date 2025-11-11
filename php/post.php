@@ -87,6 +87,38 @@ $prev_post = $stmt_prev->fetch(PDO::FETCH_ASSOC);
 $stmt_next = $pdo->prepare("SELECT * FROM baiviet WHERE ngay_dang > ? AND trang_thai = 'published' ORDER BY ngay_dang ASC LIMIT 1");
 $stmt_next->execute([$post['ngay_dang']]);
 $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
+
+// Xử lý sắp xếp bình luận
+$orderBy = "ORDER BY c.ngay_binhluan DESC"; // Mặc định: mới nhất
+
+if (isset($_GET['sort'])) {
+    switch ($_GET['sort']) {
+        case 'oldest':
+            $orderBy = "ORDER BY c.ngay_binhluan ASC";
+            break;
+        case 'name_asc':
+            $orderBy = "ORDER BY kh.ho_ten ASC";
+            break;
+        case 'name_desc':
+            $orderBy = "ORDER BY kh.ho_ten DESC";
+            break;
+        default:
+            $orderBy = "ORDER BY c.ngay_binhluan DESC";
+    }
+}
+
+// Truy vấn bình luận với sắp xếp
+$stmt_comments = $pdo->prepare("
+    SELECT c.*, kh.ho_ten, kh.avatar_url, kh.avatar_frame 
+    FROM binhluan c
+    JOIN khachhang kh ON c.id_kh = kh.id_kh
+    WHERE c.ma_bai_viet = ? $orderBy
+");
+
+$stmt_comments->execute([$post['ma_bai_viet']]);
+$comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
+
+
 ?>
 
 
@@ -106,6 +138,7 @@ $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
     <script src="../js/popup.js"></script>
+    <script src="../js/post.js" defer></script>
 </head>
 
 <body>
@@ -273,7 +306,7 @@ $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
         <div class="popup-content">
             <!-- Thêm hình ảnh tròn -->
             <div class="avatar-container">
-                <img src="../img/avt.jpg" alt="Avatar" class="avatar-circle">
+                <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
             </div>
             <h2>Đăng nhập</h2>
             <form method="post" action="./login.php" autocomplete="off">
@@ -296,7 +329,7 @@ $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
         <div class="popup-content">
             <!-- Thêm hình ảnh tròn -->
             <div class="avatar-container">
-                <img src="../img/avt.jpg" alt="Avatar" class="avatar-circle">
+                <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
             </div>
             <h2>Đăng ký</h2>
             <form method="POST" action="./signup.php" autocomplete="off">
@@ -417,6 +450,108 @@ $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
                 <?php else: ?>
                     <span class="no-next">❌ Không có bài tiếp theo</span>
                 <?php endif; ?>
+            </div>
+            <!-- YOU MAY ALSO LIKE -->
+            <section class="related-posts">
+                <h2>YOU MAY ALSO LIKE</h2>
+                <div class="related-grid">
+                    <?php
+                    $stmt_related = $pdo->prepare("
+            SELECT * FROM baiviet 
+            WHERE ma_bai_viet != ? AND trang_thai = 'published'
+            ORDER BY RAND() 
+            LIMIT 6
+        ");
+                    $stmt_related->execute([$post['ma_bai_viet']]);
+                    $related = $stmt_related->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($related as $r): ?>
+                        <div class="related-item">
+                            <a href="post.php?slug=<?= urlencode($r['duong_dan']) ?>">
+                                <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                                <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
+                                <p><?= date("F d, Y", strtotime($r['ngay_dang'])) ?></p>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+            <div class="comment-section">
+                <h3>THAM GIA BÌNH LUẬN</h3>
+
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <form class="comment-form" action="comment.php?slug=<?= htmlspecialchars($slug) ?>" method="POST">
+                        <textarea name="comment_text" placeholder="Leave a comment..." required></textarea>
+                        <button type="submit" class="submit-btn">SUBMIT</button>
+                    </form>
+                <?php else: ?>
+                    <div class="login-prompt">
+                        <p>Please login or register to comment.</p>
+                        <label for="showLogin" class="login-link">Sign in</label> |
+                        <label for="showSignup" class="signup-link">Sign up</label>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Dropdown sắp xếp -->
+                <div class="sort-comments">
+                    <label for="sort">Sắp xếp bình luận: </label>
+                    <select name="sort" id="sort"
+                        onchange="window.location.href = 'post.php?slug=<?= urlencode($slug) ?>&sort=' + this.value;">
+                        <option value="newest" <?= ($_GET['sort'] ?? '') === 'newest' ? 'selected' : '' ?>>Mới nhất
+                        </option>
+                        <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : '' ?>>Cũ nhất</option>
+                        <option value="name_asc" <?= ($_GET['sort'] ?? '') === 'name_asc' ? 'selected' : '' ?>>Tên (A → Z)
+                        </option>
+                        <option value="name_desc" <?= ($_GET['sort'] ?? '') === 'name_desc' ? 'selected' : '' ?>>Tên (Z →
+                            A)</option>
+                    </select>
+                </div>
+
+                <!-- Hiển thị bình luận -->
+                <div id="comments-container">
+                    <?php
+                    if ($comments):
+                        foreach ($comments as $comment):
+                            ?>
+                            <div class="comment" id="comment-<?= $comment['id_binhluan'] ?>">
+                                <div class="avatar-container">
+                                    <!-- Hiển thị avatar -->
+                                    <img src="<?= $author_avatar ?>" alt="Avatar" class="avatar">
+
+                                    <!-- Hiển thị frame nếu có -->
+                                    <?php if ($author_frame): ?>
+                                        <?php
+                                        // Tạo đường dẫn cho khung avatar
+                                        $frame_path = "../frames/" . $author_frame . ".png";
+                                        // Kiểm tra sự tồn tại của khung avatar
+                                        if (file_exists($frame_path)): ?>
+                                            <img src="<?= $frame_path ?>" alt="Frame" class="frame-overlay">
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="comment-text" id="comment-text-<?= $comment['id_binhluan'] ?>">
+                                    <p><strong><?= htmlspecialchars($comment['ho_ten']) ?></strong> <span
+                                            class="comment-time"><?= date("F d, Y H:i", strtotime($comment['ngay_binhluan'])) ?></span>
+                                    </p>
+                                    <p><?= nl2br(htmlspecialchars($comment['noi_dung'])) ?></p>
+
+                                    <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $comment['id_kh']): ?>
+                                        <a href="javascript:void(0);" class="edit-comment"
+                                            onclick="editComment(<?= $comment['id_binhluan'] ?>)">Sửa</a>
+                                        <a href="javascript:void(0);" class="delete-comment"
+                                            onclick="deleteComment(<?= $comment['id_binhluan'] ?>, '<?= urlencode($slug) ?>')">Xóa</a>
+                                    <?php endif; ?>
+                                </div>
+                                <br>
+                            </div>
+                            <?php
+                        endforeach;
+                    else:
+                        echo "<p>Chưa có bình luận nào.</p>";
+                    endif;
+                    ?>
+                </div>
             </div>
 
         </article>

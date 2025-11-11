@@ -296,3 +296,328 @@ footer {
 .post-meta span {
   margin-right: 10px;
 }
+.comments-section {
+  margin-top: 40px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+.comments-section h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+.comments-section textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.comments-section button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-top: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.comments-section button:hover {
+  background: #c0392b;
+}
+.comment-item {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.comment-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.comment-body {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 10px 15px;
+  flex: 1;
+}
+.comment-text {
+  margin: 5px 0;
+}
+.comment-date {
+  font-size: 12px;
+  color: #777;
+}
+.load-comments {
+  width: 100%;
+  background: #e74c3c;
+  color: white;
+  padding: 10px;
+  border: none;
+  margin-top: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.login-prompt {
+  text-align: center;
+  margin-bottom: 15px;
+}
+.login-prompt a {
+  color: #e74c3c;
+  text-decoration: none;
+  font-weight: bold;
+}
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+.comment-avatar-container {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  margin-right: 15px;
+}
+
+.comment-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-avatar-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #fff; /* Tùy chỉnh border của khung avatar */
+}
+.comment-sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 15px;
+}
+
+.comment-sort select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f7f7f7;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.comment-sort select:hover {
+  background: #e9e9e9;
+}
+/* Thông báo thành công */
+.message-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Thông báo lỗi */
+.message-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+/* Container cho phần bình luận */
+.comment-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Tiêu đề của phần bình luận */
+.comment-section h3 {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Form bình luận */
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.comment-form textarea {
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  resize: none; /* Cấm thay đổi kích thước */
+  min-height: 120px;
+}
+
+.comment-form button.submit-btn {
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.comment-form button.submit-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Phần yêu cầu đăng nhập */
+.login-prompt {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.login-prompt a {
+  color: #e74c3c;
+  text-decoration: none;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
+/* Nút tải bình luận */
+.load-comments-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 0;
+  background-color: #e74c3c;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.load-comments-btn:hover {
+  background-color: #c0392b;
+}
+.comment-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* Đảm bảo hình ảnh có hình tròn */
+  overflow: hidden; /* Ẩn phần ngoài hình tròn */
+  margin-right: 10px; /* Khoảng cách giữa avatar và bình luận */
+}
+
+.comment-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cắt ảnh sao cho vừa với container và không bị biến dạng */
+}
+.comment-avatar {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px; /* Khoảng cách giữa avatar và bình luận */
+  position: relative;
+}
+
+.avatar-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%; /* Tạo khung hình tròn */
+  overflow: hidden; /* Ẩn phần thừa ngoài khung */
+  position: relative;
+}
+
+.comment-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%; /* Avatar tròn */
+  object-fit: cover; /* Đảm bảo ảnh không bị méo */
+}
+
+.avatar-frame-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%; /* Khung cũng tròn */
+  object-fit: cover;
+  z-index: 1; /* Đảm bảo khung nằm trên avatar */
+}
+/* Cơ bản cho các liên kết */
+.edit-comment,
+.delete-comment {
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: inline-block; /* Đảm bảo chúng được hiển thị như nút */
+  margin-right: 10px;
+}
+
+/* Nút Sửa */
+.edit-comment {
+  background-color: #4caf50; /* Màu xanh lá */
+  color: white;
+}
+
+.edit-comment:hover {
+  background-color: #45a049; /* Màu xanh lá đậm khi hover */
+  color: #fff;
+}
+
+/* Nút Xóa */
+.delete-comment {
+  background-color: #f44336; /* Màu đỏ */
+  color: white;
+}
+
+.delete-comment:hover {
+  background-color: #e53935; /* Màu đỏ đậm khi hover */
+  color: #fff;
+}
+
+/* Phần chữ thông báo "Chắc chắn muốn xóa" */
+.delete-comment:focus {
+  outline: none; /* Bỏ viền khi nhấn vào nút */
+}
+.sort-comments {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sort-comments label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.sort-comments select {
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
