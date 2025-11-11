@@ -177,7 +177,7 @@ footer {
   background-size: 400% 400%;
   color: white;
   position: relative;
-  top: -24px;
+  top: -40px;
   left: 170px;
   padding: 2px 8px;
   font-weight: bold;
@@ -275,8 +275,9 @@ footer {
 .author-name {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 5px;
-  margin-left: 20px;
+  position: relative;
+  top: 50px;
+  left: 130px;
 }
 
 /* Thông tin bài viết */

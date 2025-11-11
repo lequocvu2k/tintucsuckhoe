@@ -192,6 +192,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
+
 </head>
 
 <body>
@@ -308,7 +309,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </b>
                                     </p>
                                 <?php endif; ?>
-                          </div>
+                            </div>
 
                             <!-- Dropdown menu -->
                             <div class="dropdown-menu">

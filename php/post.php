@@ -12,8 +12,9 @@ if (empty($slug)) {
 $user = null; // Mặc định là khách
 $tier = "Member";
 
+// Kiểm tra nếu người dùng đã đăng nhập
 if (isset($_SESSION['user_id'])) {
-    $id_kh = $_SESSION['user_id'];
+    $id_kh = $_SESSION['user_id']; // Lấy id người dùng từ session
     $stmt = $pdo->prepare("
         SELECT kh.*, tk.ngay_tao
         FROM khachhang kh
@@ -49,32 +50,32 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
-// ====================== LẤY BÀI VIẾT ======================
+// Lấy slug và bài viết từ cơ sở dữ liệu
 $stmt = $pdo->prepare("SELECT * FROM baiviet WHERE duong_dan = ? AND trang_thai = 'published'");
 $stmt->execute([$slug]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
-
 if (!$post) {
     die("<h2 style='text-align:center;color:red;'>❌ Bài viết không tồn tại hoặc đã bị ẩn!</h2>");
 }
 
+// --- Lấy ID tác giả từ bài viết ---
+$id_kh = $post['id_kh'];  // Lấy id_kh từ bài viết
 // --- Cập nhật lượt xem ---
 $pdo->prepare("UPDATE baiviet SET luot_xem = luot_xem + 1 WHERE ma_bai_viet = ?")->execute([$post['ma_bai_viet']]);
 
-// --- Lấy tên tác giả (người đăng) ---
-$stmt_author = $pdo->prepare("SELECT ho_ten FROM khachhang WHERE id_kh = ?");
-$stmt_author->execute([$post['ma_tac_gia']]);
+// Lấy thông tin tác giả từ bảng khachhang dựa trên id_kh
+$stmt_author = $pdo->prepare("SELECT ho_ten, email, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
+$stmt_author->execute([$id_kh]); // Dùng id_kh từ bài viết để lấy thông tin tác giả
 $author = $stmt_author->fetch(PDO::FETCH_ASSOC);
-$author_name = $author ? htmlspecialchars($author['ho_ten']) : "Người dùng không xác định";
 
-// --- Lấy bài phổ biến ---
-$stmt = $pdo->query("
-    SELECT * FROM baiviet
-    WHERE trang_thai = 'published' 
-      AND danh_muc = 'POPULAR POSTS'
-    ORDER BY ngay_dang DESC
-    LIMIT 5
-");
+// Kiểm tra và gán giá trị cho tên tác giả, email, avatar và frame
+$author_name = $author ? htmlspecialchars($author['ho_ten']) : "Người dùng không xác định";
+$author_email = $author ? htmlspecialchars($author['email']) : '';  // Gán email của tác giả
+$author_avatar = $author ? htmlspecialchars($author['avatar_url']) : '../img/avt.jpg'; // Gán avatar, mặc định nếu không có
+$author_frame = $author ? htmlspecialchars($author['avatar_frame']) : ''; // Gán frame, mặc định nếu không có
+
+// --- Lấy bài phổ biến --- 
+$stmt = $pdo->query("SELECT * FROM baiviet WHERE trang_thai = 'published' AND danh_muc = 'POPULAR POSTS' ORDER BY ngay_dang DESC LIMIT 5");
 $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Lấy bài trước
@@ -88,6 +89,7 @@ $stmt_next->execute([$post['ngay_dang']]);
 $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
 ?>
 
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -98,10 +100,12 @@ $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/post.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/popup.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
+    <script src="../js/popup.js"></script>
 </head>
 
 <body>
@@ -259,6 +263,81 @@ $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </div>
     </header>
+    <!-- Các Radio Buttons -->
+    <input type="radio" name="popup" id="showLogin" hidden>
+    <input type="radio" name="popup" id="showSignup" hidden>
+    <input type="radio" name="popup" id="hidePopup" hidden checked>
+
+    <!-- Popup Login -->
+    <div class="popup" id="loginPopup">
+        <div class="popup-content">
+            <h2>Đăng nhập</h2>
+            <form method="post" action="./login.php" autocomplete="off">
+                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
+
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="loginPassword" placeholder="Mật khẩu" required>
+                    <span class="toggle-password" data-target="loginPassword"><i class="fa fa-eye"></i></span>
+                </div>
+
+                <button type="submit">Đăng nhập</button>
+            </form>
+            <label for="hidePopup" class="close-btn">Đóng</label>
+            <label for="showSignup" class="switch-link">Chưa có tài khoản? Đăng ký</label>
+        </div>
+    </div>
+
+    <!-- Popup Signup -->
+    <div class="popup" id="signupPopup">
+        <div class="popup-content">
+            <h2>Đăng ký</h2>
+            <form method="POST" action="./signup.php" autocomplete="off">
+                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
+                <input type="text" name="ho_ten" placeholder="Họ và tên" required><br><br>
+                <input type="email" name="email" placeholder="Email" required><br><br>
+
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="signupPassword" placeholder="Mật khẩu" required>
+                    <span class="toggle-password" data-target="signupPassword"><i class="fa fa-eye"></i></span>
+                </div>
+
+                <div class="password-wrapper">
+                    <input type="password" name="confirm_password" id="signupConfirmPassword"
+                        placeholder="Xác nhận mật khẩu" required>
+                    <span class="toggle-password" data-target="signupConfirmPassword"><i class="fa fa-eye"></i></span>
+                </div>
+
+                <button type="submit">Đăng ký</button>
+            </form>
+            <label for="hidePopup" class="close-btn">Đóng</label>
+            <br>
+            <label for="showLogin" class="switch-link">Đã có tài khoản? Đăng nhập</label>
+        </div>
+    </div>
+
+    <br>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="message-error">
+            <?= htmlspecialchars($_SESSION['error']); ?>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php elseif (isset($_SESSION['signup_error'])): ?>
+        <div class="message-error">
+            <?= htmlspecialchars($_SESSION['signup_error']); ?>
+        </div>
+        <?php unset($_SESSION['signup_error']); ?>
+    <?php elseif (isset($_SESSION['login_error'])): ?>
+        <div class="message-error">
+            <?= htmlspecialchars($_SESSION['login_error']); ?>
+        </div>
+        <?php unset($_SESSION['login_error']); ?>
+    <?php elseif (isset($_SESSION['msg'])): ?>
+        <div class="message-success">
+            <?= htmlspecialchars($_SESSION['msg']); ?>
+        </div>
+        <?php unset($_SESSION['msg']); ?>
+    <?php endif; ?>
+
     <main class="post-container">
         <!-- Cột trái: bài viết -->
         <article class="post-content">
@@ -277,52 +356,43 @@ $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
             <div class="post-body">
                 <?= nl2br($post['noi_dung']) ?>
             </div>
-            <!-- Thông tin tác giả -->
-            <div class="author-info">
-                <div class="avatar-container">
+
+            <div class="user-info">
+                <div class="author-name">
                     <?php
-                    // Lấy avatar: nếu có thì dùng avatar của user, nếu không thì dùng avt.jpg mặc định
-                    $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
-                        ? htmlspecialchars($user['avatar_url'])
-                        : '../img/avt.jpg';
-
-                    // Khung avatar (frame)
-                    $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
-                        ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
-                        : '';
-
-                    // Hiển thị avatar
-                    echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
-                    if ($frame) {
-                        echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
-                    }
+                    // Hiển thị tên tác giả (lấy từ thông tin trong cơ sở dữ liệu)
+                    echo '<strong>' . htmlspecialchars($author_name) . '</strong>';
                     ?>
                 </div>
-                <div class="user-info">
-                    <div class="author-name">
+
+                <!-- Hiển thị avatar và frame -->
+                <div class="avatar-container">
+                    <!-- Hiển thị avatar -->
+                    <img src="<?= $author_avatar ?>" alt="Avatar" class="avatar">
+
+                    <!-- Hiển thị frame nếu có -->
+                    <?php if ($author_frame): ?>
                         <?php
-                        // Hiển thị tên tác giả
-                        echo '<strong>' . htmlspecialchars($user['ho_ten']) . '</strong>';
-                        ?>
-                    </div>
-
-                    <div class="user-email">
-                        <?php if ($user['email'] == 'baka@gmail.com'): ?>
-                            <span class="role-badge1">ADMIN</span>
-                        <?php else: ?>
-                            <?= htmlspecialchars($user['email']) ?>
+                        // Tạo đường dẫn cho khung avatar
+                        $frame_path = "../frames/" . $author_frame . ".png";
+                        // Kiểm tra sự tồn tại của khung avatar
+                        if (file_exists($frame_path)): ?>
+                            <img src="<?= $frame_path ?>" alt="Frame" class="frame-overlay">
                         <?php endif; ?>
-
-                        <!-- Ẩn VIP tier nếu là admin -->
-                        <?php if ($user['email'] != 'baka@gmail.com'): ?>
-                            <p>
-                                <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
-                                    <?= htmlspecialchars($tier) ?>
-                                </b>
-                            </p>
-                        <?php endif; ?>
-                    </div>
+                    <?php endif; ?>
                 </div>
+
+                <div class="user-email">
+                    <?php
+                    // Hiển thị "ADMIN" nếu email là 'baka@gmail.com' từ tác giả
+                    if ($author_email == 'baka@gmail.com'): ?>
+                        <span class="role-badge1">ADMIN</span>
+                    <?php else: ?>
+                        <?= htmlspecialchars($author_email) ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             </div>
             <!-- Hiển thị Bài trước và Bài tiếp theo -->
             <div class="post-navigation">

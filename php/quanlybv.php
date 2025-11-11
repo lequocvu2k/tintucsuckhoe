@@ -12,7 +12,84 @@ if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
 // Kiểm tra người dùng và tính toán cấp độ
 $user = null;
 $tier = "Member";
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $username = trim($_POST["username"] ?? "");
+    $password = $_POST["password"] ?? "";
+    $confirm_password = $_POST["confirm_password"] ?? "";
+    $ho_ten = trim($_POST["ho_ten"] ?? "");
+    $email = trim($_POST["email"] ?? "");
 
+    // Kiểm tra bắt buộc
+    if ($username === "" || $password === "" || $confirm_password === "" || $ho_ten === "" || $email === "") {
+        $_SESSION["signup_error"] = "❌ Vui lòng điền đầy đủ thông tin!";
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($password !== $confirm_password) {
+        $_SESSION["signup_error"] = "❌ Mật khẩu xác nhận không khớp!";
+        header("Location: index.php");
+        exit;
+    }
+
+    // Kiểm tra username đã tồn tại chưa
+    $stmt = $pdo->prepare("SELECT id_tk FROM taotaikhoan WHERE username = ?");
+    $stmt->execute([$username]);
+
+    if ($stmt->rowCount() > 0) {
+        $_SESSION["signup_error"] = "❌ Tên đăng nhập đã tồn tại!";
+        header("Location: index.php");
+        exit;
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    $stmt = $pdo->prepare("SELECT id_kh FROM khachhang WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->rowCount() > 0) {
+        $_SESSION["signup_error"] = "❌ Email đã được sử dụng!";
+        header("Location: index.php");
+        exit;
+    }
+
+    // Thêm khách hàng mới vào bảng khachhang trước
+    $stmt = $pdo->prepare("INSERT INTO khachhang (ho_ten, email) VALUES (?, ?)");
+    if (!$stmt->execute([$ho_ten, $email])) {
+        $_SESSION["signup_error"] = "❌ Lỗi khi thêm khách hàng!";
+        header("Location: index.php");
+        exit;
+    }
+
+    // Lấy id_kh vừa tạo
+    $id_kh = $pdo->lastInsertId();
+
+    $hashedPassword = $password; // lưu mật khẩu chưa mã hóa (không khuyến nghị)
+
+    // Thêm tài khoản vào taotaikhoan kèm id_kh làm khóa ngoại
+    $stmt = $pdo->prepare("INSERT INTO taotaikhoan (username, password, id_kh) VALUES (?, ?, ?)");
+    if ($stmt->execute([$username, $hashedPassword, $id_kh])) {
+        $_SESSION["msg"] = "✅ Đăng ký thành công!";
+        $_SESSION["username"] = $username;
+    } else {
+        $_SESSION["signup_error"] = "❌ Có lỗi xảy ra, vui lòng thử lại!";
+    }
+
+    header("Location: index.php");
+    exit;
+}
+
+if ($user_id) {
+    try {
+        $stmt = $pdo->prepare("SELECT ho_ten, email, so_diem, dia_chi, sdt, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
+        $stmt->execute([$user_id]);
+        $fetchedUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($fetchedUser) {
+            $user = $fetchedUser; // Gán dữ liệu thực tế
+        }
+    } catch (PDOException $e) {
+        die("Lỗi kết nối cơ sở dữ liệu: " . $e->getMessage());
+    }
+}
 if (isset($_SESSION['user_id'])) {
     $id_kh = $_SESSION['user_id'];
     $stmt = $pdo->prepare("
@@ -92,9 +169,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Thêm bài viết vào cơ sở dữ liệu
-            $stmt = $pdo->prepare("INSERT INTO baiviet (tieu_de, duong_dan, noi_dung, anh_bv, ma_tac_gia, ma_chuyen_muc, trang_thai, danh_muc, ngay_dang)
-                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$tieu_de, $duong_dan, $noi_dung, $anh_bv, $ma_tac_gia, $ma_chuyen_muc, $trang_thai, $danh_muc]);
+            // Khi bạn thêm một bài viết mới
+            $stmt = $pdo->prepare("
+    INSERT INTO baiviet (tieu_de, duong_dan, noi_dung, anh_bv, ma_tac_gia, ma_chuyen_muc, ngay_dang, ngay_cap_nhat, trang_thai, luot_xem, danh_muc, id_kh)
+    VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?, ?)
+");
+            $stmt->execute([$tieu_de, $duong_dan, $noi_dung, $anh_bv, $ma_tac_gia, $ma_chuyen_muc, $trang_thai, $luot_xem, $danh_muc, $id_kh]);
+
 
             $_SESSION['success'] = "✅ Thêm bài viết thành công!";
             header("Location: quanlybv.php");
@@ -198,6 +279,7 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/quanlybv.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/popup.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
@@ -360,6 +442,80 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
             <?php endif; ?>
         </div>
     </header>
+    <!-- Các Radio Buttons -->
+    <input type="radio" name="popup" id="showLogin" hidden>
+    <input type="radio" name="popup" id="showSignup" hidden>
+    <input type="radio" name="popup" id="hidePopup" hidden checked>
+
+    <!-- Popup Login -->
+    <div class="popup" id="loginPopup">
+        <div class="popup-content">
+            <h2>Đăng nhập</h2>
+            <form method="post" action="./login.php" autocomplete="off">
+                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
+
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="loginPassword" placeholder="Mật khẩu" required>
+                    <span class="toggle-password" data-target="loginPassword"><i class="fa fa-eye"></i></span>
+                </div>
+
+                <button type="submit">Đăng nhập</button>
+            </form>
+            <label for="hidePopup" class="close-btn">Đóng</label>
+            <label for="showSignup" class="switch-link">Chưa có tài khoản? Đăng ký</label>
+        </div>
+    </div>
+
+    <!-- Popup Signup -->
+    <div class="popup" id="signupPopup">
+        <div class="popup-content">
+            <h2>Đăng ký</h2>
+            <form method="POST" action="./signup.php" autocomplete="off">
+                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
+                <input type="text" name="ho_ten" placeholder="Họ và tên" required><br><br>
+                <input type="email" name="email" placeholder="Email" required><br><br>
+
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="signupPassword" placeholder="Mật khẩu" required>
+                    <span class="toggle-password" data-target="signupPassword"><i class="fa fa-eye"></i></span>
+                </div>
+
+                <div class="password-wrapper">
+                    <input type="password" name="confirm_password" id="signupConfirmPassword"
+                        placeholder="Xác nhận mật khẩu" required>
+                    <span class="toggle-password" data-target="signupConfirmPassword"><i class="fa fa-eye"></i></span>
+                </div>
+
+                <button type="submit">Đăng ký</button>
+            </form>
+            <label for="hidePopup" class="close-btn">Đóng</label>
+            <br>
+            <label for="showLogin" class="switch-link">Đã có tài khoản? Đăng nhập</label>
+        </div>
+    </div>
+
+    <br>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="message-error">
+            <?= htmlspecialchars($_SESSION['error']); ?>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php elseif (isset($_SESSION['signup_error'])): ?>
+        <div class="message-error">
+            <?= htmlspecialchars($_SESSION['signup_error']); ?>
+        </div>
+        <?php unset($_SESSION['signup_error']); ?>
+    <?php elseif (isset($_SESSION['login_error'])): ?>
+        <div class="message-error">
+            <?= htmlspecialchars($_SESSION['login_error']); ?>
+        </div>
+        <?php unset($_SESSION['login_error']); ?>
+    <?php elseif (isset($_SESSION['msg'])): ?>
+        <div class="message-success">
+            <?= htmlspecialchars($_SESSION['msg']); ?>
+        </div>
+        <?php unset($_SESSION['msg']); ?>
+    <?php endif; ?>
 
     <?php if (isset($_SESSION['success'])): ?>
         <div class="message-success"><?= htmlspecialchars($_SESSION['success']); ?></div>
