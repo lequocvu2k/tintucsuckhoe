@@ -207,6 +207,13 @@ footer {
   padding: 0;
 }
 
+.avatar-circle {
+  width: 100px; /* Đặt kích thước hình ảnh */
+  height: 100px;
+  border-radius: 50%; /* Đảm bảo hình ảnh có dạng tròn */
+  object-fit: cover; /* Cắt hình ảnh nếu cần thiết để vừa với khung */
+}
+
 .popular-item {
   display: flex;
   margin-bottom: 15px;

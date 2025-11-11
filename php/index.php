@@ -365,6 +365,10 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Popup Login -->
     <div class="popup" id="loginPopup">
         <div class="popup-content">
+            <!-- Thêm hình ảnh tròn -->
+            <div class="avatar-container">
+                <img src="../img/avt.jpg" alt="Avatar" class="avatar-circle">
+            </div>
             <h2>Đăng nhập</h2>
             <form method="post" action="./login.php" autocomplete="off">
                 <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
@@ -384,6 +388,10 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Popup Signup -->
     <div class="popup" id="signupPopup">
         <div class="popup-content">
+                  <!-- Thêm hình ảnh tròn -->
+            <div class="avatar-container">
+                <img src="../img/avt.jpg" alt="Avatar" class="avatar-circle">
+            </div>
             <h2>Đăng ký</h2>
             <form method="POST" action="./signup.php" autocomplete="off">
                 <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
@@ -576,6 +584,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <footer>
         <p>© 2025 Nhóm 6 - Website Tin tức Sức khỏe</p>
     </footer>
+        <script src="../js/idex.js"></script>
 </body>
 
 </html>
