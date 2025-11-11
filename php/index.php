@@ -192,7 +192,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
-
+    <script src="../js/index.js"></script>
 </head>
 
 <body>
@@ -584,7 +584,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <footer>
         <p>© 2025 Nhóm 6 - Website Tin tức Sức khỏe</p>
     </footer>
-    <script src="../js/index.js"></script>
+
 </body>
 
 </html>

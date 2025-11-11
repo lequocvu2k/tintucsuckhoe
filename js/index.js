@@ -68,3 +68,44 @@ if (openSearch && searchBar) {
     }
   });
 }
+// ===============================
+  // 👤 DROPDOWN USER (TÀI KHOẢN)
+  // ===============================
+  const accountInfo = document.querySelector(".account-info");
+  const nameContainer = accountInfo?.querySelector(".name-container");
+  const dropdown = nameContainer?.querySelector(".dropdown-menu");
+
+  if (nameContainer && dropdown) {
+    // Khi click vào tên hoặc avatar (nếu thêm sau này)
+    nameContainer.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle("show");
+    });
+
+    // Ẩn dropdown khi click ra ngoài
+    document.addEventListener("click", (e) => {
+      if (!accountInfo.contains(e.target)) {
+        dropdown.classList.remove("show");
+      }
+    });
+  }
+});
+document.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document
+      .querySelectorAll(".tab-btn")
+      .forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    document.querySelectorAll(".tab-content").forEach((tab) => {
+      tab.classList.remove("active");
+      tab.style.opacity = 0;
+      tab.style.transform = "translateY(10px)";
+    });
+
+    const activeTab = document.getElementById(btn.dataset.tab);
+    activeTab.classList.add("active");
+    activeTab.style.opacity = 1;
+    activeTab.style.transform = "translateY(0)";
+  });
+});

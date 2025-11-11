@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Location: index.php");
     exit;
 }
-
+$user_id = $_SESSION['user_id'] ?? null;
 if ($user_id) {
     try {
         $stmt = $pdo->prepare("SELECT ho_ten, email, so_diem, dia_chi, sdt, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
