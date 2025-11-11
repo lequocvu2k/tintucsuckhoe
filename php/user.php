@@ -48,6 +48,24 @@ $so_diem = isset($user['so_diem']) && is_numeric($user['so_diem']) ? $user['so_d
 $diem = tinhDiem($so_diem);
 $tier = xacDinhCapDo($so_diem);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doixp'])) {
+    $addXP = (int) $_POST['add_xp'];
+    $currentPoints = (int) $user['so_diem'];
+
+    if ($addXP > 0 && $addXP <= $currentPoints) {
+        // Trừ điểm và cộng XP
+        $stmt = $pdo->prepare("UPDATE khachhang SET so_diem = so_diem - ?, xp = xp + ? WHERE id_kh = ?");
+        $stmt->execute([$addXP, $addXP, $id_kh]);
+        echo "<script>alert('Đã đổi $addXP điểm thành XP thành công!'); window.location.reload();</script>";
+        exit;
+    } elseif ($addXP > $currentPoints) {
+        echo "<script>alert('Bạn không đủ điểm để đổi!');</script>";
+    } else {
+        echo "<script>alert('Vui lòng nhập số XP hợp lệ!');</script>";
+    }
+}
+
+
 // ====================== XỬ LÝ POST ======================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -167,6 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
+    <script src="../js/menu.js" defer></script>
     <script src="../js/user.js" defer></script>
 </head>
 
@@ -225,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </ul>
                 </li>
 
-                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Giới thiệu </a></li>
                 <li><a href="#">Liên hệ</a></li>
             </ul>
         </nav>
@@ -269,13 +288,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="account-info">
                         <div class="name-container">
                             <p class="name"><?= htmlspecialchars($user['ho_ten']) ?></p>
-                            <?php if ($user['email'] == 'takina412@gmail.com'): ?>
-                                <span class="vip-tier admin">ADMIN</span>
-                            <?php else: ?>
-                                <span class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
-                                    <?= htmlspecialchars($tier) ?>
-                                </span>
-                            <?php endif; ?>
+                            <div class="user-email">
+                                <?php if ($user['email'] == 'baka@gmail.com'): ?>
+                                    <span class="role-badge">ADMIN</span>
+                                <?php else: ?>
+                                    <?= htmlspecialchars($user['email']) ?>
+                                <?php endif; ?>
+
+                                <!-- Ẩn VIP tier nếu là admin -->
+                                <?php if ($user['email'] != 'baka@gmail.com'): ?>
+                                    <p>
+                                        <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                            <?= htmlspecialchars($tier) ?>
+                                        </b>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
 
                             <!-- Dropdown menu -->
                             <div class="dropdown-menu">
@@ -283,15 +311,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <li>
                                         <a href="./user.php">
                                             <i class="fas fa-user"></i> Tài khoản
-                                            <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
-                                                <?= htmlspecialchars($tier) ?>
+                                            <!-- Kiểm tra nếu người dùng là ADMIN, hiển thị ADMIN -->
+                                            <b class="vip-tier">
+                                                <?php
+                                                if ($_SESSION['username'] === 'admin') {
+                                                    echo '<span class="role-badge">ADMIN</span>';  // Hiển thị "ADMIN" với hiệu ứng màu sắc cầu vồng
+                                                } else {
+                                                    echo htmlspecialchars($tier);  // Hiển thị cấp độ thành viên cho người dùng khác
+                                                }
+                                                ?>
                                             </b>
                                         </a>
                                     </li>
+
                                     <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
-                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a></li>
-                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
+                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a>
                                     </li>
+                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông
+                                            báo</a>
+                                    </li>
+                                    <?php if ($_SESSION['username'] === 'admin'): ?>
+                                        <li><a href="./quanlybv.php"><i class="fas fa-cogs"></i> Quản lý bài viết</a></li>
+                                    <?php endif; ?>
                                     <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>
@@ -303,6 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
         </div>
     </header>
+
     <div class="notification">
         <?php
         if (isset($_SESSION['success'])) {
@@ -353,16 +395,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="user-name"><?= htmlspecialchars($user['ho_ten']) ?></div>
                 <div class="user-email">
-                    <?php if ($user['email'] == 'takina412@gmail.com'): ?>
-                        <span class="vip-tier">ADMIN</span>
+                    <?php if ($user['email'] == 'baka@gmail.com'): ?>
+                        <span class="role-badge">ADMIN</span>
                     <?php else: ?>
                         <?= htmlspecialchars($user['email']) ?>
                     <?php endif; ?>
-                    <p>
-                        <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
-                            <?= htmlspecialchars($tier) ?>
-                        </b>
-                    </p>
+
+                    <!-- Ẩn VIP tier nếu là admin -->
+                    <?php if ($user['email'] != 'baka@gmail.com'): ?>
+                        <p>
+                            <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                <?= htmlspecialchars($tier) ?>
+                            </b>
+                        </p>
+                    <?php endif; ?>
                 </div>
                 <div class="level-bar">
                     <?php
@@ -378,10 +424,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <p><b>Điểm:</b> <?= number_format($xp) ?></p>
-                <p><b>Ngày sinh:</b> <?= htmlspecialchars($user['ngay_sinh']) ?></p>
                 <p><b>Ngày tạo:</b> <?= htmlspecialchars($user['ngay_tao']) ?></p>
 
+                <!-- Nút mở popup đổi XP -->
+                <button type="button" class="xp-btn" onclick="openXPModal()">Đổi XP</button>
+
+                <!-- Popup -->
+                <div id="xpModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeXPModal()">&times;</span>
+                        <h3>Đổi điểm sang XP</h3>
+
+                        <!-- Hiển thị điểm hiện có -->
+                        <p class="current-points">Bạn hiện có: <b><?= number_format($user['so_diem'] ?? 0) ?></b>
+                            điểm</p>
+
+                        <form method="POST">
+                            <label for="add_xp">Nhập số XP muốn đổi:</label>
+                            <input type="number" id="add_xp" name="add_xp" min="1" max="<?= $user['so_diem'] ?? 0 ?>"
+                                required>
+                            <p class="note">💡 1 điểm = 1 XP</p>
+                            <button type="submit" name="doixp" class="confirm-btn">Xác nhận đổi</button>
+                        </form>
+                    </div>
+                </div>
+
                 <button class="logout-btn" onclick="window.location.href='logout.php'">Đăng xuất</button>
+
             </div>
             <div class="frame-selection">
                 <br><br><br>
@@ -415,6 +484,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <button type="submit" name="save_frame">Lưu khung</button>
                 </form>
+            </div>
+            <div class="health-box">
+                <h3 class="health-title">⚡ Yêu cầu</h3>
+
+                <button class="btn-health upgrade">
+                    🌿 Nâng cấp hạng
+                </button>
+
+                <button class="btn-health club">
+                    🧘 Tham gia Câu lạc bộ Sức khỏe
+                </button>
+
+                <button class="btn-health share">
+                    💬 Gửi bài viết / chia sẻ kinh nghiệm
+                </button>
+            </div>
+            <div class="history-box">
+                <h3 class="history-title">🔁 Lịch sử yêu cầu</h3>
+                <button class="hide-btn" onclick="toggleHistory()">Ẩn bớt</button>
+
+                <div class="history-section">
+                    <h4 class="history-subtitle">🌿 Yêu cầu nâng cấp hạng</h4>
+                    <p>Hiện tại chưa có yêu cầu nào</p>
+                </div>
+
+                <div class="history-section">
+                    <h4 class="history-subtitle">🧘 Yêu cầu tham gia Câu lạc bộ Sức khỏe</h4>
+                    <p>Hiện tại chưa có yêu cầu nào</p>
+                </div>
+
+                <div class="history-section">
+                    <h4 class="history-subtitle">💬 Yêu cầu gửi bài viết / chia sẻ kinh nghiệm</h4>
+                    <p>Hiện tại chưa có yêu cầu nào</p>
+                </div>
             </div>
         </div>
         <div class="profile-content">
@@ -469,7 +572,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         </div>
                     </div>
-                    <button type="submit" name="update_info" class="save-btn">💾 Lưu thay đổi</button>
+                    <button type="submit" name="update_info" class="save-btn">Lưu thay đổi</button>
                 </form>
 
                 <h2>Đổi mật khẩu</h2>

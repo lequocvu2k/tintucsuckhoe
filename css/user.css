@@ -490,7 +490,38 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background: #e73370;
 }
-
+.role-badge {
+  background: linear-gradient(
+    45deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Màu sắc cầu vồng */
+  background-size: 400% 400%;
+  color: white;
+  position: relative;
+  top: 5px;
+  left: 4px;
+  padding: 2px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  animation: rainbowMovement 5s ease infinite;
+}
+/* Hiệu ứng di chuyển màu sắc cầu vồng */
+@keyframes rainbowMovement {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
 /* Dòng thông báo */
 .msg {
   margin-top: 10px;
@@ -554,330 +585,6 @@ button[type="submit"]:hover {
     background-position: 0% 50%;
   }
 }
-
-/* ============================
-   🧭 HEADER CHÍNH
-============================ */
-.site-header {
-  position: sticky;
-  top: -50px;
-  width: 97%;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 24px;
-  z-index: 1000;
-}
-
-.site-header .left {
-  display: flex;
-  align-items: center;
-}
-
-.logo-img {
-  height: 48px;
-  width: auto;
-  transition: transform 0.3s;
-}
-
-.logo-img:hover {
-  transform: scale(1.05);
-}
-
-/* ============================
-   🧭 THANH ĐIỀU HƯỚNG
-============================ */
-.main-nav {
-  flex: 1;
-  text-align: center;
-}
-
-.nav-menu {
-  list-style: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.nav-menu li {
-  position: relative;
-}
-
-.nav-menu a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  padding: 10px 12px;
-  display: block;
-  transition: color 0.25s;
-}
-
-.nav-menu a:hover {
-  color: #0073e6;
-}
-
-/* ============================
-   🔽 DROPDOWN MENU
-============================ */
-.dropdowns .dropdown-nav {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: #fff;
-  min-width: 200px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  display: none;
-  flex-direction: column;
-  z-index: 999;
-}
-
-.dropdowns:hover .dropdown-nav {
-  display: flex;
-}
-
-.dropdown-nav li a {
-  padding: 10px 15px;
-  color: #333;
-  font-size: 14px;
-}
-
-.dropdown-nav li a:hover {
-  background: #0073e6;
-  color: #fff;
-}
-
-/* ============================
-   🔍 THANH TÌM KIẾM
-============================ */
-.right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #333;
-  transition: color 0.3s;
-}
-
-.icon-btn:hover {
-  color: #0073e6;
-}
-
-.search-bar {
-  position: absolute;
-  top: 100%;
-  right: 60px;
-  background: #fff;
-  border-radius: 25px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  padding: 5px 10px;
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-  transition: all 0.3s ease;
-}
-
-.search-bar.active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: all;
-}
-
-.search-bar input {
-  border: none;
-  outline: none;
-  padding: 6px 10px;
-  width: 180px;
-  font-size: 14px;
-}
-
-.search-bar button {
-  border: none;
-  background: #0073e6;
-  color: #fff;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ============================
-   👤 THÔNG TIN NGƯỜI DÙNG
-============================ */
-.header-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  position: relative;
-}
-
-.avatar-container {
-  position: relative;
-}
-.avatar-container .avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #0073e6;
-}
-
-.account-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.account-info .name {
-  font-weight: 600;
-  font-size: 15px;
-  color: #222;
-}
-
-.vip-tier {
-  padding: 2px 8px;
-  border-radius: 5px;
-  font-weight: bold;
-  display: inline-block;
-  color: #fff;
-  text-transform: uppercase;
-}
-
-/* Member - màu xám nhạt */
-.vip-tier.member {
-  background: #98ff98; /* Xanh lá mạ nhạt */
-}
-
-/* Bạc - màu bạc nhẹ */
-.vip-tier.bạc {
-  background: linear-gradient(90deg, #c0c0c0, #e0e0e0);
-}
-
-/* Vàng - màu vàng tươi */
-.vip-tier.vàng {
-  background: linear-gradient(90deg, #ffd700, #ffec70);
-}
-
-/* Kim Cương - màu xanh lam / cyan */
-.vip-tier.kim-cương {
-  background: linear-gradient(270deg, #00bfff, #1cefff);
-}
-
-/* Siêu Kim Cương - gradient động rainbow */
-.vip-tier.siêu-kim-cương {
-  background: linear-gradient(
-    270deg,
-    red,
-    orange,
-    yellow,
-    green,
-    blue,
-    indigo,
-    violet
-  );
-  background-size: 400% 400%;
-  animation: rainbow 5s linear infinite;
-}
-
-/* Animation rainbow */
-@keyframes rainbow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-/* ============================
-   ⚙️ DROPDOWN ACCOUNT
-============================ */
-.name-container {
-  position: relative;
-  cursor: pointer;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 120%;
-  right: 0;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  display: none;
-  z-index: 999;
-}
-
-.dropdown-menu.show {
-  display: block;
-  animation: fadeIn 0.25s ease;
-}
-
-.dropdown-menu ul {
-  list-style: none;
-  padding: 8px 0;
-}
-
-.dropdown-menu li {
-  border-bottom: 1px solid #eee;
-}
-
-.dropdown-menu li:last-child {
-  border-bottom: none;
-}
-
-.dropdown-menu a {
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  padding: 10px 14px;
-  font-size: 14px;
-  transition: background 0.2s;
-}
-
-.dropdown-menu a:hover {
-  background: #0073e6;
-  color: #fff;
-}
-
-/* ============================
-   ✨ HIỆU ỨNG
-============================ */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 .notification {
   text-align: center;
   margin: 10px 0;
@@ -919,4 +626,221 @@ button[type="submit"]:hover {
 
 .password-field i:hover {
   color: #ff69b4;
+}
+/* Nút chính */
+.xp-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.xp-btn:hover {
+  background-color: #45a049;
+}
+
+/* Popup */
+.modal {
+  display: none; /* Ẩn mặc định */
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+.modal-content input {
+  width: 80%;
+  padding: 8px;
+  margin: 10px 0;
+}
+.confirm-btn {
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.confirm-btn:hover {
+  background-color: #0b7dda;
+}
+
+.close {
+  float: right;
+  font-size: 22px;
+  cursor: pointer;
+}
+.close:hover {
+  color: red;
+}
+
+.note {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+}
+.current-points {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: black;
+  font-size: 15px;
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.15);
+}
+.current-points b {
+  color: #00ffcc;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.health-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  width: 280px;
+  font-family: "Inter", sans-serif;
+}
+
+.health-title {
+  color: #e91e63;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-health {
+  display: block;
+  width: 100%;
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 10px 0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 15px;
+}
+
+/* Màu riêng từng nút */
+.btn-health.upgrade {
+  background-color: #4caf50; /* Xanh lá */
+}
+.btn-health.upgrade:hover {
+  background-color: #43a047;
+}
+
+.btn-health.club {
+  background-color: #5c6bc0; /* Xanh dương */
+}
+.btn-health.club:hover {
+  background-color: #3f51b5;
+}
+
+.btn-health.share {
+  background-color: #e91e63; /* Hồng */
+}
+.btn-health.share:hover {
+  background-color: #d81b60;
+}
+.history-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  width: 420px;
+  font-family: "Inter", sans-serif;
+}
+
+.history-title {
+  color: #e91e63;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hide-btn {
+  background-color: #e91e63;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 10px;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+.hide-btn:hover {
+  background-color: #c2185b;
+  transform: scale(1.03);
+}
+/* Hiệu ứng ẩn/hiện */
+.history-section {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.history-box.collapsed .history-section {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.history-subtitle {
+  color: #d0a800;
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 8px 0;
 }

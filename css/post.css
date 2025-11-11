@@ -1,0 +1,290 @@
+body {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  background: #fff;
+  color: #333;
+}
+
+.post-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px 60px;
+}
+
+.post-content {
+  flex: 3;
+  max-width: 800px;
+}
+
+.post-content h1 {
+  font-size: 28px;
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.main-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.post-body {
+  font-size: 17px;
+  line-height: 1.7;
+  color: #333;
+  text-align: justify;
+}
+
+.sidebar {
+  flex: 1;
+  max-width: 300px;
+}
+
+.sidebar h3 {
+  background: #2e7d32;
+  color: white;
+  padding: 10px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+.popular-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.popular-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.popular-item img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.popular-item a {
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}
+
+.popular-item a:hover {
+  color: #2e7d32;
+}
+
+.date {
+  font-size: 13px;
+  color: #777;
+}
+
+.ads {
+  margin-top: 25px;
+}
+
+.ad-box {
+  background: #e8f5e9;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .post-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .sidebar {
+    max-width: 100%;
+  }
+
+  .main-image {
+    height: auto;
+  }
+}
+
+/* === FOOTER === */
+footer {
+  background: #e60023;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  margin-top: 30px;
+} /* Layout cho bài viết và sidebar */
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+/* Cột trái: bài viết */
+.post-content {
+  flex: 2;
+  width: 70%;
+}
+.role-badge {
+  background: linear-gradient(
+    45deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Màu sắc cầu vồng */
+  background-size: 400% 400%;
+  color: white;
+  position: relative;
+  top: 5px;
+  left: 4px;
+  padding: 2px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  animation: rainbowMovement 5s ease infinite;
+}
+.role-badge1 {
+  background: linear-gradient(
+    45deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Màu sắc cầu vồng */
+  background-size: 400% 400%;
+  color: white;
+  position: relative;
+  top: -24px;
+  left: 170px;
+  padding: 2px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  animation: rainbowMovement 5s ease infinite;
+}
+/* Hiệu ứng di chuyển màu sắc cầu vồng */
+@keyframes rainbowMovement {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+/* Cột phải: sidebar */
+.sidebar {
+  flex: 1;
+  width: 30%;
+}
+
+/* Danh sách Bài phổ biến */
+.popular-list {
+  list-style: none;
+  padding: 0;
+}
+
+.popular-item {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.popular-item img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.popular-item .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.popular-item .info a {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.popular-item .info .date {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Bài trước và bài tiếp theo */
+.post-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.post-navigation a {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.no-prev,
+.no-next {
+  color: #888;
+  font-style: italic;
+}
+/* Thông tin tác giả */
+.author-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  margin-left: 20px;
+}
+
+/* Thông tin bài viết */
+.post-meta {
+  font-size: 14px;
+  color: #888;
+}
+
+.post-meta span {
+  margin-right: 10px;
+}
