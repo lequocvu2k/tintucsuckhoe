@@ -388,7 +388,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Popup Signup -->
     <div class="popup" id="signupPopup">
         <div class="popup-content">
-                  <!-- Thêm hình ảnh tròn -->
+            <!-- Thêm hình ảnh tròn -->
             <div class="avatar-container">
                 <img src="../img/avt.jpg" alt="Avatar" class="avatar-circle">
             </div>
@@ -584,7 +584,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <footer>
         <p>© 2025 Nhóm 6 - Website Tin tức Sức khỏe</p>
     </footer>
-        <script src="../js/idex.js"></script>
+    <script src="../js/index.js"></script>
 </body>
 
 </html>
