@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 12, 2025 lúc 05:17 AM
+-- Thời gian đã tạo: Th10 12, 2025 lúc 09:56 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -38,7 +38,7 @@ CREATE TABLE `baiviet` (
   `ngay_dang` datetime DEFAULT current_timestamp(),
   `ngay_cap_nhat` datetime DEFAULT NULL,
   `trang_thai` varchar(20) NOT NULL DEFAULT 'draft',
-  `luot_xem` int(11) DEFAULT 0,
+  `luot_xem` int(11) NOT NULL DEFAULT 0,
   `danh_muc` varchar(50) DEFAULT NULL,
   `id_kh` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -48,7 +48,7 @@ CREATE TABLE `baiviet` (
 --
 
 INSERT INTO `baiviet` (`ma_bai_viet`, `tieu_de`, `duong_dan`, `noi_dung`, `anh_bv`, `ma_tac_gia`, `ma_chuyen_muc`, `ngay_dang`, `ngay_cap_nhat`, `trang_thai`, `luot_xem`, `danh_muc`, `id_kh`) VALUES
-(9, 'The Apothecary Diaries Season 3 & Original New Movie Announced for 2026-2027', 'the-apothecary-diaries-season-3-original-new-movie-announced-for-2026-2027', '<p style=\"box-sizing: border-box; outline: 0px; margin: 0px 0px 17px; padding: 0px; font-size: 17px; line-height: 1.8; color: #313131; font-family: sans-serif; background-color: #ffffff;\"><em style=\"box-sizing: border-box; outline: 0px; margin: 0px; padding: 0px;\">The Apothecary Diaries&nbsp;</em>anime is officially coming back in 2026 and 2027 with Season 3 and an original new movie. The sequel was&nbsp;<a style=\"box-sizing: border-box; outline: 0px; margin: 0px; padding: 0px; text-decoration-line: none; color: #e34c56; transition: color 0.3s; cursor: pointer;\" href=\"https://animecorner.me/the-apothecary-diaries-sequel-anime-officially-announced-after-season-2/\">previously confirmed</a>&nbsp;immediately after Season 2, but it was now specified to be another TV anime season. It will run for two split cours in October 2026 and April 2027.</p>\r\n<p style=\"box-sizing: border-box; outline: 0px; margin: 0px 0px 17px; padding: 0px; font-size: 17px; line-height: 1.8; color: #313131; font-family: sans-serif; background-color: #ffffff;\">The movie will premiere in Japan in December 2026 following the first part of the TV anime, and it will feature an original story by the author Natsu Hyuuga. You can watch the announcement trailer and see the key visual below.</p>\r\n<p style=\"box-sizing: border-box; outline: 0px; margin: 0px 0px 17px; padding: 0px; font-size: 17px; line-height: 1.8; color: #313131; font-family: sans-serif; background-color: #ffffff;\"><img src=\"https://static.animecorner.me/2025/10/1761135380-ac32ccb8a87c105a0573122cc5f526b3.jpg\" alt=\"\" width=\"1080\" height=\"1528\" /></p>', 'uploads/baiviet/1762857422_1761135682-3633e3e08b3ad181294c1a77ad1447f4[1].png', 1, 1, '2025-11-11 17:37:02', '2025-11-11 17:37:02', 'published', NULL, 'MAIN HIGHLIGHTS', 9);
+(9, 'The Apothecary Diaries Season 3 & Original New Movie Announced for 2026-2027', 'the-apothecary-diaries-season-3-original-new-movie-announced-for-2026-2027', '<p style=\"box-sizing: border-box; outline: 0px; margin: 0px 0px 17px; padding: 0px; font-size: 17px; line-height: 1.8; color: #313131; font-family: sans-serif; background-color: #ffffff;\"><em style=\"box-sizing: border-box; outline: 0px; margin: 0px; padding: 0px;\">The Apothecary Diaries&nbsp;</em>anime is officially coming back in 2026 and 2027 with Season 3 and an original new movie. The sequel was&nbsp;<a style=\"box-sizing: border-box; outline: 0px; margin: 0px; padding: 0px; text-decoration-line: none; color: #e34c56; transition: color 0.3s; cursor: pointer;\" href=\"https://animecorner.me/the-apothecary-diaries-sequel-anime-officially-announced-after-season-2/\">previously confirmed</a>&nbsp;immediately after Season 2, but it was now specified to be another TV anime season. It will run for two split cours in October 2026 and April 2027.</p>\r\n<p style=\"box-sizing: border-box; outline: 0px; margin: 0px 0px 17px; padding: 0px; font-size: 17px; line-height: 1.8; color: #313131; font-family: sans-serif; background-color: #ffffff;\">The movie will premiere in Japan in December 2026 following the first part of the TV anime, and it will feature an original story by the author Natsu Hyuuga. You can watch the announcement trailer and see the key visual below.</p>\r\n<p style=\"box-sizing: border-box; outline: 0px; margin: 0px 0px 17px; padding: 0px; font-size: 17px; line-height: 1.8; color: #313131; font-family: sans-serif; background-color: #ffffff;\"><img src=\"https://static.animecorner.me/2025/10/1761135380-ac32ccb8a87c105a0573122cc5f526b3.jpg\" alt=\"\" width=\"1080\" height=\"1528\" /></p>', 'uploads/baiviet/1762857422_1761135682-3633e3e08b3ad181294c1a77ad1447f4[1].png', 1, 1, '2025-11-11 17:37:02', '2025-11-11 17:37:02', 'published', 27, 'MAIN HIGHLIGHTS', 9);
 
 -- --------------------------------------------------------
 
@@ -156,7 +156,40 @@ INSERT INTO `dangnhap` (`id_dn`, `username`, `password`, `ngay_dn`) VALUES
 (42, 'admin', 'baka', '2025-11-12 04:09:50'),
 (43, 'baka', 'admin', '2025-11-12 04:10:06'),
 (44, 'admin', 'baka', '2025-11-12 04:12:20'),
-(45, 'baka', 'admin', '2025-11-12 04:13:27');
+(45, 'baka', 'admin', '2025-11-12 04:13:27'),
+(46, 'admin', 'baka', '2025-11-12 07:01:44'),
+(47, 'baka', 'admin', '2025-11-12 07:30:55'),
+(48, 'baka', 'admin', '2025-11-12 08:09:25'),
+(49, 'admin', 'baka', '2025-11-12 08:19:30'),
+(50, 'baka', 'admin', '2025-11-12 08:23:32'),
+(51, 'baka', 'admin', '2025-11-12 08:38:52');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `diemdoc`
+--
+
+CREATE TABLE `diemdoc` (
+  `id` int(11) NOT NULL,
+  `id_kh` int(11) NOT NULL,
+  `ma_bai_viet` int(11) DEFAULT NULL,
+  `diem_cong` int(11) DEFAULT NULL,
+  `loai_giao_dich` varchar(50) DEFAULT 'doc_bai',
+  `ngay_them` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `diemdoc`
+--
+
+INSERT INTO `diemdoc` (`id`, `id_kh`, `ma_bai_viet`, `diem_cong`, `loai_giao_dich`, `ngay_them`) VALUES
+(42, 10, 9, 50, 'doc_bai', '2025-11-12 15:12:27'),
+(43, 10, NULL, -1, 'doi_xp', '2025-11-12 15:15:58'),
+(44, 10, NULL, -1, 'doi_xp', '2025-11-12 15:17:20'),
+(45, 10, NULL, -48, 'doi_xp', '2025-11-12 15:17:35'),
+(46, 9, 9, 50, 'doc_bai', '2025-11-12 15:19:38'),
+(47, 10, 9, 0, 'xem_bai', '2025-11-12 15:28:25');
 
 -- --------------------------------------------------------
 
@@ -188,7 +221,8 @@ CREATE TABLE `khachhang` (
   `quoc_gia` varchar(50) DEFAULT 'Việt Nam',
   `tinh_thanh` varchar(50) DEFAULT NULL,
   `vai_tro` enum('Khach','NhanVien','QuanTri') DEFAULT 'Khach',
-  `so_diem` int(11) DEFAULT 0,
+  `so_diem` int(11) NOT NULL DEFAULT 0,
+  `xp` int(11) DEFAULT 0,
   `avatar_url` varchar(255) DEFAULT NULL,
   `avatar_frame` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -197,9 +231,9 @@ CREATE TABLE `khachhang` (
 -- Đang đổ dữ liệu cho bảng `khachhang`
 --
 
-INSERT INTO `khachhang` (`id_kh`, `ho_ten`, `email`, `sdt`, `dia_chi`, `gioi_tinh`, `ngay_sinh`, `quoc_gia`, `tinh_thanh`, `vai_tro`, `so_diem`, `avatar_url`, `avatar_frame`) VALUES
-(9, 'Hayase Yuuka', 'baka@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'QuanTri', 0, '../uploads/avatars/1762857789_$value[1].png', 'nahida'),
-(10, 'Yuuka Pajama', 'takina412@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'NhanVien', 0, '../uploads/avatars/1762915411_azusa.jpg', 'game');
+INSERT INTO `khachhang` (`id_kh`, `ho_ten`, `email`, `sdt`, `dia_chi`, `gioi_tinh`, `ngay_sinh`, `quoc_gia`, `tinh_thanh`, `vai_tro`, `so_diem`, `xp`, `avatar_url`, `avatar_frame`) VALUES
+(9, 'Hayase Yuuka', 'baka@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'QuanTri', 50, 0, '../uploads/avatars/1762857789_$value[1].png', 'nahida'),
+(10, 'Yuuka Pajama', 'takina412@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'NhanVien', 1, 96, '../uploads/avatars/1762915411_azusa.jpg', 'game');
 
 -- --------------------------------------------------------
 
@@ -306,6 +340,20 @@ INSERT INTO `the` (`ma_the`, `ten_the`) VALUES
 (5, 'tư thế'),
 (9, 'video');
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `thongbao`
+--
+
+CREATE TABLE `thongbao` (
+  `id` int(11) NOT NULL,
+  `id_kh` int(11) NOT NULL,
+  `noi_dung` text NOT NULL,
+  `da_doc` tinyint(1) DEFAULT 0,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Chỉ mục cho các bảng đã đổ
 --
@@ -345,6 +393,13 @@ ALTER TABLE `chuyenmuc`
 --
 ALTER TABLE `dangnhap`
   ADD PRIMARY KEY (`id_dn`);
+
+--
+-- Chỉ mục cho bảng `diemdoc`
+--
+ALTER TABLE `diemdoc`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ma_bai_viet` (`ma_bai_viet`);
 
 --
 -- Chỉ mục cho bảng `doimatkhau`
@@ -388,6 +443,13 @@ ALTER TABLE `the`
   ADD UNIQUE KEY `ten_the` (`ten_the`);
 
 --
+-- Chỉ mục cho bảng `thongbao`
+--
+ALTER TABLE `thongbao`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_kh` (`id_kh`);
+
+--
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
@@ -413,7 +475,13 @@ ALTER TABLE `chuyenmuc`
 -- AUTO_INCREMENT cho bảng `dangnhap`
 --
 ALTER TABLE `dangnhap`
-  MODIFY `id_dn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id_dn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+
+--
+-- AUTO_INCREMENT cho bảng `diemdoc`
+--
+ALTER TABLE `diemdoc`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT cho bảng `doimatkhau`
@@ -452,6 +520,12 @@ ALTER TABLE `the`
   MODIFY `ma_the` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
+-- AUTO_INCREMENT cho bảng `thongbao`
+--
+ALTER TABLE `thongbao`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Các ràng buộc cho các bảng đã đổ
 --
 
@@ -467,6 +541,12 @@ ALTER TABLE `bai_the`
 --
 ALTER TABLE `binhluan`
   ADD CONSTRAINT `binhluan_ibfk_1` FOREIGN KEY (`id_kh`) REFERENCES `khachhang` (`id_kh`);
+
+--
+-- Các ràng buộc cho bảng `diemdoc`
+--
+ALTER TABLE `diemdoc`
+  ADD CONSTRAINT `diemdoc_ibfk_2` FOREIGN KEY (`ma_bai_viet`) REFERENCES `baiviet` (`ma_bai_viet`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `doimatkhau`
@@ -485,6 +565,12 @@ ALTER TABLE `taotaikhoan`
 --
 ALTER TABLE `teptin`
   ADD CONSTRAINT `teptin_ibfk_1` FOREIGN KEY (`ma_bai_viet`) REFERENCES `baiviet` (`ma_bai_viet`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `thongbao`
+--
+ALTER TABLE `thongbao`
+  ADD CONSTRAINT `thongbao_ibfk_1` FOREIGN KEY (`id_kh`) REFERENCES `khachhang` (`id_kh`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
