@@ -3,8 +3,8 @@
 session_start();
 require_once './db.php';
 
-// ✅ CHỈ ADMIN ĐƯỢC TRUY CẬP
-if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
+// ✅ CHỈ ADMIN HOẶC NHÂN VIÊN MỚI ĐƯỢC TRUY CẬP
+if (!isset($_SESSION['username']) || ($_SESSION['username'] !== 'admin' && $_SESSION['user_role'] !== 'NhanVien')) {
     echo "<h2 style='color:red;text-align:center;margin-top:50px;'>🚫 Bạn không có quyền truy cập trang này!</h2>";
     exit;
 }
@@ -425,8 +425,8 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                                     </li>
 
                                     <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
-                                    <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
-
+                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a>
+                                    </li>
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông
                                             báo</a>
                                     </li>

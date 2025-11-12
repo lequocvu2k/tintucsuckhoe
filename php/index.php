@@ -71,17 +71,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 if ($user_id) {
     try {
-        $stmt = $pdo->prepare("SELECT ho_ten, email, so_diem, dia_chi, sdt, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
+        $stmt = $pdo->prepare("SELECT ho_ten, email, so_diem, dia_chi, sdt, avatar_url, avatar_frame, vai_tro FROM khachhang WHERE id_kh = ?");
         $stmt->execute([$user_id]);
         $fetchedUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($fetchedUser) {
-            $user = $fetchedUser; // Gán dữ liệu thực tế
+            $user = $fetchedUser; // Gán dữ liệu thực tế vào biến $user
+            $_SESSION['user_role'] = $user['vai_tro']; // Lưu vai trò vào session
         }
     } catch (PDOException $e) {
         die("Lỗi kết nối cơ sở dữ liệu: " . $e->getMessage());
     }
 }
+
 function tinhDiem($so_diem)
 {
     return floor($so_diem / 10000); // 1 điểm = 10.000đ
@@ -335,7 +337,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
-                                    <?php if ($_SESSION['username'] === 'admin'): ?>
+                                    <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'QuanTri' || $_SESSION['user_role'] === 'NhanVien')): ?>
                                         <li class="dropdown">
                                             <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
                                                 lý</a>
