@@ -54,6 +54,27 @@ if (!$post) {
 $pdo->prepare("UPDATE baiviet SET luot_xem = luot_xem + 1 WHERE ma_bai_viet = ?")
     ->execute([$post['ma_bai_viet']]);
 
+if (isset($_SESSION['user_id'])) {
+    $id_kh = $_SESSION['user_id'];
+    $ma_bai_viet = $post['ma_bai_viet'];
+
+    // Kiểm tra xem đã ghi lịch sử đọc chưa (tránh trùng)
+    $check = $pdo->prepare("
+        SELECT id FROM diemdoc 
+        WHERE id_kh = ? AND ma_bai_viet = ? AND loai_giao_dich = 'xem_bai'
+    ");
+    $check->execute([$id_kh, $ma_bai_viet]);
+
+    if ($check->rowCount() == 0) {
+        // Ghi lại lịch sử xem bài viết
+        $insert = $pdo->prepare("
+            INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, loai_giao_dich, ngay_them)
+            VALUES (?, ?, 0, 'xem_bai', NOW())
+        ");
+        $insert->execute([$id_kh, $ma_bai_viet]);
+    }
+}
+
 // ✅ CỘNG ĐIỂM KHI NGƯỜI DÙNG ĐỌC BÀI VIẾT
 if (isset($_SESSION['user_id'])) {
     $reader_id = $_SESSION['user_id'];
@@ -324,7 +345,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                         </a>
                                     </li>
 
-                                    <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
+                                    <li><a href="./user.php?view=history"><i class="fas fa-history"></i> Lịch sử</a></li>
                                     <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>

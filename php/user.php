@@ -398,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </a>
                                     </li>
 
-                                    <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
+                                    <li><a href="./user.php?view=history"><i class="fas fa-history"></i> Lịch sử</a></li>
                                     <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
@@ -522,7 +522,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_diem->execute([$user['id_kh']]);
                 $tong_diem_con_lai = (int)$stmt_diem->fetchColumn();
                 ?>
-                <p><b>Tổng điểm đọc bài còn lại:</b> <?= number_format(max(0, $tong_diem_con_lai)) ?></p>
+
+                <i class="fas fa-gem"></i>
+                <span>Tổng điểm còn lại:</span>
+                <b><?= number_format($tong_diem_con_lai) ?></b>
 
                 <p><b>Ngày tạo:</b> <?= htmlspecialchars($user['ngay_tao']) ?></p>
 
@@ -600,6 +603,7 @@ WHERE id_kh = ?
                     <button type="submit" name="save_frame">Lưu khung</button>
                 </form>
             </div>
+            <br>
             <div class="health-box">
                 <h3 class="health-title">⚡ Yêu cầu</h3>
 
@@ -612,7 +616,6 @@ WHERE id_kh = ?
                 </button>
                 <!-- Nút để mở popup "Trở thành nhân viên" -->
                 <button class="btn-health share" onclick="openEmployeeModal()">Trở thành nhân viên</button>
-
                 <!-- Modal "Trở thành nhân viên" -->
                 <div id="employeeModal" class="modal">
                     <div class="modal-content">
@@ -644,6 +647,7 @@ WHERE id_kh = ?
                     </div>
                 </div>
             </div>
+            <br>
             <div class="history-box">
                 <h3 class="history-title">🔁 Lịch sử yêu cầu</h3>
                 <button class="hide-btn" onclick="toggleHistory()">Ẩn bớt</button>
@@ -782,9 +786,59 @@ WHERE id_kh = ?
                 </div>
             <?php elseif ($view === 'history'): ?>
                 <div class="tab-content <?= ($view === 'history') ? 'active' : '' ?>" id="history">
-                    <h2>Lịch sử hoạt động</h2>
-                    <p>Bạn chưa có hoạt động nào gần đây.</p>
+                    <h2>Lịch sử đọc</h2>
+
+                    <?php
+                    // 🔹 Lấy dữ liệu bài viết kèm lượt xem
+                    $stmt = $pdo->prepare("
+        SELECT 
+            b.tieu_de,
+            b.duong_dan,
+            b.anh_bv,
+            b.luot_xem,     -- 👈 Lấy thêm cột lượt xem
+            d.ngay_them
+        FROM diemdoc d
+        JOIN baiviet b ON d.ma_bai_viet = b.ma_bai_viet
+        WHERE d.id_kh = ? AND d.loai_giao_dich = 'xem_bai'
+        ORDER BY d.ngay_them DESC
+    ");
+                    $stmt->execute([$user['id_kh']]);
+                    $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    ?>
+
+                    <?php if ($history): ?>
+                        <div class="history-grid">
+                            <?php foreach ($history as $item): ?>
+                                <div class="history-card">
+                                    <a href="post.php?slug=<?= htmlspecialchars($item['duong_dan']) ?>">
+                                        <div class="thumb">
+                                            <img src="<?= !empty($item['anh_bv']) ? htmlspecialchars($item['anh_bv']) : '../img/noimage.jpg' ?>"
+                                                alt="<?= htmlspecialchars($item['tieu_de']) ?>">
+
+                                            <!-- ✅ Badge lượt xem -->
+                                            <div class="badge-wrap">
+                                                <span class="badge badge-views">
+                                                    <i class="fa-regular fa-eye"></i> <?= number_format($item['luot_xem']) ?>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body">
+                                            <h3><?= htmlspecialchars($item['tieu_de']) ?></h3>
+                                            <p class="time">
+                                                <i class="fa-regular fa-clock"></i>
+                                                <?= date("d/m/Y H:i", strtotime($item['ngay_them'])) ?>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <p>Bạn chưa đọc bài viết nào gần đây.</p>
+                    <?php endif; ?>
                 </div>
+
             <?php elseif ($view === 'saved'): ?>
                 <div class="tab-content <?= ($view === 'saved') ? 'active' : '' ?>" id="saved">
                     <h2>Bài viết đã lưu</h2>
