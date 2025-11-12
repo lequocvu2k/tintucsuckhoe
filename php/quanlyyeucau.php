@@ -50,6 +50,30 @@ if (isset($_SESSION['user_id'])) {
         $tier = xacDinhCapDo($so_diem);
     }
 }
+if (isset($_POST['duyet'])) {
+    $id = $_POST['id']; // id của yêu cầu
+    $stmt = $pdo->prepare("UPDATE nhanvien_yc SET trang_thai = 'đã duyệt' WHERE id = ?");
+    $stmt->execute([$id]);
+
+    // 🔹 Lấy id_kh để gửi thông báo
+    $get = $pdo->prepare("SELECT id_kh, ho_ten FROM nhanvien_yc WHERE id = ?");
+    $get->execute([$id]);
+    $yc = $get->fetch(PDO::FETCH_ASSOC);
+
+    if ($yc) {
+        $id_kh = $yc['id_kh'];
+        $name = $yc['ho_ten'];
+
+        // 🔸 Thêm thông báo cho người dùng
+        $msg = "🎉 Xin chúc mừng $name! Yêu cầu trở thành nhân viên của bạn đã được duyệt.";
+        $insert = $pdo->prepare("INSERT INTO thongbao (id_kh, noi_dung) VALUES (?, ?)");
+        $insert->execute([$id_kh, $msg]);
+    }
+
+    $_SESSION['success'] = "✅ Đã duyệt yêu cầu và gửi thông báo.";
+    header("Location: quanlyyeucau.php");
+    exit;
+}
 
 // Lấy danh sách yêu cầu từ cơ sở dữ liệu
 $stmt = $pdo->prepare("SELECT * FROM nhanvien_yc ORDER BY ngay_tao DESC");
@@ -339,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                                 <?php
                                 // Truy vấn thông tin người dùng dựa trên id_kh
                                 $id_kh = $request['id_kh']; // Lấy id_kh từ mỗi yêu cầu
-                            
+
                                 // Truy vấn thông tin avatar và khung avatar từ bảng khachhang
                                 $stmt = $pdo->prepare("SELECT avatar_url, avatar_frame, vai_tro FROM khachhang WHERE id_kh = ?");
                                 $stmt->execute([$id_kh]);
@@ -349,12 +373,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                                 $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
                                     ? htmlspecialchars($user['avatar_url'])
                                     : '../img/avt.jpg';  // Avatar mặc định
-                            
+
                                 // Lấy khung avatar (frame)
                                 $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
                                     ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
                                     : '';  // Khung avatar mặc định nếu không có
-                            
+
                                 // Hiển thị avatar
                                 echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
 
@@ -410,7 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                             // Kiểm tra trạng thái yêu cầu
                             if ($request['trang_thai'] === 'đã duyệt') {
                                 // Hiển thị form chọn vai trò
-                                ?>
+                        ?>
                                 <div id="role-selection-<?= $request['id'] ?>" class="role-selection" style="display:block;">
                                     <h3>Chọn vai trò cho người dùng</h3>
                                     <form method="POST">
@@ -425,7 +449,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                                         <a href="quanlyyeucau.php" class="cancel-btn">Hủy</a>
                                     </form>
                                 </div>
-                                <?php
+                        <?php
                             }
                         }
                         ?>
@@ -445,10 +469,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
         function showRoleSelection(requestId) {
             const roleSelection = document.getElementById(`role-selection-${requestId}`);
             if (roleSelection) {
-                roleSelection.style.display = 'block';  // Hiển thị form
+                roleSelection.style.display = 'block'; // Hiển thị form
             }
         }
-
     </script>
 </body>
 

@@ -846,9 +846,35 @@ WHERE id_kh = ?
                 </div>
             <?php elseif ($view === 'notifications'): ?>
                 <div class="tab-content <?= ($view === 'notifications') ? 'active' : '' ?>" id="notifications">
-                    <h2>Thông báo</h2>
-                    <p>Không có thông báo mới.</p>
+                    <h2>🔔 Thông báo của bạn</h2>
+
+                    <?php
+                    $stmt = $pdo->prepare("
+        SELECT noi_dung, created_at, da_doc 
+        FROM thongbao 
+        WHERE id_kh = ? 
+        ORDER BY created_at DESC
+    ");
+                    $stmt->execute([$user['id_kh']]);
+                    $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    ?>
+
+                    <?php if ($notifications): ?>
+                        <ul class="notification-list">
+                            <?php foreach ($notifications as $n): ?>
+                                <li class="notification-item <?= $n['da_doc'] ? 'read' : 'unread' ?>">
+                                    <p><?= htmlspecialchars($n['noi_dung']) ?></p>
+                                    <span class="time">
+                                        🕒 <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
+                                    </span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>Không có thông báo mới.</p>
+                    <?php endif; ?>
                 </div>
+
             <?php elseif ($view === 'settings'): ?>
                 <div class="tab-content <?= ($view === 'settings') ? 'active' : '' ?>" id="settings">
                     <h2>Cài đặt tài khoản</h2>
