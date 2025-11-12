@@ -1,0 +1,221 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f9f6;
+  color: #333;
+  scroll-behavior: smooth;
+}
+
+.about-hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #e8f5e9, #ffffff, #e3f2fd);
+}
+
+.about-hero h1 {
+  color: #2e7d32;
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.about-hero p {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+main {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+}
+
+section {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 30px;
+  margin-bottom: 25px;
+  scroll-margin-top: 100px;
+  animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2 {
+  color: #2e7d32;
+  font-size: 1.5rem;
+  border-left: 5px solid #43a047;
+  padding-left: 10px;
+  margin-bottom: 15px;
+}
+
+p {
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+ul {
+  margin-left: 20px;
+}
+
+.team {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.member {
+  flex: 1 1 calc(50% - 20px);
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.member:hover {
+  background: #e8f5e9;
+  transform: translateY(-5px);
+}
+
+.member img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #c8e6c9;
+  margin-bottom: 10px;
+}
+
+.member h4 {
+  margin: 5px 0;
+  color: #2e7d32;
+}
+
+.member span {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.back-home {
+  display: inline-block;
+  margin-top: 20px;
+  background-color: #43a047;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.back-home:hover {
+  background-color: #2e7d32;
+}
+.role-badge {
+  background: linear-gradient(
+    45deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Màu sắc cầu vồng */
+  background-size: 400% 400%;
+  color: white;
+  position: relative;
+  top: -1px;
+  left: 10px;
+  padding: 2px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  animation: rainbowMovement 5s ease infinite;
+}
+/* Hiệu ứng di chuyển màu sắc cầu vồng */
+@keyframes rainbowMovement {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+.vip-tier {
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-weight: bold;
+  display: inline-block;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+/* Member - màu xám nhạt */
+.vip-tier.member {
+  background: #98ff98; /* Xanh lá mạ nhạt */
+}
+
+/* Bạc - màu bạc nhẹ */
+.vip-tier.bạc {
+  background: linear-gradient(90deg, #c0c0c0, #e0e0e0);
+}
+
+/* Vàng - màu vàng tươi */
+.vip-tier.vàng {
+  background: linear-gradient(90deg, #ffd700, #ffec70);
+}
+
+/* Kim Cương - màu xanh lam / cyan */
+.vip-tier.kim-cương {
+  background: linear-gradient(270deg, #00bfff, #1cefff);
+}
+
+/* Siêu Kim Cương - gradient động rainbow */
+.vip-tier.siêu-kim-cương {
+  background: linear-gradient(
+    270deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  background-size: 400% 400%;
+  animation: rainbow 5s linear infinite;
+}
+
+/* Animation rainbow */
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+footer {
+  text-align: center;
+  padding: 25px;
+  font-size: 14px;
+  color: #666;
+  background: #f0f0f0;
+}

@@ -85,7 +85,7 @@ $diem = tinhDiem($so_diem);
 $tier = xacDinhCapDo($so_diem);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doixp'])) {
-    $addXP = (int)$_POST['add_xp'];
+    $addXP = (int) $_POST['add_xp'];
     $id_kh = $user['id_kh']; // lấy id người dùng hiện tại
 
     // 🔹 Lấy tổng điểm đọc bài hiện có
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doixp'])) {
           AND loai_giao_dich IN ('doc_bai', 'doi_xp')
     ");
     $stmt_diem->execute([$id_kh]);
-    $tong_diem_doc = (int)$stmt_diem->fetchColumn();
+    $tong_diem_doc = (int) $stmt_diem->fetchColumn();
 
     // 🔸 Kiểm tra hợp lệ
     if ($addXP > 0 && $addXP <= $tong_diem_doc) {
@@ -317,8 +317,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </ul>
                 </li>
 
-                <li><a href="#">Giới thiệu </a></li>
-                <li><a href="#">Liên hệ</a></li>
+                <li class="dropdowns">
+                    <a href="#">Giới thiệu ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="./about.php#about">Về chúng tôi</a></li>
+                        <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
+                        <li><a href="./about.php#policy">Chính sách biên tập</a></li>
+                        <li><a href="./about.php#team">Đội ngũ</a></li>
+                    </ul>
+                </li>
+                <li class="dropdowns">
+                    <a href="#">Liên hệ ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="mailto:vuliztva1@gmail.com">📧 Email hỗ trợ</a></li>
+                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank">💬 Fanpage Facebook</a></li>
+                        <li><a href="https://zalo.me/0332138297" target="_blank">📱 Zalo liên hệ</a></li>
+                        <li><a href="../mail/formmail.php">📝 Gửi phản hồi</a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
 
@@ -499,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="level-bar">
                     <?php
                     // --- Lấy XP hiện tại từ bảng khachhang ---
-                    $xp = isset($user['xp']) && is_numeric($user['xp']) ? (int)$user['xp'] : 0;
+                    $xp = isset($user['xp']) && is_numeric($user['xp']) ? (int) $user['xp'] : 0;
 
                     // --- Tính cấp độ và tiến trình ---
                     $level = floor($xp / 100); // Mỗi 100 XP = 1 cấp
@@ -520,7 +536,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     WHERE id_kh = ?
 ");
                 $stmt_diem->execute([$user['id_kh']]);
-                $tong_diem_con_lai = (int)$stmt_diem->fetchColumn();
+                $tong_diem_con_lai = (int) $stmt_diem->fetchColumn();
                 ?>
 
                 <i class="fas fa-gem"></i>
@@ -548,7 +564,7 @@ WHERE id_kh = ?
 ");
                         $stmt_diem->execute([$user['id_kh']]);
                         $diem_result = $stmt_diem->fetch(PDO::FETCH_ASSOC);
-                        $tong_diem_doc = (int)$diem_result['tong_diem_doc'];
+                        $tong_diem_doc = (int) $diem_result['tong_diem_doc'];
 
                         ?>
 
@@ -558,8 +574,7 @@ WHERE id_kh = ?
 
                         <form method="POST">
                             <label for="add_xp">Nhập số XP muốn đổi:</label>
-                            <input type="number" id="add_xp" name="add_xp"
-                                min="1" max="<?= $tong_diem_doc ?>" required>
+                            <input type="number" id="add_xp" name="add_xp" min="1" max="<?= $tong_diem_doc ?>" required>
 
                             <p class="note">💡 1 điểm đọc bài = 1 XP</p>
                             <button type="submit" name="doixp" class="confirm-btn">Xác nhận đổi</button>
@@ -915,8 +930,8 @@ WHERE id_kh = ?
                     </form>
                 </div>
 
-        </div>
-    <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
 </body>
 

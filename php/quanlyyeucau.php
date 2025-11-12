@@ -215,8 +215,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                     </ul>
                 </li>
 
-                <li><a href="#">Giới thiệu </a></li>
-                <li><a href="#">Liên hệ</a></li>
+                <li class="dropdowns">
+                    <a href="#">Giới thiệu ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="./about.php#about">Về chúng tôi</a></li>
+                        <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
+                        <li><a href="./about.php#policy">Chính sách biên tập</a></li>
+                        <li><a href="./about.php#team">Đội ngũ</a></li>
+                    </ul>
+                </li>
+                <li class="dropdowns">
+                    <a href="#">Liên hệ ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="mailto:vuliztva1@gmail.com">📧 Email hỗ trợ</a></li>
+                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank">💬 Fanpage Facebook</a></li>
+                        <li><a href="https://zalo.me/0332138297" target="_blank">📱 Zalo liên hệ</a></li>
+                        <li><a href="../mail/formmail.php">📝 Gửi phản hồi</a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
 
@@ -363,7 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                                 <?php
                                 // Truy vấn thông tin người dùng dựa trên id_kh
                                 $id_kh = $request['id_kh']; // Lấy id_kh từ mỗi yêu cầu
-
+                            
                                 // Truy vấn thông tin avatar và khung avatar từ bảng khachhang
                                 $stmt = $pdo->prepare("SELECT avatar_url, avatar_frame, vai_tro FROM khachhang WHERE id_kh = ?");
                                 $stmt->execute([$id_kh]);
@@ -373,12 +389,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                                 $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
                                     ? htmlspecialchars($user['avatar_url'])
                                     : '../img/avt.jpg';  // Avatar mặc định
-
+                            
                                 // Lấy khung avatar (frame)
                                 $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
                                     ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
                                     : '';  // Khung avatar mặc định nếu không có
-
+                            
                                 // Hiển thị avatar
                                 echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
 
@@ -434,7 +450,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                             // Kiểm tra trạng thái yêu cầu
                             if ($request['trang_thai'] === 'đã duyệt') {
                                 // Hiển thị form chọn vai trò
-                        ?>
+                                ?>
                                 <div id="role-selection-<?= $request['id'] ?>" class="role-selection" style="display:block;">
                                     <h3>Chọn vai trò cho người dùng</h3>
                                     <form method="POST">
@@ -449,7 +465,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
                                         <a href="quanlyyeucau.php" class="cancel-btn">Hủy</a>
                                     </form>
                                 </div>
-                        <?php
+                                <?php
                             }
                         }
                         ?>

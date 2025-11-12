@@ -1,0 +1,131 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Chiều cao toàn màn hình */
+  margin: 0;
+  overflow: hidden;
+}
+
+* {
+  -webkit-user-select: none; /* Đảm bảo hoạt động trên Safari */
+  -moz-user-select: none; /* Đảm bảo hoạt động trên Firefox */
+  -ms-user-select: none; /* Đảm bảo hoạt động trên IE/Edge */
+}
+
+.message-success {
+  color: green;
+  font-weight: bold;
+  margin: 15px 0;
+  padding: 10px;
+  border: 1px solid green;
+  background-color: #e6ffe6;
+  border-radius: 5px;
+  max-width: 400px;
+}
+.message-error {
+  color: red;
+  font-weight: bold;
+  margin: 15px 0;
+  padding: 10px;
+  border: 1px solid red;
+  background-color: #ffe6e6;
+  border-radius: 5px;
+  max-width: 400px;
+}
+
+/* Nền video hoặc ảnh */
+video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+.backhome {
+  display: inline-block;
+  margin-top: 10px;
+  margin-left: 200px;
+  padding: 8px 15px;
+  border: 2px solid white;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s, color 0.3s;
+}
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.form-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: bold;
+}
+.form-container {
+  background-color: transparent;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 700px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px #e0e0e0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.form-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-container input,
+.form-container textarea {
+  width: 95%;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.3s;
+}
+
+.form-container input:focus,
+.form-container textarea:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.form-container textarea {
+  resize: vertical;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+  background-color: #45a049;
+}

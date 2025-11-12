@@ -31,10 +31,14 @@ if (isset($_SESSION['user_id'])) {
         }
         function xacDinhCapDo($so_diem)
         {
-            if ($so_diem >= 1000000) return 'Siêu Kim Cương';
-            if ($so_diem >= 500000) return 'Kim Cương';
-            if ($so_diem >= 100000) return 'Vàng';
-            if ($so_diem >= 50000)  return 'Bạc';
+            if ($so_diem >= 1000000)
+                return 'Siêu Kim Cương';
+            if ($so_diem >= 500000)
+                return 'Kim Cương';
+            if ($so_diem >= 100000)
+                return 'Vàng';
+            if ($so_diem >= 50000)
+                return 'Bạc';
             return 'Member';
         }
         $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
@@ -145,10 +149,10 @@ $stmt_author->execute([$post['id_kh']]);
 $author = $stmt_author->fetch(PDO::FETCH_ASSOC);
 
 // --- Gán mặc định để tránh lỗi ---
-$author_name  = $author && !empty($author['ho_ten']) ? htmlspecialchars($author['ho_ten']) : "Không rõ tác giả";
+$author_name = $author && !empty($author['ho_ten']) ? htmlspecialchars($author['ho_ten']) : "Không rõ tác giả";
 $author_email = $author && !empty($author['email']) ? htmlspecialchars($author['email']) : "";
 $author_avatar = $author && !empty($author['avatar_url']) ? htmlspecialchars($author['avatar_url']) : "../img/avt.jpg";
-$author_frame  = $author && !empty($author['avatar_frame']) ? htmlspecialchars($author['avatar_frame']) : "";
+$author_frame = $author && !empty($author['avatar_frame']) ? htmlspecialchars($author['avatar_frame']) : "";
 
 // --- Lấy bài phổ biến ---
 $stmt = $pdo->query("SELECT * FROM baiviet WHERE trang_thai='published' AND danh_muc='POPULAR POSTS' ORDER BY ngay_dang DESC LIMIT 5");
@@ -264,8 +268,24 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                     </ul>
                 </li>
 
-                <li><a href="#">Giới thiệu </a></li>
-                <li><a href="#">Liên hệ</a></li>
+                <li class="dropdowns">
+                    <a href="#">Giới thiệu ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="./about.php#about">Về chúng tôi</a></li>
+                        <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
+                        <li><a href="./about.php#policy">Chính sách biên tập</a></li>
+                        <li><a href="./about.php#team">Đội ngũ</a></li>
+                    </ul>
+                </li>
+                <li class="dropdowns">
+                    <a href="#">Liên hệ ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="mailto:vuliztva1@gmail.com">📧 Email hỗ trợ</a></li>
+                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank">💬 Fanpage Facebook</a></li>
+                        <li><a href="https://zalo.me/0332138297" target="_blank">📱 Zalo liên hệ</a></li>
+                        <li><a href="../mail/formmail.php">📝 Gửi phản hồi</a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
 
@@ -592,7 +612,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                     <?php
                     if ($comments):
                         foreach ($comments as $comment):
-                    ?>
+                            ?>
                             <div class="comment" id="comment-<?= $comment['id_binhluan'] ?>">
                                 <div class="avatar-container">
                                     <!-- Hiển thị avatar -->
@@ -611,8 +631,24 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                 </div>
 
                                 <div class="comment-text" id="comment-text-<?= $comment['id_binhluan'] ?>">
-                                    <p><strong><?= htmlspecialchars($comment['ho_ten']) ?></strong> <span
-                                            class="comment-time"><?= date("F d, Y H:i", strtotime($comment['ngay_binhluan'])) ?></span>
+                                    <p><strong><?= htmlspecialchars($comment['ho_ten']) ?></strong>
+                                    <div class="user-email">
+                                        <?php if ($user['email'] == 'baka@gmail.com'): ?>
+                                            <span class="role-badge1">ADMIN</span>
+                                        <?php else: ?>
+                                        <?php endif; ?>
+
+                                        <!-- Ẩn VIP tier nếu là admin -->
+                                        <?php if ($user['email'] != 'baka@gmail.com'): ?>
+                                            <p>
+                                                <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                                    <?= htmlspecialchars($tier) ?>
+                                                </b>
+                                            </p>
+                                        <?php endif; ?>
+                                    </div>
+                                    <span
+                                        class="comment-time"><?= date("F d, Y H:i", strtotime($comment['ngay_binhluan'])) ?></span>
                                     </p>
                                     <p><?= nl2br(htmlspecialchars($comment['noi_dung'])) ?></p>
 
@@ -625,7 +661,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                 </div>
                                 <br>
                             </div>
-                    <?php
+                            <?php
                         endforeach;
                     else:
                         echo "<p>Chưa có bình luận nào.</p>";

@@ -342,9 +342,24 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                         <li><a href="#">Ăn uống lành mạnh</a></li>
                     </ul>
                 </li>
-
-                <li><a href="#">Giới thiệu </a></li>
-                <li><a href="#">Liên hệ</a></li>
+                <li class="dropdowns">
+                    <a href="#">Giới thiệu ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="./about.php#about">Về chúng tôi</a></li>
+                        <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
+                        <li><a href="./about.php#policy">Chính sách biên tập</a></li>
+                        <li><a href="./about.php#team">Đội ngũ</a></li>
+                    </ul>
+                </li>
+                <li class="dropdowns">
+                    <a href="#">Liên hệ ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="mailto:vuliztva1@gmail.com">📧 Email hỗ trợ</a></li>
+                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank">💬 Fanpage Facebook</a></li>
+                        <li><a href="https://zalo.me/0332138297" target="_blank">📱 Zalo liên hệ</a></li>
+                        <li><a href="../mail/formmail.php">📝 Gửi phản hồi</a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
 
@@ -442,8 +457,6 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                                             </ul>
                                         </li>
                                     <?php endif; ?>
-
-
                                     <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>
