@@ -276,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">
             <ul class="nav-menu">
-                <li><a href="index.php">Trang chủ</a></li>
+                <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
 
                 <li class="dropdowns">
                     <a href="#">Xếp hạng ▾</a>
@@ -318,21 +318,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </li>
 
                 <li class="dropdowns">
-                    <a href="#">Giới thiệu ▾</a>
+                    <a href="#"><i class="fa-solid fa-circle-info"></i> Giới thiệu ▾</a>
                     <ul class="dropdown-nav">
-                        <li><a href="./about.php#about">Về chúng tôi</a></li>
-                        <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
-                        <li><a href="./about.php#policy">Chính sách biên tập</a></li>
-                        <li><a href="./about.php#team">Đội ngũ</a></li>
+                        <li><a href="./about.php#about"><i class="fa-solid fa-circle-info"></i> Về chúng tôi</a></li>
+                        <li><a href="./about.php#mission"><i class="fa-solid fa-bullseye"></i> Tầm nhìn & Sứ mệnh</a>
+                        </li>
+                        <li><a href="./about.php#policy"><i class="fa-solid fa-scale-balanced"></i> Chính sách biên
+                                tập</a></li>
+                        <li><a href="./about.php#team"><i class="fa-solid fa-people-group"></i> Đội ngũ</a></li>
                     </ul>
                 </li>
+
                 <li class="dropdowns">
-                    <a href="#">Liên hệ ▾</a>
+                    <a href="#"><i class="fa-solid fa-envelope-circle-check"></i> Liên hệ ▾</a>
                     <ul class="dropdown-nav">
-                        <li><a href="mailto:vuliztva1@gmail.com">📧 Email hỗ trợ</a></li>
-                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank">💬 Fanpage Facebook</a></li>
-                        <li><a href="https://zalo.me/0332138297" target="_blank">📱 Zalo liên hệ</a></li>
-                        <li><a href="../mail/formmail.php">📝 Gửi phản hồi</a></li>
+                        <li><a href="mailto:vuliztva1@gmail.com"><i class="fa-solid fa-envelope"></i> Email hỗ trợ</a>
+                        </li>
+                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank"><i
+                                    class="fa-brands fa-facebook"></i> Fanpage Facebook</a></li>
+                        <li><a href="https://zalo.me/0332138297" target="_blank"><i class="fa-brands fa-zhihu"></i> Zalo
+                                liên hệ</a></li>
+                        <li><a href="../mail/formmail.php"><i class="fa-solid fa-pen-to-square"></i> Gửi phản hồi</a>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -362,9 +369,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             : '../img/avt.jpg';
 
                         // Khung avatar (frame)
-                        $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
-                            ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
-                            : '';
+                        $frame = '';
+                        if (!empty($user['avatar_frame'])) {
+                            $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
+                            foreach ($possibleExtensions as $ext) {
+                                $path = '../frames/' . htmlspecialchars($user['avatar_frame']) . '.' . $ext;
+                                if (file_exists($path)) {
+                                    $frame = $path;
+                                    break;
+                                }
+                            }
+                        }
 
                         // Hiển thị avatar
                         echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
@@ -471,9 +486,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         : '../img/avt.jpg';
 
                     // Khung avatar (frame)
-                    $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
-                        ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
-                        : '';
+                    $frame = '';
+                    if (!empty($user['avatar_frame'])) {
+                        $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
+                        foreach ($possibleExtensions as $ext) {
+                            $path = '../frames/' . htmlspecialchars($user['avatar_frame']) . '.' . $ext;
+                            if (file_exists($path)) {
+                                $frame = $path;
+                                break;
+                            }
+                        }
+                    }
 
                     // Hiển thị avatar
                     echo '<div class="avatar-container">';
@@ -613,6 +636,32 @@ WHERE id_kh = ?
                         <label>
                             <input type="radio" name="avatar_frame" value="raiden" <?= ($user['avatar_frame'] == 'raiden') ? 'checked' : '' ?>>
                             <img src="../frames/raiden.png" alt="Gold Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="chiu" <?= ($user['avatar_frame'] == 'chiu') ? 'checked' : '' ?>>
+                            <img src="../frames/chiu.gif" alt="Ice Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="firefly"
+                                <?= ($user['avatar_frame'] == 'firefly') ? 'checked' : '' ?>>
+                            <img src="../frames/firefly.png" alt="Gold Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="genhsin"
+                                <?= ($user['avatar_frame'] == 'genhsin') ? 'checked' : '' ?>>
+                            <img src="../frames/genhsin.gif" alt="Gold Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="peak" <?= ($user['avatar_frame'] == 'peak') ? 'checked' : '' ?>>
+                            <img src="../frames/peak.gif" alt="Gold Frame">
+                        </label>
+                        <label>
+                            <input type="radio" name="avatar_frame" value="gi" <?= ($user['avatar_frame'] == 'gi') ? 'checked' : '' ?>>
+                            <img src="../frames/gi.gif" alt="Gold Frame">
+                        </label>
+                            <label>
+                            <input type="radio" name="avatar_frame" value="evernight" <?= ($user['avatar_frame'] == 'evernight') ? 'checked' : '' ?>>
+                            <img src="../frames/evernight.png" alt="Gold Frame">
                         </label>
                     </div>
                     <button type="submit" name="save_frame">Lưu khung</button>

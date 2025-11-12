@@ -211,7 +211,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">
             <ul class="nav-menu">
-                <li><a href="index.php">Trang chủ</a></li>
+                <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
 
                 <li class="dropdowns">
                     <a href="#">Xếp hạng ▾</a>
@@ -253,23 +253,30 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </li>
 
                 <li class="dropdowns">
-                    <a href="#">Giới thiệu ▾</a>
+                    <a href="#"><i class="fa-solid fa-circle-info"></i> Giới thiệu ▾</a>
                     <ul class="dropdown-nav">
-                        <li><a href="./about.php#about">Về chúng tôi</a></li>
-                        <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
-                        <li><a href="./about.php#policy">Chính sách biên tập</a></li>
-                        <li><a href="./about.php#team">Đội ngũ</a></li>
+                        <li><a href="./about.php#about"><i class="fa-solid fa-circle-info"></i> Về chúng tôi</a></li>
+                        <li><a href="./about.php#mission"><i class="fa-solid fa-bullseye"></i> Tầm nhìn & Sứ mệnh</a>
+                        </li>
+                        <li><a href="./about.php#policy"><i class="fa-solid fa-scale-balanced"></i> Chính sách biên
+                                tập</a></li>
+                        <li><a href="./about.php#team"><i class="fa-solid fa-people-group"></i> Đội ngũ</a></li>
                     </ul>
                 </li>
                 <li class="dropdowns">
-                    <a href="#">Liên hệ ▾</a>
+                    <a href="#"><i class="fa-solid fa-envelope-circle-check"></i> Liên hệ ▾</a>
                     <ul class="dropdown-nav">
-                        <li><a href="mailto:vuliztva1@gmail.com">📧 Email hỗ trợ</a></li>
-                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank">💬 Fanpage Facebook</a></li>
-                        <li><a href="https://zalo.me/0332138297" target="_blank">📱 Zalo liên hệ</a></li>
-                        <li><a href="../mail/formmail.php">📝 Gửi phản hồi</a></li>
+                        <li><a href="mailto:vuliztva1@gmail.com"><i class="fa-solid fa-envelope"></i> Email hỗ trợ</a>
+                        </li>
+                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank"><i
+                                    class="fa-brands fa-facebook"></i> Fanpage Facebook</a></li>
+                        <li><a href="https://zalo.me/0332138297" target="_blank"><i class="fa-brands fa-zhihu"></i> Zalo
+                                liên hệ</a></li>
+                        <li><a href="../mail/formmail.php"><i class="fa-solid fa-pen-to-square"></i> Gửi phản hồi</a>
+                        </li>
                     </ul>
                 </li>
+
             </ul>
         </nav>
 
@@ -296,10 +303,17 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             ? htmlspecialchars($user['avatar_url'])
                             : '../img/avt.jpg';
 
-                        // Khung avatar (frame)
-                        $frame = !empty($user['avatar_frame']) && file_exists('../frames/' . $user['avatar_frame'] . '.png')
-                            ? '../frames/' . htmlspecialchars($user['avatar_frame']) . '.png'
-                            : '';
+                        $frame = '';
+                        if (!empty($user['avatar_frame'])) {
+                            $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
+                            foreach ($possibleExtensions as $ext) {
+                                $path = '../frames/' . htmlspecialchars($user['avatar_frame']) . '.' . $ext;
+                                if (file_exists($path)) {
+                                    $frame = $path;
+                                    break;
+                                }
+                            }
+                        }
 
                         // Hiển thị avatar
                         echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
