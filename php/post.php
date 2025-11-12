@@ -12,9 +12,8 @@ if (empty($slug)) {
 $user = null; // Mặc định là khách
 $tier = "Member";
 
-// Kiểm tra nếu người dùng đã đăng nhập
 if (isset($_SESSION['user_id'])) {
-    $id_kh = $_SESSION['user_id']; // Lấy id người dùng từ session
+    $id_kh = $_SESSION['user_id'];
     $stmt = $pdo->prepare("
         SELECT kh.*, tk.ngay_tao
         FROM khachhang kh
@@ -26,31 +25,24 @@ if (isset($_SESSION['user_id'])) {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        // Tính điểm và cấp độ
         function tinhDiem($so_diem)
         {
             return floor($so_diem / 10000);
         }
         function xacDinhCapDo($so_diem)
         {
-            if ($so_diem >= 1000000)
-                return 'Siêu Kim Cương';
-            if ($so_diem >= 500000)
-                return 'Kim Cương';
-            if ($so_diem >= 100000)
-                return 'Vàng';
-            if ($so_diem >= 50000)
-                return 'Bạc';
+            if ($so_diem >= 1000000) return 'Siêu Kim Cương';
+            if ($so_diem >= 500000) return 'Kim Cương';
+            if ($so_diem >= 100000) return 'Vàng';
+            if ($so_diem >= 50000)  return 'Bạc';
             return 'Member';
         }
-
-        $so_diem = isset($user['so_diem']) && is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
-        $diem = tinhDiem($so_diem);
+        $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
         $tier = xacDinhCapDo($so_diem);
     }
 }
 
-// Lấy slug và bài viết từ cơ sở dữ liệu
+// --- Lấy bài viết theo slug ---
 $stmt = $pdo->prepare("SELECT * FROM baiviet WHERE duong_dan = ? AND trang_thai = 'published'");
 $stmt->execute([$slug]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -58,39 +50,100 @@ if (!$post) {
     die("<h2 style='text-align:center;color:red;'>❌ Bài viết không tồn tại hoặc đã bị ẩn!</h2>");
 }
 
-// --- Lấy ID tác giả từ bài viết ---
-$id_kh = $post['id_kh'];  // Lấy id_kh từ bài viết
 // --- Cập nhật lượt xem ---
-$pdo->prepare("UPDATE baiviet SET luot_xem = luot_xem + 1 WHERE ma_bai_viet = ?")->execute([$post['ma_bai_viet']]);
+$pdo->prepare("UPDATE baiviet SET luot_xem = luot_xem + 1 WHERE ma_bai_viet = ?")
+    ->execute([$post['ma_bai_viet']]);
 
-// Lấy thông tin tác giả từ bảng khachhang dựa trên id_kh
+// ✅ CỘNG ĐIỂM KHI NGƯỜI DÙNG ĐỌC BÀI VIẾT
+if (isset($_SESSION['user_id'])) {
+    $reader_id = $_SESSION['user_id'];
+
+    // Điểm thưởng có thể phụ thuộc độ dài bài viết (VD: 100 điểm mỗi 500 ký tự)
+    $points_to_add = max(50, round(strlen(strip_tags($post['noi_dung'])) / 500));
+
+    // Kiểm tra xem đã cộng điểm cho bài viết này trong 24h chưa
+    $stmt_check = $pdo->prepare("
+        SELECT COUNT(*) FROM diemdoc
+        WHERE id_kh = :id_kh 
+          AND ma_bai_viet = :ma_bai_viet 
+          AND ngay_them >= NOW() - INTERVAL 1 DAY
+    ");
+    $stmt_check->execute(['id_kh' => $reader_id, 'ma_bai_viet' => $post['ma_bai_viet']]);
+    $already_added = $stmt_check->fetchColumn();
+
+    if ($already_added == 0) {
+        // Cộng điểm
+        $stmt_update = $pdo->prepare("
+            UPDATE khachhang 
+            SET so_diem = so_diem + :diem 
+            WHERE id_kh = :id_kh
+        ");
+        $stmt_update->execute(['diem' => $points_to_add, 'id_kh' => $reader_id]);
+
+        // Ghi lại lịch sử cộng điểm
+        $stmt_log = $pdo->prepare("
+            INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, ngay_them)
+            VALUES (:id_kh, :ma_bai_viet, :diem_cong, NOW())
+        ");
+        $stmt_log->execute([
+            'id_kh' => $reader_id,
+            'ma_bai_viet' => $post['ma_bai_viet'],
+            'diem_cong' => $points_to_add
+        ]);
+
+        // ✅ Popup thông báo +XP
+        echo "
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const popup = document.createElement('div');
+            popup.textContent = '+{$points_to_add} điểm!';
+            popup.style.position = 'fixed';
+            popup.style.bottom = '80px';
+            popup.style.right = '30px';
+            popup.style.background = 'rgba(0, 200, 0, 0.9)';
+            popup.style.color = '#fff';
+            popup.style.padding = '10px 20px';
+            popup.style.borderRadius = '10px';
+            popup.style.fontWeight = 'bold';
+            popup.style.fontSize = '18px';
+            popup.style.zIndex = '9999';
+            popup.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+            popup.style.transition = 'all 0.5s ease';
+            document.body.appendChild(popup);
+            setTimeout(() => { popup.style.opacity = '0'; popup.style.transform = 'translateY(-50px)'; }, 2000);
+            setTimeout(() => { popup.remove(); }, 2500);
+        });
+        </script>
+        ";
+    }
+}
+
+// --- Lấy thông tin tác giả ---
 $stmt_author = $pdo->prepare("SELECT ho_ten, email, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
-$stmt_author->execute([$id_kh]); // Dùng id_kh từ bài viết để lấy thông tin tác giả
+$stmt_author->execute([$post['id_kh']]);
 $author = $stmt_author->fetch(PDO::FETCH_ASSOC);
 
-// Kiểm tra và gán giá trị cho tên tác giả, email, avatar và frame
-$author_name = $author ? htmlspecialchars($author['ho_ten']) : "Người dùng không xác định";
-$author_email = $author ? htmlspecialchars($author['email']) : '';  // Gán email của tác giả
-$author_avatar = $author ? htmlspecialchars($author['avatar_url']) : '../img/avt.jpg'; // Gán avatar, mặc định nếu không có
-$author_frame = $author ? htmlspecialchars($author['avatar_frame']) : ''; // Gán frame, mặc định nếu không có
+// --- Gán mặc định để tránh lỗi ---
+$author_name  = $author && !empty($author['ho_ten']) ? htmlspecialchars($author['ho_ten']) : "Không rõ tác giả";
+$author_email = $author && !empty($author['email']) ? htmlspecialchars($author['email']) : "";
+$author_avatar = $author && !empty($author['avatar_url']) ? htmlspecialchars($author['avatar_url']) : "../img/avt.jpg";
+$author_frame  = $author && !empty($author['avatar_frame']) ? htmlspecialchars($author['avatar_frame']) : "";
 
-// --- Lấy bài phổ biến --- 
-$stmt = $pdo->query("SELECT * FROM baiviet WHERE trang_thai = 'published' AND danh_muc = 'POPULAR POSTS' ORDER BY ngay_dang DESC LIMIT 5");
+// --- Lấy bài phổ biến ---
+$stmt = $pdo->query("SELECT * FROM baiviet WHERE trang_thai='published' AND danh_muc='POPULAR POSTS' ORDER BY ngay_dang DESC LIMIT 5");
 $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Lấy bài trước
-$stmt_prev = $pdo->prepare("SELECT * FROM baiviet WHERE ngay_dang < ? AND trang_thai = 'published' ORDER BY ngay_dang DESC LIMIT 1");
+// --- Lấy bài trước & tiếp theo ---
+$stmt_prev = $pdo->prepare("SELECT * FROM baiviet WHERE ngay_dang < ? AND trang_thai='published' ORDER BY ngay_dang DESC LIMIT 1");
 $stmt_prev->execute([$post['ngay_dang']]);
 $prev_post = $stmt_prev->fetch(PDO::FETCH_ASSOC);
 
-// Lấy bài tiếp theo
-$stmt_next = $pdo->prepare("SELECT * FROM baiviet WHERE ngay_dang > ? AND trang_thai = 'published' ORDER BY ngay_dang ASC LIMIT 1");
+$stmt_next = $pdo->prepare("SELECT * FROM baiviet WHERE ngay_dang > ? AND trang_thai='published' ORDER BY ngay_dang ASC LIMIT 1");
 $stmt_next->execute([$post['ngay_dang']]);
 $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
 
-// Xử lý sắp xếp bình luận
-$orderBy = "ORDER BY c.ngay_binhluan DESC"; // Mặc định: mới nhất
-
+// --- Lấy bình luận ---
+$orderBy = "ORDER BY c.ngay_binhluan DESC";
 if (isset($_GET['sort'])) {
     switch ($_GET['sort']) {
         case 'oldest':
@@ -102,24 +155,18 @@ if (isset($_GET['sort'])) {
         case 'name_desc':
             $orderBy = "ORDER BY kh.ho_ten DESC";
             break;
-        default:
-            $orderBy = "ORDER BY c.ngay_binhluan DESC";
     }
 }
-
-// Truy vấn bình luận với sắp xếp
 $stmt_comments = $pdo->prepare("
     SELECT c.*, kh.ho_ten, kh.avatar_url, kh.avatar_frame 
     FROM binhluan c
     JOIN khachhang kh ON c.id_kh = kh.id_kh
     WHERE c.ma_bai_viet = ? $orderBy
 ");
-
 $stmt_comments->execute([$post['ma_bai_viet']]);
 $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
-
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -394,6 +441,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
         <!-- Cột trái: bài viết -->
         <article class="post-content">
             <h1><?= htmlspecialchars($post['tieu_de']) ?></h1>
+            <p><i class="fas fa-eye"></i> <?= $post['luot_xem'] ?> lượt xem</p>
 
             <!-- Thông tin bài viết -->
             <div class="post-meta">
@@ -523,7 +571,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                     <?php
                     if ($comments):
                         foreach ($comments as $comment):
-                            ?>
+                    ?>
                             <div class="comment" id="comment-<?= $comment['id_binhluan'] ?>">
                                 <div class="avatar-container">
                                     <!-- Hiển thị avatar -->
@@ -556,7 +604,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                 </div>
                                 <br>
                             </div>
-                            <?php
+                    <?php
                         endforeach;
                     else:
                         echo "<p>Chưa có bình luận nào.</p>";

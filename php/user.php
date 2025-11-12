@@ -85,19 +85,56 @@ $diem = tinhDiem($so_diem);
 $tier = xacDinhCapDo($so_diem);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doixp'])) {
-    $addXP = (int) $_POST['add_xp'];
-    $currentPoints = (int) $user['so_diem'];
+    $addXP = (int)$_POST['add_xp'];
+    $id_kh = $user['id_kh']; // lấy id người dùng hiện tại
 
-    if ($addXP > 0 && $addXP <= $currentPoints) {
-        // Trừ điểm và cộng XP
-        $stmt = $pdo->prepare("UPDATE khachhang SET so_diem = so_diem - ?, xp = xp + ? WHERE id_kh = ?");
-        $stmt->execute([$addXP, $addXP, $id_kh]);
-        echo "<script>alert('Đã đổi $addXP điểm thành XP thành công!'); window.location.reload();</script>";
+    // 🔹 Lấy tổng điểm đọc bài hiện có
+    $stmt_diem = $pdo->prepare("
+        SELECT COALESCE(SUM(diem_cong), 0) AS tong_diem_doc
+        FROM diemdoc
+        WHERE id_kh = ?
+          AND loai_giao_dich IN ('doc_bai', 'doi_xp')
+    ");
+    $stmt_diem->execute([$id_kh]);
+    $tong_diem_doc = (int)$stmt_diem->fetchColumn();
+
+    // 🔸 Kiểm tra hợp lệ
+    if ($addXP > 0 && $addXP <= $tong_diem_doc) {
+
+        // 1️⃣ Ghi lại giao dịch đổi XP (trừ điểm đọc bài)
+        $stmt_insert = $pdo->prepare("
+            INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, loai_giao_dich, ngay_them)
+            VALUES (:id_kh, NULL, :diem_cong, 'doi_xp', NOW())
+        ");
+        $stmt_insert->execute([
+            ':id_kh' => $id_kh,
+            ':diem_cong' => -$addXP // Trừ điểm đọc bài
+        ]);
+
+        // 2️⃣ Cập nhật bảng khachhang: trừ so_diem và cộng xp
+        $stmt_update = $pdo->prepare("
+            UPDATE khachhang 
+            SET xp = xp + :xp, 
+                so_diem = GREATEST(so_diem - :xp, 0)  -- tránh âm điểm
+            WHERE id_kh = :id_kh
+        ");
+        $stmt_update->execute([
+            ':xp' => $addXP,
+            ':id_kh' => $id_kh
+        ]);
+
+        // 3️⃣ Thông báo và reload
+        $_SESSION['success'] = "🎉 Đã đổi {$addXP} điểm sang XP thành công!";
+        header("Location: user.php");
         exit;
-    } elseif ($addXP > $currentPoints) {
-        echo "<script>alert('Bạn không đủ điểm để đổi!');</script>";
+    } elseif ($addXP > $tong_diem_doc) {
+        $_SESSION['error'] = "⚠️ Bạn không đủ điểm để đổi!";
+        header("Location: user.php");
+        exit;
     } else {
-        echo "<script>alert('Vui lòng nhập số XP hợp lệ!');</script>";
+        $_SESSION['error'] = "❌ Vui lòng nhập số XP hợp lệ!";
+        header("Location: user.php");
+        exit;
     }
 }
 
@@ -405,6 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         ?>
     </div>
+
     <div class="profile-container">
         <!-- KHUNG TRÁI -->
         <div class="profile-left">
@@ -460,18 +498,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="level-bar">
                     <?php
-                    $xp = $user['so_diem'] ?? 0;
-                    $level = floor($xp / 100); // Mỗi 100 điểm = 1 cấp
+                    // --- Lấy XP hiện tại từ bảng khachhang ---
+                    $xp = isset($user['xp']) && is_numeric($user['xp']) ? (int)$user['xp'] : 0;
+
+                    // --- Tính cấp độ và tiến trình ---
+                    $level = floor($xp / 100); // Mỗi 100 XP = 1 cấp
                     $nextLevelXP = ($level + 1) * 100;
                     $percent = min(100, ($xp / $nextLevelXP) * 100);
                     ?>
-                    <p>Level <?= $level ?> - XP: <?= $xp ?> / <?= $nextLevelXP ?></p>
+                    <p>Level <?= $level ?> - XP: <?= number_format($xp) ?> / <?= number_format($nextLevelXP) ?></p>
                     <div class="progress">
                         <div class="progress-fill" style="width: <?= $percent ?>%;"></div>
                     </div>
                 </div>
 
-                <p><b>Điểm:</b> <?= number_format($xp) ?></p>
+                <?php
+                // 🔹 Tính tổng tất cả điểm cộng / trừ thực tế từ bảng diemdoc
+                $stmt_diem = $pdo->prepare("
+    SELECT COALESCE(SUM(diem_cong), 0) AS tong_diem
+    FROM diemdoc
+    WHERE id_kh = ?
+");
+                $stmt_diem->execute([$user['id_kh']]);
+                $tong_diem_con_lai = (int)$stmt_diem->fetchColumn();
+                ?>
+                <p><b>Tổng điểm đọc bài còn lại:</b> <?= number_format(max(0, $tong_diem_con_lai)) ?></p>
+
                 <p><b>Ngày tạo:</b> <?= htmlspecialchars($user['ngay_tao']) ?></p>
 
                 <!-- Nút mở popup đổi XP -->
@@ -483,15 +535,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="close" onclick="closeXPModal()">&times;</span>
                         <h3>Đổi điểm sang XP</h3>
 
-                        <!-- Hiển thị điểm hiện có -->
-                        <p class="current-points">Bạn hiện có: <b><?= number_format($user['so_diem'] ?? 0) ?></b>
-                            điểm</p>
+                        <?php
+                        // 🔹 Lấy tổng điểm đọc bài thực tế (chỉ tính loai_giao_dich = 'doc_bai')
+                        $stmt_diem = $pdo->prepare("
+SELECT COALESCE(SUM(diem_cong), 0) AS tong_diem_doc
+FROM diemdoc
+WHERE id_kh = ?
+  AND loai_giao_dich IN ('doc_bai', 'doi_xp')
+");
+                        $stmt_diem->execute([$user['id_kh']]);
+                        $diem_result = $stmt_diem->fetch(PDO::FETCH_ASSOC);
+                        $tong_diem_doc = (int)$diem_result['tong_diem_doc'];
+
+                        ?>
+
+                        <p class="current-points">
+                            Bạn hiện có: <b><?= number_format($tong_diem_doc) ?></b> điểm đọc bài
+                        </p>
 
                         <form method="POST">
                             <label for="add_xp">Nhập số XP muốn đổi:</label>
-                            <input type="number" id="add_xp" name="add_xp" min="1" max="<?= $user['so_diem'] ?? 0 ?>"
-                                required>
-                            <p class="note">💡 1 điểm = 1 XP</p>
+                            <input type="number" id="add_xp" name="add_xp"
+                                min="1" max="<?= $tong_diem_doc ?>" required>
+
+                            <p class="note">💡 1 điểm đọc bài = 1 XP</p>
                             <button type="submit" name="doixp" class="confirm-btn">Xác nhận đổi</button>
                         </form>
                     </div>
@@ -768,8 +835,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
 
-            </div>
-        <?php endif; ?>
+        </div>
+    <?php endif; ?>
 
 </body>
 

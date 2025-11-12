@@ -609,35 +609,52 @@ button[type="submit"]:hover {
 
 .password-field input {
   width: 100%; /* Đảm bảo ô nhập chiếm toàn bộ chiều rộng */
-  padding-right: 35px;  /* Tạo khoảng trống cho biểu tượng */
+  padding-right: 35px; /* Tạo khoảng trống cho biểu tượng */
 }
 
 .password-field i {
   position: absolute;
-  right: 10px;   /* Đảm bảo biểu tượng gần cạnh phải */
-  top: 50%;      /* Căn giữa theo chiều dọc */
-  transform: translateY(-50%);  /* Điều chỉnh để căn giữa hoàn hảo */
+  right: 10px; /* Đảm bảo biểu tượng gần cạnh phải */
+  top: 50%; /* Căn giữa theo chiều dọc */
+  transform: translateY(-50%); /* Điều chỉnh để căn giữa hoàn hảo */
   cursor: pointer;
   color: #888;
   transition: color 0.3s ease-in-out;
 }
 
 .password-field i:hover {
-  color: #ff69b4;  /* Thay đổi màu khi hover */
+  color: #ff69b4; /* Thay đổi màu khi hover */
 }
 
-/* Nút chính */
+/* === Nút Đổi XP === */
 .xp-btn {
-  background-color: #4caf50;
+  display: inline-block;
+  background-color: #28a745; /* màu xanh lá */
   color: white;
   border: none;
-  padding: 8px 14px;
   border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: bold;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.3s;
+  position: relative;
+  z-index: 9999; /* ✅ luôn nằm trên các lớp khác */
 }
+
 .xp-btn:hover {
-  background-color: #45a049;
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+/* === Modal (popup) === */
+#xpModal {
+  z-index: 1000; /* thấp hơn nút, để nút không bị che */
+}
+
+/* Nếu modal đang bị che chính bởi overlay (background tối),
+   thêm dòng này để fix toàn bộ modal luôn nằm trên nhưng không che phần khác */
+.modal {
+  z-index: 2000;
 }
 
 /* Popup */
