@@ -619,10 +619,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 echo '<p><b>Số điện thoại:</b> ' . htmlspecialchars($cau['sdt']) . '</p>';
                                 echo '<p><b>Ngày gửi yêu cầu:</b> ' . htmlspecialchars($cau['ngay_tao']) . '</p>';
                                 echo '<p><b>Trạng thái:</b> <span class="' . $statusClass . '">' . htmlspecialchars($cau['trang_thai']) . '</span></p>';
-                                echo '<form method="POST" style="display:inline;">
-                        <input type="hidden" name="cancel_request_id" value="' . $cau['id'] . '">
-                        <button type="submit" name="cancel_request" class="cancel-btn">Hủy yêu cầu</button>
-                      </form>';
+
+                                // Kiểm tra trạng thái và hiển thị nút phù hợp
+                                if ($cau['trang_thai'] == 'đã duyệt') {
+                                    // Hiển thị nút "Xóa yêu cầu" khi trạng thái là "đã duyệt"
+                                    echo '<form method="POST" style="display:inline;">
+                            <input type="hidden" name="delete_request_id" value="' . $cau['id'] . '">
+                            <button type="submit" name="delete_request" class="delete-btn">Xóa yêu cầu</button>
+                          </form>';
+                                } else {
+                                    // Hiển thị nút "Hủy yêu cầu" khi trạng thái không phải là "đã duyệt"
+                                    echo '<form method="POST" style="display:inline;">
+                            <input type="hidden" name="cancel_request_id" value="' . $cau['id'] . '">
+                            <button type="submit" name="cancel_request" class="cancel-btn">Hủy yêu cầu</button>
+                          </form>';
+                                }
                                 echo '</div>';
                             }
                         } else {
