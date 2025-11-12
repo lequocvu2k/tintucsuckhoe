@@ -508,3 +508,81 @@
 .nav-menu a:hover i {
   color: #43a047; /* xanh sáng hơn khi hover */
 }
+.site-footer {
+  background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+  color: #2e7d32;
+  padding: 40px 20px 15px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border-top: 2px solid #a5d6a7;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 25px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.footer-column {
+  flex: 1 1 230px;
+  min-width: 200px;
+}
+
+.footer-column h3 {
+  color: #1b5e20;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #a5d6a7;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.footer-column p {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin: 8px 0;
+}
+
+.footer-column ul li a {
+  color: #2e7d32;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-column ul li a:hover {
+  color: #43a047;
+  text-decoration: underline;
+}
+
+.social-icons a {
+  display: inline-block;
+  margin-right: 10px;
+  color: #2e7d32;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: #43a047;
+  transform: scale(1.2);
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.9rem;
+  border-top: 1px solid #c8e6c9;
+  padding-top: 10px;
+  color: #388e3c;
+}
