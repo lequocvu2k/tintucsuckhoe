@@ -34,13 +34,13 @@ if (isset($_SESSION['user_id'])) {
         }
         function xacDinhCapDo($so_diem)
         {
-            if ($so_diem >= 1000000)
+            if ($so_diem >= 10000)
                 return 'Siêu Kim Cương';
-            if ($so_diem >= 500000)
+            if ($so_diem >= 5000)
                 return 'Kim Cương';
-            if ($so_diem >= 100000)
+            if ($so_diem >= 1000)
                 return 'Vàng';
-            if ($so_diem >= 50000)
+            if ($so_diem >= 500)
                 return 'Bạc';
             return 'Member';
         }

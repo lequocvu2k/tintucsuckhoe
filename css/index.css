@@ -808,3 +808,54 @@ footer {
   width: 100%;
   border-radius: 10px;
 }
+.editor-item {
+    display: inline-block;
+    width: calc(33.33% - 20px); /* Ba bài mỗi hàng */
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    vertical-align: top;
+}
+
+.editor-item:hover {
+    transform: scale(1.05); /* Hiệu ứng zoom khi hover */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Tăng độ shadow khi hover */
+}
+
+.editor-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.editor-info h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+}
+
+.editor-info .author-date {
+    font-size: 14px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.editor-item a {
+    text-decoration: none;
+    color: inherit;
+}
+
+@media screen and (max-width: 768px) {
+    .editor-item {
+        width: calc(50% - 20px); /* Hai bài mỗi hàng trên thiết bị tablet */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .editor-item {
+        width: 100%; /* Một bài mỗi hàng trên thiết bị di động */
+    }
+}

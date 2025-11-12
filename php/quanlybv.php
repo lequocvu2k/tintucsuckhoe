@@ -111,13 +111,13 @@ if (isset($_SESSION['user_id'])) {
 
         function xacDinhCapDo($so_diem)
         {
-            if ($so_diem >= 1000000)
+            if ($so_diem >= 10000)
                 return 'Siêu Kim Cương';
-            if ($so_diem >= 500000)
+            if ($so_diem >= 5000)
                 return 'Kim Cương';
-            if ($so_diem >= 100000)
+            if ($so_diem >= 1000)
                 return 'Vàng';
-            if ($so_diem >= 50000)
+            if ($so_diem >= 500)
                 return 'Bạc';
             return 'Member';
         }
@@ -172,9 +172,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Khi bạn thêm một bài viết mới
             $stmt = $pdo->prepare("
     INSERT INTO baiviet (tieu_de, duong_dan, noi_dung, anh_bv, ma_tac_gia, ma_chuyen_muc, ngay_dang, ngay_cap_nhat, trang_thai, luot_xem, danh_muc, id_kh)
-    VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, 0, ?, ?)
 ");
-            $stmt->execute([$tieu_de, $duong_dan, $noi_dung, $anh_bv, $ma_tac_gia, $ma_chuyen_muc, $trang_thai, $luot_xem, $danh_muc, $id_kh]);
+
+            $stmt->execute([$tieu_de, $duong_dan, $noi_dung, $anh_bv, $ma_tac_gia, $ma_chuyen_muc, $trang_thai, $danh_muc, $id_kh]);
+
 
 
             $_SESSION['success'] = "✅ Thêm bài viết thành công!";
@@ -265,7 +267,26 @@ if (isset($_POST['edit'])) {
 }
 
 // Lấy danh sách bài viết
-$baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll(PDO::FETCH_ASSOC);
+// Lấy danh sách chuyên mục để hiển thị dropdown lọc
+$chuyenmucs = $pdo->query("SELECT ma_chuyen_muc, ten_chuyen_muc FROM chuyenmuc ORDER BY ten_chuyen_muc ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+// Xử lý lọc bài viết theo chuyên mục (nếu có)
+$filter = $_GET['chuyenmuc'] ?? '';
+$sql = "
+    SELECT b.*, c.ten_chuyen_muc 
+    FROM baiviet b
+    LEFT JOIN chuyenmuc c ON b.ma_chuyen_muc = c.ma_chuyen_muc
+";
+
+if (!empty($filter)) {
+    $stmt = $pdo->prepare($sql . " WHERE b.ma_chuyen_muc = ? ORDER BY b.ngay_dang DESC");
+    $stmt->execute([$filter]);
+} else {
+    $stmt = $pdo->prepare($sql . " ORDER BY b.ngay_dang DESC");
+    $stmt->execute();
+}
+
+$baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
@@ -305,7 +326,7 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
 
                 <li class="dropdowns">
-                    <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
+                    <a href="#">Xếp hạng ▾</a>
                     <ul class="dropdown-nav">
                         <li><a href="#">Nhiều lượt xem hôm nay</a></li>
                         <li><a href="#">Nhiều lượt xem tuần</a></li>
@@ -314,17 +335,34 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                 </li>
 
                 <li class="dropdowns">
-                    <a href="#"><i class="fa-solid fa-heart-pulse"></i> Sức khỏe ▾</a>
+                    <a href="#">Tin tức ▾</a>
                     <ul class="dropdown-nav">
-                        <li><a href="./category.php?id=1"><i class="fa-solid fa-newspaper"></i> Tin tức</a></li>
-                        <li><a href="./category.php?id=2"><i class="fa-solid fa-apple-whole"></i> Dinh dưỡng</a></li>
-                        <li><a href="./category.php?id=3"><i class="fa-solid fa-dumbbell"></i> Khỏe đẹp</a></li>
-                        <li><a href="./category.php?id=4"><i class="fa-solid fa-user-doctor"></i> Tư vấn</a></li>
-                        <li><a href="./category.php?id=5"><i class="fa-solid fa-hospital"></i> Dịch vụ y tế</a></li>
-                        <li><a href="./category.php?id=6"><i class="fa-solid fa-virus-covid"></i> Các bệnh</a></li>
+                        <li><a href="#">Tập luyện</a></li>
+                        <li><a href="#">Nghỉ ngơi</a></li>
+                        <li><a href="#">Thủ thuật</a></li>
+                        <li><a href="#">Dinh dưỡng</a></li>
+                        <li><a href="#">Tinh thần</a></li>
+                        <li><a href="#">Mẹo mắt - lưng</a></li>
                     </ul>
                 </li>
 
+                <li class="dropdowns">
+                    <a href="#">Chương trình tập luyện ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Nhóm cơ</a></li>
+                        <li><a href="#">Theo mục tiêu</a></li>
+                        <li><a href="#">Tự tạo kế hoạch</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdowns">
+                    <a href="#">Dinh dưỡng ▾</a>
+                    <ul class="dropdown-nav">
+                        <li><a href="#">Giảm cân</a></li>
+                        <li><a href="#">Tăng cơ</a></li>
+                        <li><a href="#">Ăn uống lành mạnh</a></li>
+                    </ul>
+                </li>
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-circle-info"></i> Giới thiệu ▾</a>
                     <ul class="dropdown-nav">
@@ -336,7 +374,6 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                         <li><a href="./about.php#team"><i class="fa-solid fa-people-group"></i> Đội ngũ</a></li>
                     </ul>
                 </li>
-
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-envelope-circle-check"></i> Liên hệ ▾</a>
                     <ul class="dropdown-nav">
@@ -352,7 +389,6 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                 </li>
             </ul>
         </nav>
-
 
         <!-- PHẦN BÊN PHẢI -->
         <div class="right">
@@ -594,9 +630,22 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
 
                 <!-- Mã chuyên mục -->
                 <div class="form-group">
-                    <label>Mã chuyên mục</label>
-                    <input type="number" name="ma_chuyen_muc"
-                        value="<?= htmlspecialchars($editPost['ma_chuyen_muc'] ?? '') ?>">
+                    <label>Chuyên mục</label>
+                    <select name="ma_chuyen_muc" required>
+                        <option value="">-- Chọn chuyên mục --</option>
+                        <?php
+                        try {
+                            $chuyenmucStmt = $pdo->query("SELECT ma_chuyen_muc, ten_chuyen_muc FROM chuyenmuc ORDER BY ma_chuyen_muc ASC");
+                            $chuyenmucs = $chuyenmucStmt->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($chuyenmucs as $cm) {
+                                $selected = (isset($editPost['ma_chuyen_muc']) && $editPost['ma_chuyen_muc'] == $cm['ma_chuyen_muc']) ? 'selected' : '';
+                                echo "<option value='{$cm['ma_chuyen_muc']}' {$selected}>{$cm['ten_chuyen_muc']}</option>";
+                            }
+                        } catch (PDOException $e) {
+                            echo "<option disabled>Lỗi tải chuyên mục</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <!-- Danh mục -->
@@ -645,6 +694,18 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
             </div>
         </form>
     </div>
+    <!-- Bộ lọc chuyên mục -->
+    <form method="GET" style="margin-bottom: 20px; text-align:right;">
+        <label for="chuyenmuc" style="font-weight:bold; margin-right:10px;">📂 Lọc theo chuyên mục:</label>
+        <select name="chuyenmuc" id="chuyenmuc" onchange="this.form.submit()" style="padding:5px 10px;">
+            <option value="">-- Tất cả --</option>
+            <?php foreach ($chuyenmucs as $cm): ?>
+                <option value="<?= $cm['ma_chuyen_muc'] ?>" <?= (isset($_GET['chuyenmuc']) && $_GET['chuyenmuc'] == $cm['ma_chuyen_muc']) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($cm['ten_chuyen_muc']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </form>
     <table>
         <thead>
             <tr>
@@ -653,6 +714,7 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                 <th>Tiêu đề</th>
                 <th>Đường dẫn</th>
                 <th>Danh mục</th> <!-- 🆕 thêm cột Danh mục -->
+                <th>Chuyên mục</th>
                 <th>Tác giả</th>
                 <th>Trạng thái</th>
                 <th>Ngày đăng</th>
@@ -667,6 +729,8 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                     <td><?= htmlspecialchars($bv['tieu_de']) ?></td>
                     <td><?= htmlspecialchars($bv['duong_dan']) ?></td>
                     <td><span class="category"><?= htmlspecialchars($bv['danh_muc']) ?></span></td> <!-- 🆕 -->
+                    <td><?= htmlspecialchars($bv['ten_chuyen_muc'] ?? 'Không rõ') ?></td>
+
                     <td><?= htmlspecialchars($bv['ma_tac_gia']) ?></td>
                     <td><span class="status <?= $bv['trang_thai'] ?>"><?= ucfirst($bv['trang_thai']) ?></span></td>
                     <td><?= $bv['ngay_dang'] ?></td>
@@ -687,7 +751,24 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
     </table>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.1/tinymce.min.js"></script>
-    <br><br>
+    <script>
+        tinymce.init({
+            selector: 'textarea[name="noi_dung"]',  // Chọn textarea cần thay thế
+            height: 300,
+            plugins: 'advlist autolink lists link image charmap print preview anchor',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code | image link',
+            content_style: "body { font-family:Arial, sans-serif; font-size:14px }",
+            images_upload_url: 'upload_image.php', // URL của script xử lý ảnh
+            automatic_uploads: true,  // Tự động tải ảnh lên khi người dùng chèn ảnh
+
+            setup: function (editor) {
+                // Đảm bảo rằng TinyMCE sẽ cập nhật nội dung vào textarea khi thay đổi
+                editor.on('change', function () {
+                    tinymce.triggerSave();  // Đồng bộ hóa nội dung vào textarea
+                });
+            }
+        });
+    </script>
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-column">

@@ -31,13 +31,13 @@ if (isset($_SESSION['user_id'])) {
         }
         function xacDinhCapDo($so_diem)
         {
-            if ($so_diem >= 1000000)
+            if ($so_diem >= 10000)
                 return 'Siêu Kim Cương';
-            if ($so_diem >= 500000)
+            if ($so_diem >= 5000)
                 return 'Kim Cương';
-            if ($so_diem >= 100000)
+            if ($so_diem >= 1000)
                 return 'Vàng';
-            if ($so_diem >= 50000)
+            if ($so_diem >= 500)
                 return 'Bạc';
             return 'Member';
         }
@@ -62,13 +62,67 @@ if (isset($_SESSION['user_id'])) {
     $id_kh = $_SESSION['user_id'];
     $ma_bai_viet = $post['ma_bai_viet'];
 
-    // Kiểm tra xem đã ghi lịch sử đọc chưa (tránh trùng)
-    $check = $pdo->prepare("
-        SELECT id FROM diemdoc 
-        WHERE id_kh = ? AND ma_bai_viet = ? AND loai_giao_dich = 'xem_bai'
-    ");
-    $check->execute([$id_kh, $ma_bai_viet]);
 
+    // Kiểm tra nếu người dùng đã đọc bài trong vòng 24 giờ chưa
+    $check = $pdo->prepare("
+    SELECT COUNT(*) 
+    FROM diemdoc 
+    WHERE id_kh = :id_kh 
+      AND ma_bai_viet = :ma_bai_viet 
+      AND loai_giao_dich = 'xem_bai' 
+      AND ngay_them >= NOW() - INTERVAL 1 DAY
+");
+    $check->execute(['id_kh' => $id_kh, 'ma_bai_viet' => $post['ma_bai_viet']]);
+    $already_added = $check->fetchColumn();
+    // Nếu chưa đọc trong 24 giờ, cộng điểm và ghi lại
+    if ($already_added == 0) {
+        // Cộng điểm cho người dùng
+        $points_to_add = max(50, round(strlen(strip_tags($post['noi_dung'])) / 500));  // Điều chỉnh số điểm cộng tùy theo độ dài bài viết
+
+        // Cập nhật điểm trong bảng khachhang
+        $stmt_update = $pdo->prepare("
+        UPDATE khachhang 
+        SET so_diem = so_diem + :diem 
+        WHERE id_kh = :id_kh
+    ");
+        $stmt_update->execute(['diem' => $points_to_add, 'id_kh' => $id_kh]);
+
+        // Ghi lại lịch sử cộng điểm
+        $stmt_log = $pdo->prepare("
+        INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, loai_giao_dich, ngay_them)
+        VALUES (:id_kh, :ma_bai_viet, :diem_cong, 'xem_bai', NOW())
+    ");
+        $stmt_log->execute([
+            'id_kh' => $id_kh,
+            'ma_bai_viet' => $post['ma_bai_viet'],
+            'diem_cong' => $points_to_add
+        ]);
+
+        // Thông báo cộng điểm
+        echo "
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const popup = document.createElement('div');
+            popup.textContent = '+{$points_to_add} điểm!';
+            popup.style.position = 'fixed';
+            popup.style.bottom = '80px';
+            popup.style.right = '30px';
+            popup.style.background = 'rgba(0, 200, 0, 0.9)';
+            popup.style.color = '#fff';
+            popup.style.padding = '10px 20px';
+            popup.style.borderRadius = '10px';
+            popup.style.fontWeight = 'bold';
+            popup.style.fontSize = '18px';
+            popup.style.zIndex = '9999';
+            popup.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+            popup.style.transition = 'all 0.5s ease';
+            document.body.appendChild(popup);
+            setTimeout(() => { popup.style.opacity = '0'; popup.style.transform = 'translateY(-50px)'; }, 2000);
+            setTimeout(() => { popup.remove(); }, 2500);
+        });
+    </script>
+    ";
+    }
     if ($check->rowCount() == 0) {
         // Ghi lại lịch sử xem bài viết
         $insert = $pdo->prepare("
@@ -98,20 +152,21 @@ if (isset($_SESSION['user_id'])) {
 
     if ($already_added == 0) {
         // Cộng điểm
+// Cộng điểm vào bảng khachhang
         $stmt_update = $pdo->prepare("
-            UPDATE khachhang 
-            SET so_diem = so_diem + :diem 
-            WHERE id_kh = :id_kh
-        ");
-        $stmt_update->execute(['diem' => $points_to_add, 'id_kh' => $reader_id]);
+    UPDATE khachhang 
+    SET so_diem = so_diem + :diem 
+    WHERE id_kh = :id_kh
+");
+        $stmt_update->execute(['diem' => $points_to_add, 'id_kh' => $id_kh]);
 
-        // Ghi lại lịch sử cộng điểm
+        // Ghi lại lịch sử cộng điểm vào diemdoc
         $stmt_log = $pdo->prepare("
-            INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, ngay_them)
-            VALUES (:id_kh, :ma_bai_viet, :diem_cong, NOW())
-        ");
+    INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, loai_giao_dich, ngay_them)
+    VALUES (:id_kh, :ma_bai_viet, :diem_cong, 'xem_bai', NOW())
+");
         $stmt_log->execute([
-            'id_kh' => $reader_id,
+            'id_kh' => $id_kh,
             'ma_bai_viet' => $post['ma_bai_viet'],
             'diem_cong' => $points_to_add
         ]);
@@ -191,8 +246,6 @@ $stmt_comments = $pdo->prepare("
 $stmt_comments->execute([$post['ma_bai_viet']]);
 $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -557,7 +610,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <!-- YOU MAY ALSO LIKE -->
             <section class="related-posts">
-                <h2>YOU MAY ALSO LIKE</h2>
+                <h2>BẠN CÓ THỂ THÍCH</h2>
                 <div class="related-grid">
                     <?php
                     $stmt_related = $pdo->prepare("

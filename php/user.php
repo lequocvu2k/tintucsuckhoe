@@ -69,13 +69,13 @@ function tinhDiem($so_diem)
 
 function xacDinhCapDo($so_diem)
 {
-    if ($so_diem >= 1000000)
+    if ($so_diem >= 10000)
         return 'Siêu Kim Cương';
-    if ($so_diem >= 500000)
+    if ($so_diem >= 5000)
         return 'Kim Cương';
-    if ($so_diem >= 100000)
+    if ($so_diem >= 1000)
         return 'Vàng';
-    if ($so_diem >= 50000)
+    if ($so_diem >= 500)
         return 'Bạc';
     return 'Member';
 }
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doixp'])) {
         SELECT COALESCE(SUM(diem_cong), 0) AS tong_diem_doc
         FROM diemdoc
         WHERE id_kh = ?
-          AND loai_giao_dich IN ('doc_bai', 'doi_xp')
+          AND loai_giao_dich IN ('xem_bai', 'doi_xp')
     ");
     $stmt_diem->execute([$id_kh]);
     $tong_diem_doc = (int) $stmt_diem->fetchColumn();
@@ -501,7 +501,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
 
-                <div class="user-name"><?= htmlspecialchars($user['ho_ten']) ?></div>
+                <div class="user-name <?php
+                // Tính cấp độ và gán lớp màu sắc
+                $level = floor($xp / 100); // Mỗi 100 XP = 1 cấp
+                
+                // Xác định màu sắc dựa trên cấp độ
+                if ($level >= 40) {
+                    echo 'level-40';
+                } elseif ($level >= 30) {
+                    echo 'level-30';
+                } elseif ($level >= 20) {
+                    echo 'level-20';
+                } elseif ($level >= 10) {
+                    echo 'level-1';
+                } else {
+                    echo 'level-1'; // Màu cho các cấp thấp hơn
+                }
+                ?>">
+                    <?= htmlspecialchars($user['ho_ten']) ?>
+                </div>
+
                 <div class="user-email">
                     <?php if ($user['email'] == 'baka@gmail.com'): ?>
                         <span class="role-badge">ADMIN</span>
@@ -561,12 +580,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3>Đổi điểm sang XP</h3>
 
                         <?php
-                        // 🔹 Lấy tổng điểm đọc bài thực tế (chỉ tính loai_giao_dich = 'doc_bai')
+                        // Lấy tổng điểm đọc bài thực tế
+                        // Kiểm tra và lấy tổng điểm đọc bài từ bảng diemdoc
                         $stmt_diem = $pdo->prepare("
-SELECT COALESCE(SUM(diem_cong), 0) AS tong_diem_doc
-FROM diemdoc
-WHERE id_kh = ?
-  AND loai_giao_dich IN ('doc_bai', 'doi_xp')
+    SELECT COALESCE(SUM(diem_cong), 0) AS tong_diem_doc
+    FROM diemdoc
+    WHERE id_kh = ? AND loai_giao_dich = 'xem_bai'
 ");
                         $stmt_diem->execute([$user['id_kh']]);
                         $diem_result = $stmt_diem->fetch(PDO::FETCH_ASSOC);

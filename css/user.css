@@ -1172,6 +1172,31 @@ form button {
   color: #777;
   margin-top: 6px;
 }
+.user-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Màu sắc cho từng cấp độ */
+.level-10 {
+    color: #FFD700; /* Vàng cho cấp 10 trở lên */
+}
+
+.level-20 {
+    color: #FF6347; /* Cam cho cấp 20 trở lên */
+}
+
+.level-30 {
+    color: #32CD32; /* Xanh lá cây cho cấp 30 trở lên */
+}
+
+.level-40 {
+    color: #00BFFF; /* Xanh dương cho cấp 40 trở lên */
+}
+
+.level-1 {
+    color: #8c8c8c; /* Màu xám cho cấp thấp */
+}
 
 /* Responsive tinh chỉnh kích cỡ card */
 @media (min-width: 1280px) {

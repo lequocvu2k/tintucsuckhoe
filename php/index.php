@@ -3,6 +3,17 @@ session_start();
 require_once './db.php'; // file bạn đã có
 // Lấy thông tin user
 $user_id = $_SESSION['user_id'] ?? null; // Đảm bảo user_id đã được lưu trong session
+// --- Lấy thông tin tác giả ---
+$stmt_author = $pdo->prepare("SELECT ho_ten, email, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
+$stmt_author->execute([$user_id]);  // Sử dụng $user_id thay vì $post['id_kh']
+$author = $stmt_author->fetch(PDO::FETCH_ASSOC);
+
+// --- Gán mặc định để tránh lỗi ---
+$author_name = $author && !empty($author['ho_ten']) ? htmlspecialchars($author['ho_ten']) : "Không rõ tác giả";
+$author_email = $author && !empty($author['email']) ? htmlspecialchars($author['email']) : "";
+$author_avatar = $author && !empty($author['avatar_url']) ? htmlspecialchars($author['avatar_url']) : "../img/avt.jpg";
+$author_frame = $author && !empty($author['avatar_frame']) ? htmlspecialchars($author['avatar_frame']) : "";
+
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"] ?? "");
@@ -92,13 +103,13 @@ function tinhDiem($so_diem)
 // Hàm xác định cấp độ
 function xacDinhCapDo($so_diem)
 {
-    if ($so_diem >= 1000000)
+    if ($so_diem >= 10000)
         return 'Siêu Kim Cương';
-    if ($so_diem >= 500000)
+    if ($so_diem >= 5000)
         return 'Kim Cương';
-    if ($so_diem >= 100000)
+    if ($so_diem >= 1000)
         return 'Vàng';
-    if ($so_diem >= 50000)
+    if ($so_diem >= 500)
         return 'Bạc';
     return 'Member';
 }
@@ -475,13 +486,20 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <h2>EDITOR'S PICKS</h2>
                 <?php foreach ($editors as $e): ?>
                     <div class="editor-item">
-                        <a href="./post.php?slug=<?= urlencode($e['duong_dan']) ?>">
-                            <img src="<?= htmlspecialchars($e['anh_bv']) ?>" alt="">
+                        <a href="./post.php?slug=<?= urlencode($e['duong_dan'] ?? '') ?>">
+                            <img src="<?= htmlspecialchars($e['anh_bv'] ?? '') ?>" alt="">
                             <div class="editor-info">
-                                <h3><?= htmlspecialchars($e['tieu_de']) ?></h3>
+                                <h3><?= htmlspecialchars($e['tieu_de'] ?? 'No Title') ?></h3>
+                                <div class="author-date">
+                                    <span>By
+                                        <b><?= !empty($author_name) ? htmlspecialchars($author_name) : 'Unknown Author' ?></b>
+                                    </span> •
+                                    <span><?= date("F d, Y", strtotime($e['ngay_dang'])) ?></span>
+                                </div>
                             </div>
                         </a>
                     </div>
+
                 <?php endforeach; ?>
             </section>
 
