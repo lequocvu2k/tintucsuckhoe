@@ -66,3 +66,23 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     activeTab.style.transform = "translateY(0)";
   });
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const dropdownBtn = document.querySelector(".dropdown-btn");
+  const dropdownContent = document.querySelector(".dropdown-content");
+
+  // Toggle dropdown khi nhấn vào nút
+  dropdownBtn.addEventListener("click", function () {
+    dropdownContent.style.display =
+      dropdownContent.style.display === "block" ? "none" : "block";
+  });
+
+  // Đóng dropdown nếu nhấn ở nơi khác
+  window.addEventListener("click", function (e) {
+    if (
+      !dropdownBtn.contains(e.target) &&
+      !dropdownContent.contains(e.target)
+    ) {
+      dropdownContent.style.display = "none";
+    }
+  });
+});

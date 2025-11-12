@@ -436,3 +436,64 @@
 .search-bar button:hover {
   color: #e60023;
 }
+/* Style cho dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Nút dropdown */
+.dropdown-btn {
+  color: white;
+  padding: 10px 20px;  /* Tăng chiều rộng cho nút */
+  font-size: 16px;  /* Tăng kích thước chữ */
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  border-radius: 8px;  /* Bo tròn góc */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;  /* Hiệu ứng chuyển màu và bo góc */
+  width: 170px;  /* Đặt chiều rộng cho nút */
+}
+
+.dropdown-btn:hover {
+  background-color: #0056b3;  /* Màu khi hover */
+  transform: scale(1.05);  /* Phóng to nhẹ khi hover */
+}
+
+/* Nội dung của dropdown */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;  /* Màu nền trắng */
+  min-width: 200px;  /* Đặt chiều rộng giống như nút dropdown */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Bóng mờ nhẹ */
+  border-radius: 8px;  /* Bo tròn góc */
+  z-index: 1;
+  padding: 8px 0;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;  /* Hiệu ứng mờ */
+}
+
+/* Mục con trong dropdown */
+.dropdown-content li {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;  /* Kích thước chữ nhỏ hơn */
+  color: #333;  /* Màu chữ đậm */
+  transition: background-color 0.3s ease;  /* Hiệu ứng chuyển màu nền */
+  width: 100%;  /* Chiều rộng 100% của dropdown */
+  box-sizing: border-box;
+}
+
+.dropdown-content li:hover {
+  background-color: #f0f0f0;  /* Màu nền khi hover */
+  color: #007bff;  /* Chuyển màu chữ khi hover */
+  border-radius: 6px;  /* Bo góc nhẹ */
+}
+
+/* Hiển thị dropdown khi hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+  opacity: 1;
+}

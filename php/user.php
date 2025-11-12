@@ -364,15 +364,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <li><a href="./user.php?view=history"><i class="fas fa-history"></i> Lịch sử</a></li>
 
                                     <!-- Nạp tiền -->
-                                  <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
+                                    <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
 
                                     <!-- Thông báo -->
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
 
-                                    <!-- Quản lý bài viết cho ADMIN -->
                                     <?php if ($_SESSION['username'] === 'admin'): ?>
-                                        <li><a href="./quanlybv.php"><i class="fas fa-cogs"></i> Quản lý bài viết</a></li>
+                                        <li class="dropdown">
+                                            <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
+                                                lý</a>
+                                            <ul class="dropdown-content">
+                                                <li><a href="./quanlybv.php"><i class="fas fa-pencil-alt"></i> Quản lý bài
+                                                        viết</a></li>
+                                                <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
+                                                </li>
+                                            </ul>
+                                        </li>
                                     <?php endif; ?>
 
                                     <!-- Đăng xuất -->

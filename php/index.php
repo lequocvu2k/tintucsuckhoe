@@ -336,8 +336,18 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
                                     <?php if ($_SESSION['username'] === 'admin'): ?>
-                                        <li><a href="./quanlybv.php"><i class="fas fa-cogs"></i> Quản lý bài viết</a></li>
+                                        <li class="dropdown">
+                                            <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
+                                                lý</a>
+                                            <ul class="dropdown-content">
+                                                <li><a href="./quanlybv.php"><i class="fas fa-pencil-alt"></i> Quản lý bài
+                                                        viết</a></li>
+                                                <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
+                                                </li>
+                                            </ul>
+                                        </li>
                                     <?php endif; ?>
+
                                     <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>

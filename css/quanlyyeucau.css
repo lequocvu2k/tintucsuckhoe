@@ -1,0 +1,325 @@
+.role-badge {
+  background: linear-gradient(
+    45deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Màu sắc cầu vồng */
+  background-size: 400% 400%;
+  color: white;
+  position: relative;
+  top: 5px;
+  left: 4px;
+  padding: 2px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  animation: rainbowMovement 5s ease infinite;
+}
+/* Hiệu ứng di chuyển màu sắc cầu vồng */
+@keyframes rainbowMovement {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+/* Dòng thông báo */
+.msg {
+  margin-top: 10px;
+  font-weight: 500;
+  color: #d32f2f;
+}
+.vip-tier {
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-weight: bold;
+  display: inline-block;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+/* Member - màu xám nhạt */
+.vip-tier.member {
+  background: #98ff98; /* Xanh lá mạ nhạt */
+}
+
+/* Bạc - màu bạc nhẹ */
+.vip-tier.bạc {
+  background: linear-gradient(90deg, #c0c0c0, #e0e0e0);
+}
+
+/* Vàng - màu vàng tươi */
+.vip-tier.vàng {
+  background: linear-gradient(90deg, #ffd700, #ffec70);
+}
+
+/* Kim Cương - màu xanh lam / cyan */
+.vip-tier.kim-cương {
+  background: linear-gradient(270deg, #00bfff, #1cefff);
+}
+
+/* Siêu Kim Cương - gradient động rainbow */
+.vip-tier.siêu-kim-cương {
+  background: linear-gradient(
+    270deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  background-size: 400% 400%;
+  animation: rainbow 5s linear infinite;
+}
+
+/* Animation rainbow */
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.frame-overlay1 {
+  position: absolute;
+  top: 200px; /* bằng border của avatar */
+  left: 55px; /* bằng border của avatar */
+  width: 126px; /* avatar 120px + border 3px * 2 */
+  height: 134px;
+  border-radius: 50%;
+  pointer-events: none;
+  object-fit: cover;
+}
+
+/* Tổng thể cho trang quản lý yêu cầu */
+main.container {
+  width: 80%;
+  margin: 40px auto;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(240, 240, 240, 0.9)
+  );
+  border-radius: 15px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.07);
+  padding: 40px;
+  overflow: hidden;
+  position: relative;
+  flex: 1; /* Để container chiếm phần lớn không gian */
+  transition: all 0.3s ease-in-out;
+}
+
+/* Tiêu đề của trang */
+h2 {
+  text-align: center;
+  font-size: 32px;
+  color: #333;
+  font-weight: 800;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: "Poppins", sans-serif;
+  background: -webkit-linear-gradient(#3498db, #8e44ad);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Thông báo thành công */
+.message-success {
+  background-color: #28a745;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  animation: bounce 1s infinite;
+}
+
+/* Hiệu ứng nhảy cho thông báo thành công */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Table style */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề cột */
+th,
+td {
+  padding: 15px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+/* Đổi màu tiêu đề cột */
+th {
+  background-color: #2980b9;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+/* Style cho Avatar */
+td img.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%; /* Làm cho ảnh tròn */
+  object-fit: cover; /* Đảm bảo ảnh không bị méo */
+  border: 3px solid #fff; /* Border cho avatar */
+  position: relative;
+}
+
+/* Avatar Container */
+.avatar-container {
+    display: flex;          /* Dùng flexbox để canh chỉnh các phần tử */
+    align-items: center;    /* Căn giữa theo chiều dọc */
+    justify-content: center;/* Căn giữa theo chiều ngang */
+}
+
+/* Style cho Avatar */
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%; /* Làm cho avatar tròn */
+    object-fit: cover;
+    border: 3px solid #fff; /* Viền avatar */
+}
+
+/* Style cho Khung Avatar */
+.frame-overlay1 {
+    width: 126px; /* Khung lớn hơn avatar một chút */
+    height: 136px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff; /* Viền khung */
+    margin-left: 0; /* Khoảng cách giữa avatar và khung */
+}
+
+/* Các trạng thái yêu cầu */
+span.chờ-duyệt {
+  color: #f39c12;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+span.đã-duyệt {
+  color: #27ae60;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+span.bị-từ-chối {
+  color: #e74c3c;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Nút duyệt và từ chối */
+button {
+  padding: 12px 30px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.3s ease-in-out;
+  margin: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Nút duyệt */
+.approve-btn {
+  background-color: #27ae60;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.approve-btn:hover {
+  background-color: #2ecc71;
+  transform: scale(1.05);
+}
+
+/* Nút từ chối */
+.reject-btn {
+  background-color: #e74c3c;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.reject-btn:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+  position: relative;
+  bottom: 0;
+  width: auto;
+  text-align: center;
+  padding: 25px;
+  background-color: #333;
+  color: white;
+  margin-top: 40px; /* Đảm bảo không bị dính với các phần trên */
+  border-radius: 12px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Tạo khoảng cách cho nội dung trong footer */
+footer p {
+  margin: 0;
+  font-size: 16px;
+  font-family: "Arial", sans-serif;
+}
+
+/* Đảm bảo footer luôn nằm ở dưới cùng của trang */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
