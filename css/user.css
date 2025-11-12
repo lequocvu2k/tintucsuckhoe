@@ -608,23 +608,24 @@ button[type="submit"]:hover {
 }
 
 .password-field input {
-  width: 50%;
-  padding-right: 35px;
+  width: 100%; /* Đảm bảo ô nhập chiếm toàn bộ chiều rộng */
+  padding-right: 35px;  /* Tạo khoảng trống cho biểu tượng */
 }
 
 .password-field i {
   position: absolute;
-  left: 400px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 10px;   /* Đảm bảo biểu tượng gần cạnh phải */
+  top: 50%;      /* Căn giữa theo chiều dọc */
+  transform: translateY(-50%);  /* Điều chỉnh để căn giữa hoàn hảo */
   cursor: pointer;
   color: #888;
-  transition: color 0.3s;
+  transition: color 0.3s ease-in-out;
 }
 
 .password-field i:hover {
-  color: #ff69b4;
+  color: #ff69b4;  /* Thay đổi màu khi hover */
 }
+
 /* Nút chính */
 .xp-btn {
   background-color: #4caf50;
@@ -844,97 +845,97 @@ hr {
 }
 /* Modal nền */
 .modal {
-    display: none; /* Ẩn mặc định */
-    position: fixed;
-    z-index: 1; /* Đặt lên trên cùng */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0); /* Màu đen */
-    background-color: rgba(0, 0, 0, 0.4); /* Màu đen với độ trong suốt */
-    padding-top: 60px;
+  display: none; /* Ẩn mặc định */
+  position: fixed;
+  z-index: 1; /* Đặt lên trên cùng */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0); /* Màu đen */
+  background-color: rgba(0, 0, 0, 0.4); /* Màu đen với độ trong suốt */
+  padding-top: 60px;
 }
 
 /* Nội dung modal */
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
 }
 
 /* Nút đóng modal */
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* Form và các nút */
 form label {
-    display: block;
-    margin-top: 10px;
+  display: block;
+  margin-top: 10px;
 }
 
 form input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 10px;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 form button {
-    padding: 10px 20px;
-    margin-top: 10px;
-    cursor: pointer;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
 }
 
 /* Nút hủy */
 .cancel-btn {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    cursor: pointer;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
 .cancel-btn:hover {
-    background-color: #d32f2f;
+  background-color: #d32f2f;
 }
 
 /* Nút gửi */
 .confirm-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
 .confirm-btn:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 .status-pending {
-    color: #ff9800; /* Màu cam cho trạng thái "chờ duyệt" */
-    font-weight: bold;
+  color: #ff9800; /* Màu cam cho trạng thái "chờ duyệt" */
+  font-weight: bold;
 }
 
 .status-approved {
-    color: #4caf50; /* Màu xanh cho trạng thái "đã duyệt" */
-    font-weight: bold;
+  color: #4caf50; /* Màu xanh cho trạng thái "đã duyệt" */
+  font-weight: bold;
 }
 
 .status-rejected {
-    color: #f44336; /* Màu đỏ cho trạng thái "bị từ chối" */
-    font-weight: bold;
+  color: #f44336; /* Màu đỏ cho trạng thái "bị từ chối" */
+  font-weight: bold;
 }

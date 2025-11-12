@@ -48,3 +48,43 @@ window.onclick = function (event) {
     closeEmployeeModal();
   }
 };
+document.addEventListener("DOMContentLoaded", function () {
+  const tabs = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  // Lấy giá trị `view` từ URL và cập nhật active tab
+  const urlParams = new URLSearchParams(window.location.search);
+  const view = urlParams.get("view") || "info"; // Mặc định 'info' nếu không có giá trị view trong URL
+
+  // Đảm bảo hiển thị nội dung của tab dựa trên giá trị `view`
+  tabContents.forEach((content) => {
+    if (content.id === view) {
+      content.classList.add("active");
+    } else {
+      content.classList.remove("active");
+    }
+  });
+
+  // Đánh dấu tab tương ứng là active
+  const activeTab = document.querySelector(`.tab-btn[data-tab="${view}"]`);
+  if (activeTab) {
+    activeTab.classList.add("active");
+  }
+
+  // Xử lý khi người dùng nhấn vào tab
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      const activeTab = this.getAttribute("data-tab");
+
+      // Cập nhật tham số URL khi nhấn tab
+      window.history.pushState({}, "", `?view=${activeTab}`);
+
+      // Cập nhật lại active class cho các tab
+      tabs.forEach((t) => t.classList.remove("active"));
+      this.classList.add("active");
+
+      // Tải lại trang
+      location.reload();
+    });
+  });
+});

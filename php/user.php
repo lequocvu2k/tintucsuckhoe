@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 $id_kh = $_SESSION['user_id'];
+$view = $_GET['view'] ?? 'info'; // Nếu không có tham số view, mặc định sẽ hiển thị 'info'
 
 // Xử lý hủy yêu cầu
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_request'])) {
@@ -340,13 +341,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <?php endif; ?>
                             </div>
 
-                            <!-- Dropdown menu -->
                             <div class="dropdown-menu">
                                 <ul>
+                                    <!-- Tài khoản -->
                                     <li>
-                                        <a href="./user.php">
+                                        <a href="./user.php?view=info">
                                             <i class="fas fa-user"></i> Tài khoản
-                                            <!-- Kiểm tra nếu người dùng là ADMIN, hiển thị ADMIN -->
                                             <b
                                                 class="vip-tier <?= ($_SESSION['username'] === 'admin') ? 'admin' : strtolower(str_replace(' ', '-', $tier)) ?>">
                                                 <?php
@@ -357,22 +357,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 }
                                                 ?>
                                             </b>
-
                                         </a>
                                     </li>
 
-                                    <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
-                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a>
+                                    <!-- Lịch sử -->
+                                    <li><a href="./user.php?view=history"><i class="fas fa-history"></i> Lịch sử</a></li>
+
+                                    <!-- Nạp tiền -->
+                                  <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
+
+                                    <!-- Thông báo -->
+                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
-                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông
-                                            báo</a>
-                                    </li>
+
+                                    <!-- Quản lý bài viết cho ADMIN -->
                                     <?php if ($_SESSION['username'] === 'admin'): ?>
                                         <li><a href="./quanlybv.php"><i class="fas fa-cogs"></i> Quản lý bài viết</a></li>
                                     <?php endif; ?>
+
+                                    <!-- Đăng xuất -->
                                     <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -629,32 +636,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- HÀNG TIÊU ĐỀ + TAB -->
             <div class="profile-header">
                 <div class="profile-tabs">
-                    <button class="tab-btn active" data-tab="info"><i class="fas fa-user"></i> Thông tin</button>
-                    <button class="tab-btn" data-tab="history"><i class="fas fa-history"></i> Lịch sử</button>
-                    <button class="tab-btn" data-tab="saved"><i class="fas fa-bookmark"></i> Đã lưu</button>
-                    <button class="tab-btn" data-tab="notifications"><i class="fas fa-bell"></i> Thông báo</button>
-                    <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Cài đặt</button>
+                    <button class="tab-btn <?= ($view === 'info') ? 'active' : '' ?>" data-tab="info">
+                        <i class="fas fa-user"></i> Thông tin
+                    </button>
+                    <button class="tab-btn <?= ($view === 'history') ? 'active' : '' ?>" data-tab="history">
+                        <i class="fas fa-history"></i> Lịch sử
+                    </button>
+                    <button class="tab-btn <?= ($view === 'saved') ? 'active' : '' ?>" data-tab="saved">
+                        <i class="fas fa-bookmark"></i> Đã lưu
+                    </button>
+                    <button class="tab-btn <?= ($view === 'notifications') ? 'active' : '' ?>" data-tab="notifications">
+                        <i class="fas fa-bell"></i> Thông báo
+                    </button>
+                    <button class="tab-btn <?= ($view === 'settings') ? 'active' : '' ?>" data-tab="settings">
+                        <i class="fas fa-cog"></i> Cài đặt
+                    </button>
                 </div>
 
-                <!-- TAB KHÁC -->
-                <div class="tab-content" id="history">
+            </div>
+            <!-- TAB KHÁC -->
+            <?php if ($view === 'info'): ?>
+                <div class="tab-content <?= ($view === 'info') ? 'active' : '' ?>" id="info">
+                    <form method="POST" class="info-form">
+                        <h2 class="profile-title">Thông tin cá nhân</h2>
+                        <div class="form-columns">
+                            <div class="form-left">
+                                <label>Họ tên:</label>
+                                <input type="text" name="ho_ten" value="<?= htmlspecialchars($user['ho_ten']) ?>" required>
+
+                                <label>Số điện thoại:</label>
+                                <input type="text" name="sdt" value="<?= htmlspecialchars($user['sdt']) ?>">
+
+                                <label>Email:</label>
+                                <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+
+                                <label>Ngày sinh:</label>
+                                <input type="date" name="ngay_sinh" value="<?= htmlspecialchars($user['ngay_sinh']) ?>">
+                            </div>
+
+                            <div class="form-right">
+                                <label>Địa chỉ:</label>
+                                <input type="text" name="dia_chi" value="<?= htmlspecialchars($user['dia_chi']) ?>">
+
+                                <label>Thành phố / Tỉnh:</label>
+                                <input type="text" name="tinh_thanh" value="<?= htmlspecialchars($user['tinh_thanh']) ?>">
+
+                                <label>Quốc gia:</label>
+                                <input type="text" name="quoc_gia" value="<?= htmlspecialchars($user['quoc_gia']) ?>">
+
+                                <label>Giới tính:</label>
+                                <div class="radio-group">
+                                    <label>
+                                        <input type="radio" name="gioi_tinh" value="Nam" <?= $isMale ?>> Nam
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="gioi_tinh" value="Nữ" <?= $isFemale ?>> Nữ
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" name="update_info" class="save-btn">Lưu thay đổi</button>
+                    </form>
+                </div>
+            <?php elseif ($view === 'history'): ?>
+                <div class="tab-content <?= ($view === 'history') ? 'active' : '' ?>" id="history">
                     <h2>Lịch sử hoạt động</h2>
                     <p>Bạn chưa có hoạt động nào gần đây.</p>
                 </div>
-
-                <div class="tab-content" id="saved">
+            <?php elseif ($view === 'saved'): ?>
+                <div class="tab-content <?= ($view === 'saved') ? 'active' : '' ?>" id="saved">
                     <h2>Bài viết đã lưu</h2>
                     <p>Danh sách các bài viết bạn lưu sẽ hiển thị ở đây.</p>
                 </div>
-
-                <div class="tab-content" id="notifications">
+            <?php elseif ($view === 'notifications'): ?>
+                <div class="tab-content <?= ($view === 'notifications') ? 'active' : '' ?>" id="notifications">
                     <h2>Thông báo</h2>
                     <p>Không có thông báo mới.</p>
                 </div>
-
-                <div class="tab-content" id="settings">
+            <?php elseif ($view === 'settings'): ?>
+                <div class="tab-content <?= ($view === 'settings') ? 'active' : '' ?>" id="settings">
                     <h2>Cài đặt tài khoản</h2>
-                    <p>Bạn có thể tùy chỉnh hiển thị, bảo mật và các thiết lập khác ở đây.</p>
+                    <p>Bạn có thể tùy chỉnh bảo mật và các thiết lập khác ở đây.</p>
 
                     <h2>Đổi mật khẩu</h2>
                     <form method="POST" class="password-form">
@@ -672,85 +734,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <button type="submit" name="update_pass" class="save-btn">🔑 Đổi mật khẩu</button>
+                        </div>
                     </form>
 
                     <?php if (!empty($msg)): ?>
-                        <p class="msg"><?= $msg ?></p>
+                        <p class="msg">
+                            <?= $msg ?>
+                        </p>
                     <?php endif; ?>
-                </div>
-
-                <!-- Cài đặt thông báo -->
-                <div class="notification-settings">
-                    <h3>Cài đặt thông báo</h3>
-                    <label>
-                        <input type="checkbox" name="email_notifications" <?= $user['email_notifications'] ? 'checked' : '' ?>> Nhận thông báo qua email
-                    </label>
-                    <label>
-                        <input type="checkbox" name="sms_notifications" <?= $user['sms_notifications'] ? 'checked' : '' ?>>
-                        Nhận thông báo qua SMS
-                    </label>
-                    <button type="submit" name="update_notifications" class="save-btn">Lưu thay đổi</button>
                 </div>
 
                 <!-- Xóa tài khoản -->
                 <div class="delete-account">
                     <h3>Xóa tài khoản</h3>
                     <p>Chú ý: Việc xóa tài khoản sẽ không thể hoàn tác. Bạn muốn xóa tài khoản?</p>
-
-                    <!-- Form để xóa tài khoản -->
                     <form method="POST" action="">
                         <button type="submit" name="delete_account" class="delete-btn">Xóa tài khoản</button>
                     </form>
                 </div>
 
             </div>
-
-        </div>
-        <!-- TAB: THÔNG TIN -->
-        <div class="tab-content active" id="info">
-            <form method="POST" class="info-form">
-                <h2 class="profile-title">Thông tin cá nhân</h2>
-                <div class="form-columns">
-                    <div class="form-left">
-                        <label>Họ tên:</label>
-                        <input type="text" name="ho_ten" value="<?= htmlspecialchars($user['ho_ten']) ?>" required>
-
-                        <label>Số điện thoại:</label>
-                        <input type="text" name="sdt" value="<?= htmlspecialchars($user['sdt']) ?>">
-
-                        <label>Email:</label>
-                        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
-
-                        <label>Ngày sinh:</label>
-                        <input type="date" name="ngay_sinh" value="<?= htmlspecialchars($user['ngay_sinh']) ?>">
-                    </div>
-
-                    <div class="form-right">
-                        <label>Địa chỉ:</label>
-                        <input type="text" name="dia_chi" value="<?= htmlspecialchars($user['dia_chi']) ?>">
-
-                        <label>Thành phố / Tỉnh:</label>
-                        <input type="text" name="tinh_thanh" value="<?= htmlspecialchars($user['tinh_thanh']) ?>">
-
-                        <label>Quốc gia:</label>
-                        <input type="text" name="quoc_gia" value="<?= htmlspecialchars($user['quoc_gia']) ?>">
-
-                        <label>Giới tính:</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="gioi_tinh" value="Nam" <?= $isMale ?>> Nam
-                            </label>
-                            <label>
-                                <input type="radio" name="gioi_tinh" value="Nữ" <?= $isFemale ?>> Nữ
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" name="update_info" class="save-btn">Lưu thay đổi</button>
-            </form>
-
-
-        </div>
+        <?php endif; ?>
 
 </body>
 

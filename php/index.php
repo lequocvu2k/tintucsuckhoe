@@ -332,7 +332,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </li>
 
                                     <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
-                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a></li>
+                                    <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
                                     <?php if ($_SESSION['username'] === 'admin'): ?>
@@ -585,7 +585,6 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <footer>
         <p>© 2025 Nhóm 6 - Website Tin tức Sức khỏe</p>
     </footer>
-
 </body>
 
 </html>
