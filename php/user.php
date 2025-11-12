@@ -340,13 +340,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </p>
                                 <?php endif; ?>
                             </div>
-
+                            <!-- Dropdown menu -->
                             <div class="dropdown-menu">
                                 <ul>
-                                    <!-- Tài khoản -->
                                     <li>
-                                        <a href="./user.php?view=info">
+                                        <a href="./user.php">
                                             <i class="fas fa-user"></i> Tài khoản
+                                            <!-- Kiểm tra nếu người dùng là ADMIN, hiển thị ADMIN -->
                                             <b
                                                 class="vip-tier <?= ($_SESSION['username'] === 'admin') ? 'admin' : strtolower(str_replace(' ', '-', $tier)) ?>">
                                                 <?php
@@ -357,37 +357,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 }
                                                 ?>
                                             </b>
+
                                         </a>
                                     </li>
 
-                                    <!-- Lịch sử -->
-                                    <li><a href="./user.php?view=history"><i class="fas fa-history"></i> Lịch sử</a></li>
-
-                                    <!-- Nạp tiền -->
+                                    <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
                                     <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
-
-                                    <!-- Thông báo -->
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
-
-                                    <?php if ($_SESSION['username'] === 'admin'): ?>
+                                    <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'QuanTri' || $_SESSION['user_role'] === 'NhanVien')): ?>
                                         <li class="dropdown">
                                             <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
                                                 lý</a>
                                             <ul class="dropdown-content">
                                                 <li><a href="./quanlybv.php"><i class="fas fa-pencil-alt"></i> Quản lý bài
                                                         viết</a></li>
-                                                <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
-                                                </li>
+                                                <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
+                                                    <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
+                                                    </li>
+                                                <?php endif; ?>
                                             </ul>
                                         </li>
                                     <?php endif; ?>
 
-                                    <!-- Đăng xuất -->
+
                                     <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>
-
                         </div>
                     </div>
                 </div>

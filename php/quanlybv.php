@@ -425,14 +425,25 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                                     </li>
 
                                     <li><a href="./user.php?view=order"><i class="fas fa-history"></i> Lịch sử</a></li>
-                                    <li><a href="./user.php?view=recharge"><i class="fas fa-wallet"></i> Nạp tiền</a>
+                                    <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
+                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
-                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông
-                                            báo</a>
-                                    </li>
-                                    <?php if ($_SESSION['username'] === 'admin'): ?>
-                                        <li><a href="./quanlybv.php"><i class="fas fa-cogs"></i> Quản lý bài viết</a></li>
+                                    <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'QuanTri' || $_SESSION['user_role'] === 'NhanVien')): ?>
+                                        <li class="dropdown">
+                                            <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
+                                                lý</a>
+                                            <ul class="dropdown-content">
+                                                <li><a href="./quanlybv.php"><i class="fas fa-pencil-alt"></i> Quản lý bài
+                                                        viết</a></li>
+                                                <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
+                                                    <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
+                                                    </li>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </li>
                                     <?php endif; ?>
+
+
                                     <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>

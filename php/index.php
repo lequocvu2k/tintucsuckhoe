@@ -344,8 +344,10 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <ul class="dropdown-content">
                                                 <li><a href="./quanlybv.php"><i class="fas fa-pencil-alt"></i> Quản lý bài
                                                         viết</a></li>
-                                                <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
-                                                </li>
+                                                <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
+                                                    <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
+                                                    </li>
+                                                <?php endif; ?>
                                             </ul>
                                         </li>
                                     <?php endif; ?>
