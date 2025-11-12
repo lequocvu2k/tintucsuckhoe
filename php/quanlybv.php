@@ -305,7 +305,7 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
 
                 <li class="dropdowns">
-                    <a href="#">Xếp hạng ▾</a>
+                    <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
                     <ul class="dropdown-nav">
                         <li><a href="#">Nhiều lượt xem hôm nay</a></li>
                         <li><a href="#">Nhiều lượt xem tuần</a></li>
@@ -314,34 +314,17 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                 </li>
 
                 <li class="dropdowns">
-                    <a href="#">Tin tức ▾</a>
+                    <a href="#"><i class="fa-solid fa-heart-pulse"></i> Sức khỏe ▾</a>
                     <ul class="dropdown-nav">
-                        <li><a href="#">Tập luyện</a></li>
-                        <li><a href="#">Nghỉ ngơi</a></li>
-                        <li><a href="#">Thủ thuật</a></li>
-                        <li><a href="#">Dinh dưỡng</a></li>
-                        <li><a href="#">Tinh thần</a></li>
-                        <li><a href="#">Mẹo mắt - lưng</a></li>
+                        <li><a href="./category.php?id=1"><i class="fa-solid fa-newspaper"></i> Tin tức</a></li>
+                        <li><a href="./category.php?id=2"><i class="fa-solid fa-apple-whole"></i> Dinh dưỡng</a></li>
+                        <li><a href="./category.php?id=3"><i class="fa-solid fa-dumbbell"></i> Khỏe đẹp</a></li>
+                        <li><a href="./category.php?id=4"><i class="fa-solid fa-user-doctor"></i> Tư vấn</a></li>
+                        <li><a href="./category.php?id=5"><i class="fa-solid fa-hospital"></i> Dịch vụ y tế</a></li>
+                        <li><a href="./category.php?id=6"><i class="fa-solid fa-virus-covid"></i> Các bệnh</a></li>
                     </ul>
                 </li>
 
-                <li class="dropdowns">
-                    <a href="#">Chương trình tập luyện ▾</a>
-                    <ul class="dropdown-nav">
-                        <li><a href="#">Nhóm cơ</a></li>
-                        <li><a href="#">Theo mục tiêu</a></li>
-                        <li><a href="#">Tự tạo kế hoạch</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdowns">
-                    <a href="#">Dinh dưỡng ▾</a>
-                    <ul class="dropdown-nav">
-                        <li><a href="#">Giảm cân</a></li>
-                        <li><a href="#">Tăng cơ</a></li>
-                        <li><a href="#">Ăn uống lành mạnh</a></li>
-                    </ul>
-                </li>
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-circle-info"></i> Giới thiệu ▾</a>
                     <ul class="dropdown-nav">
@@ -353,6 +336,7 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                         <li><a href="./about.php#team"><i class="fa-solid fa-people-group"></i> Đội ngũ</a></li>
                     </ul>
                 </li>
+
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-envelope-circle-check"></i> Liên hệ ▾</a>
                     <ul class="dropdown-nav">
@@ -368,6 +352,7 @@ $baiviet = $pdo->query("SELECT * FROM baiviet ORDER BY ngay_dang ASC")->fetchAll
                 </li>
             </ul>
         </nav>
+
 
         <!-- PHẦN BÊN PHẢI -->
         <div class="right">
