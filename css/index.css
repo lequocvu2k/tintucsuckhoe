@@ -768,6 +768,7 @@ footer {
 
 .post-info h3 a {
   color: #333;
+  
   text-decoration: none;
 }
 
@@ -846,6 +847,93 @@ footer {
 .editor-item a {
     text-decoration: none;
     color: inherit;
+}
+.popular {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.popular h2 {
+  background: #d60000;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 5px;
+  letter-spacing: 1px;
+}
+
+.popular ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.popular li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  transition: background 0.2s ease;
+}
+
+.popular li:hover {
+  background: #fafafa;
+}
+
+/* Ảnh to rõ, không méo */
+.popular img {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* Phần chữ */
+.popular li div {
+  flex: 1;
+}
+
+.popular li p {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+  font-weight: 600;
+  line-height: 1.4em;
+}
+/* Đặt tiêu đề đậm */
+.popular li .post-title {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333; /* Hoặc màu tùy ý */
+}
+
+/* Làm cho thông tin tác giả và ngày đăng nhạt hơn */
+.popular li .author-date {
+    font-size: 14px;
+    color: #777; /* Màu nhạt hơn */
+    font-weight: normal; /* Đảm bảo không đậm */
+}
+
+.popular li a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.popular li a:hover p {
+  color: #d60000;
+}
+.popular li img {
+    width: auto;   /* Đảm bảo ảnh chiếm toàn bộ chiều rộng của phần tử */
+    height: auto;  /* Giữ tỷ lệ chiều cao của ảnh */
+    max-height: 100px; /* Giảm chiều cao tối đa cho ảnh */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo mó */
 }
 
 @media screen and (max-width: 768px) {

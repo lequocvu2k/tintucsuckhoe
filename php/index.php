@@ -558,20 +558,46 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
                                     <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
                                     <div>
-                                        <p><?= htmlspecialchars($p['tieu_de']) ?></p>
+                                        <p class="post-title"><?= htmlspecialchars($p['tieu_de']) ?></p>
+                                        <!-- Tiêu đề đậm -->
+                                        <p class="author-date"> <!-- Thông tin tác giả và ngày đăng nhạt -->
+                                            <span>By
+                                                <b><?= !empty($author_name) ? htmlspecialchars($author_name) : 'Unknown Author' ?></b>
+                                            </span> •
+                                            <span><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></span>
+                                        </p>
                                     </div>
                                 </a>
                             </li>
                         <?php endforeach; ?>
-                    </ul>
-            </aside>
-        </div>
 
-        <div class="triple-section">
-            <!-- Rankings -->
-            <section class="rankings">
-                <h2>RANKINGS</h2>
-                <?php foreach ($rankings as $r): ?>
+                    </ul>
+                </section>
+            </aside>
+
+            <div class="triple-section">
+                <!-- Rankings -->
+                <section class="rankings">
+                    <h2>RANKINGS</h2>
+                    <?php foreach ($rankings as $r): ?>
+                        <div class="post-item">
+                            <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
+                                <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                                <div class="post-info">
+                                    <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
+                                </div>
+                            </a>
+                            <p class="meta">by <?= htmlspecialchars($r['tac_gia']) ?> |
+                                <?= date("F d, Y", strtotime($r['ngay_dang'])) ?>
+                            </p>
+                        </div>
+                </div>
+            <?php endforeach; ?>
+            </section>
+
+            <section class="interviews">
+                <h2>INTERVIEWS</h2>
+                <?php foreach ($interviews as $i): ?>
                     <div class="post-item">
                         <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
                             <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
@@ -579,31 +605,13 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                             </div>
                         </a>
-                        <p class="meta">by <?= htmlspecialchars($r['tac_gia']) ?> |
-                            <?= date("F d, Y", strtotime($r['ngay_dang'])) ?>
+                        </h3>
+                        <p class="meta">by <?= htmlspecialchars($i['tac_gia']) ?> |
+                            <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
                         </p>
                     </div>
             </div>
         <?php endforeach; ?>
-        </section>
-
-        <section class="interviews">
-            <h2>INTERVIEWS</h2>
-            <?php foreach ($interviews as $i): ?>
-                <div class="post-item">
-                    <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
-                        <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
-                        <div class="post-info">
-                            <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
-                        </div>
-                    </a>
-                    </h3>
-                    <p class="meta">by <?= htmlspecialchars($i['tac_gia']) ?> |
-                        <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
-                    </p>
-                </div>
-                </div>
-            <?php endforeach; ?>
         </section>
         <!-- Recommendations -->
         <section class="recommendations">
