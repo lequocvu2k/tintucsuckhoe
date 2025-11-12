@@ -809,141 +809,89 @@ footer {
   width: 100%;
   border-radius: 10px;
 }
-.editor-item {
-    display: inline-block;
-    width: calc(33.33% - 20px); /* Ba bài mỗi hàng */
-    margin-bottom: 20px;
-    background-color: #fff;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    vertical-align: top;
+.editors .editor-item {
+    display: flex;
+    align-items: center; /* Vertically align the image and text */
+    margin-bottom: 20px;  /* Add space between editor items */
 }
 
-.editor-item:hover {
-    transform: scale(1.05); /* Hiệu ứng zoom khi hover */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Tăng độ shadow khi hover */
+.editors .editor-item a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
 }
 
-.editor-info {
-    padding: 15px;
-    text-align: center;
+.editors .editor-item img {
+    width: 120px;  /* Adjust the image width */
+    height: auto;
+    margin-right: 15px; /* Space between image and text */
 }
 
-.editor-info h3 {
-    font-size: 18px;
+.editors .editor-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.editors .editor-info h3 {
     font-weight: bold;
-    color: #333;
-    margin: 10px 0;
+    margin: 0; /* Remove default margin from h3 */
 }
 
-.editor-info .author-date {
-    font-size: 14px;
+.editors .author-date {
+    font-size: 0.9em;
+    color: #777;
+}
+.latest-item .author-date {
+    font-size: 0.9em;
     color: #777;
     margin-top: 5px;
 }
 
-.editor-item a {
-    text-decoration: none;
-    color: inherit;
+.latest-item .author-date span {
+    margin-right: 5px;
 }
-.popular {
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px 15px;
-  margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.popular h2 {
-  background: #d60000;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
-  font-size: 18px;
-  border-radius: 5px;
-  letter-spacing: 1px;
+.latest-item .post-title {
+    font-weight: bold;  /* Làm cho tiêu đề chữ đậm */
 }
 
 .popular ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+    list-style-type: none;
+    padding: 0;
 }
 
-.popular li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-  transition: background 0.2s ease;
+.popular ul li {
+    display: flex;
+    align-items: center; /* Aligns image and text vertically */
+    margin-bottom: 20px;
 }
 
-.popular li:hover {
-  background: #fafafa;
+.popular ul li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
 }
 
-/* Ảnh to rõ, không méo */
-.popular img {
-  width: 100px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 8px;
-  flex-shrink: 0;
+.popular ul li img {
+    width: 80px;  /* Adjust image width */
+    height: auto;
+    margin-right: 10px; /* Space between the image and the text */
 }
 
-/* Phần chữ */
-.popular li div {
-  flex: 1;
+.popular ul li div {
+    display: flex;
+    flex-direction: column;
 }
 
-.popular li p {
-  margin: 0;
-  font-size: 15px;
-  color: #333;
-  font-weight: 600;
-  line-height: 1.4em;
-}
-/* Đặt tiêu đề đậm */
-.popular li .post-title {
+.popular ul li .post-title {
     font-weight: bold;
-    font-size: 16px;
-    color: #333; /* Hoặc màu tùy ý */
 }
 
-/* Làm cho thông tin tác giả và ngày đăng nhạt hơn */
-.popular li .author-date {
-    font-size: 14px;
-    color: #777; /* Màu nhạt hơn */
-    font-weight: normal; /* Đảm bảo không đậm */
+.popular ul li .author-date {
+    font-size: 0.9em;
+    color: #777;
 }
-
-.popular li a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.popular li a:hover p {
-  color: #d60000;
-}
-.popular li img {
-    width: auto;   /* Đảm bảo ảnh chiếm toàn bộ chiều rộng của phần tử */
-    height: auto;  /* Giữ tỷ lệ chiều cao của ảnh */
-    max-height: 100px; /* Giảm chiều cao tối đa cho ảnh */
-    object-fit: cover; /* Đảm bảo ảnh không bị méo mó */
-}
-
-@media screen and (max-width: 768px) {
-    .editor-item {
-        width: calc(50% - 20px); /* Hai bài mỗi hàng trên thiết bị tablet */
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .editor-item {
-        width: 100%; /* Một bài mỗi hàng trên thiết bị di động */
-    }
+.popular ul li img {
+    width: 120px;  /* Adjust image width to make it bigger */
+    height: auto;
+    margin-right: 15px; /* Increase space between the image and the text */
 }

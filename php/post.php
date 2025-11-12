@@ -62,7 +62,6 @@ if (isset($_SESSION['user_id'])) {
     $id_kh = $_SESSION['user_id'];
     $ma_bai_viet = $post['ma_bai_viet'];
 
-
     // Kiểm tra nếu người dùng đã đọc bài trong vòng 24 giờ chưa
     $check = $pdo->prepare("
     SELECT COUNT(*) 
@@ -133,71 +132,6 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
-// ✅ CỘNG ĐIỂM KHI NGƯỜI DÙNG ĐỌC BÀI VIẾT
-if (isset($_SESSION['user_id'])) {
-    $reader_id = $_SESSION['user_id'];
-
-    // Điểm thưởng có thể phụ thuộc độ dài bài viết (VD: 100 điểm mỗi 500 ký tự)
-    $points_to_add = max(50, round(strlen(strip_tags($post['noi_dung'])) / 500));
-
-    // Kiểm tra xem đã cộng điểm cho bài viết này trong 24h chưa
-    $stmt_check = $pdo->prepare("
-        SELECT COUNT(*) FROM diemdoc
-        WHERE id_kh = :id_kh 
-          AND ma_bai_viet = :ma_bai_viet 
-          AND ngay_them >= NOW() - INTERVAL 1 DAY
-    ");
-    $stmt_check->execute(['id_kh' => $reader_id, 'ma_bai_viet' => $post['ma_bai_viet']]);
-    $already_added = $stmt_check->fetchColumn();
-
-    if ($already_added == 0) {
-        // Cộng điểm
-// Cộng điểm vào bảng khachhang
-        $stmt_update = $pdo->prepare("
-    UPDATE khachhang 
-    SET so_diem = so_diem + :diem 
-    WHERE id_kh = :id_kh
-");
-        $stmt_update->execute(['diem' => $points_to_add, 'id_kh' => $id_kh]);
-
-        // Ghi lại lịch sử cộng điểm vào diemdoc
-        $stmt_log = $pdo->prepare("
-    INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, loai_giao_dich, ngay_them)
-    VALUES (:id_kh, :ma_bai_viet, :diem_cong, 'xem_bai', NOW())
-");
-        $stmt_log->execute([
-            'id_kh' => $id_kh,
-            'ma_bai_viet' => $post['ma_bai_viet'],
-            'diem_cong' => $points_to_add
-        ]);
-
-        // ✅ Popup thông báo +XP
-        echo "
-        <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const popup = document.createElement('div');
-            popup.textContent = '+{$points_to_add} điểm!';
-            popup.style.position = 'fixed';
-            popup.style.bottom = '80px';
-            popup.style.right = '30px';
-            popup.style.background = 'rgba(0, 200, 0, 0.9)';
-            popup.style.color = '#fff';
-            popup.style.padding = '10px 20px';
-            popup.style.borderRadius = '10px';
-            popup.style.fontWeight = 'bold';
-            popup.style.fontSize = '18px';
-            popup.style.zIndex = '9999';
-            popup.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
-            popup.style.transition = 'all 0.5s ease';
-            document.body.appendChild(popup);
-            setTimeout(() => { popup.style.opacity = '0'; popup.style.transform = 'translateY(-50px)'; }, 2000);
-            setTimeout(() => { popup.remove(); }, 2500);
-        });
-        </script>
-        ";
-    }
-}
-
 // --- Lấy thông tin tác giả ---
 $stmt_author = $pdo->prepare("SELECT ho_ten, email, avatar_url, avatar_frame FROM khachhang WHERE id_kh = ?");
 $stmt_author->execute([$post['id_kh']]);
@@ -214,10 +148,12 @@ $stmt = $pdo->query("SELECT * FROM baiviet WHERE trang_thai='published' AND danh
 $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // --- Lấy bài trước & tiếp theo ---
+// Lấy bài trước
 $stmt_prev = $pdo->prepare("SELECT * FROM baiviet WHERE ngay_dang < ? AND trang_thai='published' ORDER BY ngay_dang DESC LIMIT 1");
 $stmt_prev->execute([$post['ngay_dang']]);
 $prev_post = $stmt_prev->fetch(PDO::FETCH_ASSOC);
 
+// Lấy bài tiếp theo
 $stmt_next = $pdo->prepare("SELECT * FROM baiviet WHERE ngay_dang > ? AND trang_thai='published' ORDER BY ngay_dang ASC LIMIT 1");
 $stmt_next->execute([$post['ngay_dang']]);
 $next_post = $stmt_next->fetch(PDO::FETCH_ASSOC);
@@ -612,18 +548,18 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                     <span class="no-next">❌ Không có bài tiếp theo</span>
                 <?php endif; ?>
             </div>
-            <!-- YOU MAY ALSO LIKE -->
             <section class="related-posts">
                 <h2>BẠN CÓ THỂ THÍCH</h2>
                 <div class="related-grid">
                     <?php
+                    // Cập nhật LIMIT từ 6 thành 4 để lấy 4 bài ngẫu nhiên
                     $stmt_related = $pdo->prepare("
             SELECT * FROM baiviet 
             WHERE ma_bai_viet != ? AND trang_thai = 'published'
-            ORDER BY RAND() 
-            LIMIT 6
+            ORDER BY RAND()  -- Sắp xếp ngẫu nhiên
+            LIMIT 4          -- Lấy 4 bài viết
         ");
-                    $stmt_related->execute([$post['ma_bai_viet']]);
+                    $stmt_related->execute([$post['ma_bai_viet']]);  // Lấy bài viết không phải bài hiện tại
                     $related = $stmt_related->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($related as $r): ?>
@@ -637,6 +573,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                     <?php endforeach; ?>
                 </div>
             </section>
+
             <div class="comment-section">
                 <h3>THAM GIA BÌNH LUẬN</h3>
 
@@ -760,9 +697,10 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
             </ul>
 
             <div class="ads">
-                <h4>ADVERTISEMENT</h4>
-                <div class="ad-box">AD 1</div>
-                <div class="ad-box">AD 2</div>
+
+                <div class="ad-box">Advertisement</div>
+                <br>
+                <div class="ad-box">Advertisement</div>
             </div>
         </aside>
     </main>

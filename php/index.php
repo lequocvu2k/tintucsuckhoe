@@ -543,11 +543,21 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="latest-item">
                             <a href="./post.php?slug=<?= urlencode($l['duong_dan']) ?>">
                                 <img src="<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
-                                <p><?= htmlspecialchars($l['tieu_de']) ?></p>
+                                <!-- Tiêu đề đậm -->
+                                <p class="post-title"><?= htmlspecialchars($l['tieu_de']) ?></p>
+                                <!-- Thêm thông tin tác giả và ngày đăng -->
+                                <div class="author-date">
+                                    <span>By
+                                        <b><?= !empty($author_name) ? htmlspecialchars($author_name) : 'Unknown Author' ?></b>
+                                    </span> •
+                                    <span><?= date("F d, Y", strtotime($l['ngay_dang'])) ?></span>
+                                </div>
                             </a>
-                        <?php endforeach; ?>
-                    </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </section>
+
 
             <aside class="popular">
                 <section class="latest">
