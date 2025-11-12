@@ -33,7 +33,7 @@
 .frame-overlay1 {
   position: absolute;
   top: -12px; /* bằng border của avatar */
-  left: -1px; /* bằng border của avatar */
+  left: -11px; /* bằng border của avatar */
   width: 126px; /* avatar 120px + border 3px * 2 */
   height: 126px;
   border-radius: 50%;
