@@ -573,20 +573,24 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                             }
                         }
                     }
-
                     if (!empty($frame)): ?>
                         <img src="<?= $frame ?>" alt="Frame" class="frame-overlay">
                     <?php endif; ?>
                 </div>
-
-
                 <div class="user-email">
                     <?php
                     // Hiển thị "ADMIN" nếu email là 'baka@gmail.com' từ tác giả
                     if ($author_email == 'baka@gmail.com'): ?>
                         <span class="role-badge1">ADMIN</span>
                     <?php else: ?>
-                        <?= htmlspecialchars($author_email) ?>
+                        <!-- Ẩn VIP tier nếu là admin -->
+                        <?php if ($user['email'] != 'baka@gmail.com'): ?>
+                            <p>
+                                <b class="vip-tier1 <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                    <?= htmlspecialchars($tier) ?>
+                                </b>
+                            </p>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -707,7 +711,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                         <!-- Ẩn VIP tier nếu là admin -->
                                         <?php if ($user['email'] != 'baka@gmail.com'): ?>
                                             <p>
-                                                <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                                <b class="vip-tier1 <?= strtolower(str_replace(' ', '-', $tier)) ?>">
                                                     <?= htmlspecialchars($tier) ?>
                                                 </b>
                                             </p>
