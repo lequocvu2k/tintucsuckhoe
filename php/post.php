@@ -685,8 +685,12 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
             <ul class="popular-list">
                 <?php foreach ($popular as $p): ?>
                     <li class="popular-item">
-                        <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                        <!-- Bọc ảnh trong thẻ <a> -->
+                        <a href="post.php?slug=<?= urlencode($p['duong_dan']) ?>">
+                            <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                        </a>
                         <div class="info">
+                            <!-- Tiêu đề vẫn là một liên kết -->
                             <a href="post.php?slug=<?= urlencode($p['duong_dan']) ?>">
                                 <?= htmlspecialchars($p['tieu_de']) ?>
                             </a>

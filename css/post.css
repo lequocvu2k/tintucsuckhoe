@@ -793,3 +793,10 @@ footer {
   text-decoration: none; /* Bỏ gạch chân khi hover */
   color: #007bff; /* Thêm màu cho hover nếu cần */
 }
+.popular-list .popular-item img {
+    width: 110px; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng của container */
+    height: auto; /* Để chiều cao tự động điều chỉnh theo tỷ lệ */
+    max-height: 250px; /* Đặt chiều cao tối đa cho ảnh */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo, lấp đầy không gian */
+    border-radius: 10px; /* Cải thiện giao diện với góc bo tròn */
+}
