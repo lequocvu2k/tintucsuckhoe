@@ -30,6 +30,33 @@
     background-position: 100% 50%;
   }
 }
+.frame-overlay1 {
+  position: absolute;
+  top: -12px; /* bằng border của avatar */
+  left: -1px; /* bằng border của avatar */
+  width: 126px; /* avatar 120px + border 3px * 2 */
+  height: 126px;
+  border-radius: 50%;
+  pointer-events: none;
+  object-fit: cover;
+}
+.cancel-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 8px 16px;
+    background-color: #f44336;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cancel-btn:hover {
+    background-color: #e53935;
+}
+
 /* Dòng thông báo */
 .msg {
   margin-top: 10px;
@@ -92,16 +119,6 @@
   100% {
     background-position: 0% 50%;
   }
-}
-.frame-overlay1 {
-  position: absolute;
-  top: 200px; /* bằng border của avatar */
-  left: 55px; /* bằng border của avatar */
-  width: 126px; /* avatar 120px + border 3px * 2 */
-  height: 134px;
-  border-radius: 50%;
-  pointer-events: none;
-  object-fit: cover;
 }
 
 /* Tổng thể cho trang quản lý yêu cầu */
@@ -217,16 +234,6 @@ td img.avatar {
     border: 3px solid #fff; /* Viền avatar */
 }
 
-/* Style cho Khung Avatar */
-.frame-overlay1 {
-    width: 126px; /* Khung lớn hơn avatar một chút */
-    height: 136px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #fff; /* Viền khung */
-    margin-left: 0; /* Khoảng cách giữa avatar và khung */
-}
-
 /* Các trạng thái yêu cầu */
 span.chờ-duyệt {
   color: #f39c12;
@@ -322,4 +329,49 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #333;
+}
+.role-selection {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.role-selection h3 {
+    text-align: center;
+    font-size: 20px;
+    color: #333;
+}
+
+.role-selection form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.role-selection label {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.role-selection select {
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.role-selection button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.role-selection button:hover {
+    background-color: #45a049;
 }
