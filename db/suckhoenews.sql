@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 13, 2025 lúc 03:53 AM
+-- Thời gian đã tạo: Th10 13, 2025 lúc 03:57 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -281,7 +281,7 @@ CREATE TABLE `khachhang` (
 --
 
 INSERT INTO `khachhang` (`id_kh`, `ho_ten`, `email`, `sdt`, `dia_chi`, `gioi_tinh`, `ngay_sinh`, `quoc_gia`, `tinh_thanh`, `vai_tro`, `so_diem`, `xp`, `avatar_url`, `avatar_frame`) VALUES
-(9, 'Hayase Yuuka', 'baka@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'QuanTri', 800, 0, '../uploads/avatars/1762857789_$value[1].png', 'chiu'),
+(9, 'Hayase Yuuka', 'baka@gmail.com', '8686868686', 'Trái Đất', 'Nữ', '2005-12-04', 'Việt Nam', 'Hà Nội', 'QuanTri', 800, 0, '../uploads/avatars/1762857789_$value[1].png', 'chiu'),
 (10, 'Yuuka Pajama', 'takina412@gmail.com', NULL, NULL, 'Khác', NULL, 'Việt Nam', NULL, 'NhanVien', 147, 100, '../uploads/avatars/1762915411_azusa.jpg', 'gi');
 
 -- --------------------------------------------------------
