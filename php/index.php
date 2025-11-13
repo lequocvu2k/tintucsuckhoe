@@ -585,7 +585,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </ul>
                 </section>
             </aside>
-
+</div>
             <div class="triple-section">
                 <!-- Rankings -->
                 <section class="rankings">
