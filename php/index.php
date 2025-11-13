@@ -213,11 +213,12 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
-        <div class="left">
-            <a href="index.php" class="logo-link">
-                <img src="../img/logo.svg" alt="Logo" class="logo-img" />
-            </a>
-        </div>
+      <div class="left">
+    <a href="index.php" class="logo-link">
+        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+    </a>
+</div>
+
 
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">
@@ -692,6 +693,29 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             © 2025 <strong>Nhóm 6</strong> — Tin tức Sức khỏe 🌱 | Lan tỏa kiến thức · Sống khỏe mỗi ngày
         </div>
     </footer>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const slider = document.querySelector(".slider");
+    const slides = document.querySelectorAll(".slide");
+    const prevBtn = document.querySelector(".prev");
+    const nextBtn = document.querySelector(".next");
+
+    let index = 0;
+
+    function showSlide(i) {
+        index = (i + slides.length) % slides.length;
+        slider.style.transform = `translateX(${-index * 100}%)`;
+    }
+
+    nextBtn.addEventListener("click", () => {
+        showSlide(index + 1);
+    });
+
+    prevBtn.addEventListener("click", () => {
+        showSlide(index - 1);
+    });
+});
+</script>
 
 </body>
 

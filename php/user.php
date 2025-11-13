@@ -267,11 +267,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
-        <div class="left">
-            <a href="index.php" class="logo-link">
-                <img src="../img/logo.svg" alt="Logo" class="logo-img" />
-            </a>
-        </div>
+    <div class="left">
+    <a href="index.php" class="logo-link">
+        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+    </a>
+</div>
+
 
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">
@@ -624,8 +625,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <img src="../frames/fire.png" alt="Fire Frame">
                         </label>
                         <label>
-                            <input type="radio" name="avatar_frame" value="fire1" <?= ($user['avatar_frame'] == 'fire1') ? 'checked' : '' ?>>
-                            <img src="../frames/fire1.png" alt="Fire Frame">
+                            <input type="radio" name="avatar_frame" value="gc" <?= ($user['avatar_frame'] == 'gc') ? 'checked' : '' ?>>
+                            <img src="../frames/gc.gif" alt="Fire Frame">
                         </label>
                         <label>
                             <input type="radio" name="avatar_frame" value="ice" <?= ($user['avatar_frame'] == 'ice') ? 'checked' : '' ?>>

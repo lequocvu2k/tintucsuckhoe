@@ -165,11 +165,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
-        <div class="left">
-            <a href="index.php" class="logo-link">
-                <img src="../img/logo.svg" alt="Logo" class="logo-img" />
-            </a>
-        </div>
+    <div class="left">
+    <a href="index.php" class="logo-link">
+        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+    </a>
+</div>
 
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">

@@ -282,7 +282,7 @@ if (!empty($filter)) {
     $stmt = $pdo->prepare($sql . " WHERE b.ma_chuyen_muc = ? ORDER BY b.ngay_dang DESC");
     $stmt->execute([$filter]);
 } else {
-    $stmt = $pdo->prepare($sql . " ORDER BY b.ngay_dang DESC");
+    $stmt = $pdo->prepare($sql . " ORDER BY b.ma_bai_viet ASC");
     $stmt->execute();
 }
 
@@ -314,11 +314,12 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
-        <div class="left">
-            <a href="index.php" class="logo-link">
-                <img src="../img/logo.svg" alt="Logo" class="logo-img" />
-            </a>
-        </div>
+     <div class="left">
+    <a href="index.php" class="logo-link">
+        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+    </a>
+</div>
+
 
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">

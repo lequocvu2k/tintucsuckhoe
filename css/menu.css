@@ -17,17 +17,18 @@
   padding: 8px 24px;
   z-index: 1000;
 }
+.logo-img {
+    width: 140px;      /* tăng chiều rộng logo */
+    height: auto;      /* giữ tỷ lệ ảnh */
+    object-fit: contain; 
+    display: block;
+}
 
 .site-header .left {
   display: flex;
   align-items: center;
 }
 
-.logo-img {
-  height: 48px;
-  width: auto;
-  transition: transform 0.3s;
-}
 
 .logo-img:hover {
   transform: scale(1.05);
