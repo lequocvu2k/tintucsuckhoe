@@ -282,36 +282,76 @@ try {
             </ul>
         </section>
 
-        <section id="team">
-            <h2>Đội ngũ của chúng tôi</h2>
-            <div class="team">
-                <?php
-                if (isset($error)) {
-                    echo '<p style="color:red;">' . $error . '</p>';
-                } elseif ($members) {
-                    foreach ($members as $mem) {
-                        $avatarPath = '../img/' . $mem['avatar_url'];
-                        $avatar = (!empty($mem['avatar_url']) && file_exists($avatarPath))
-                            ? $avatarPath
-                            : '../img/avt.jpg';
+     <section id="team">
+    <h2>Đội ngũ của chúng tôi</h2>
+    <div class="team">
+        <?php
+        if (isset($error)) {
+            echo '<p style="color:red;">' . $error . '</p>';
+        } elseif ($members) {
 
-                        $roleName = ($mem['vai_tro'] === 'QuanTri')
-                            ? 'Quản trị viên'
-                            : 'Nhân viên';
+            foreach ($members as $mem) {
 
-                        echo '
-                        <div class="member">
-                            <img src="' . htmlspecialchars($avatar) . '" alt="Avatar">
-                            <h4>' . htmlspecialchars($mem['ho_ten']) . '</h4>
-                            <span>' . $roleName . '</span>
-                        </div>';
-                    }
-                } else {
-                    echo '<p>Hiện chưa có thành viên nào trong đội ngũ.</p>';
-                }
+                // Avatar user
+                $avatar = (!empty($mem['avatar_url']) && file_exists($mem['avatar_url']))
+                    ? htmlspecialchars($mem['avatar_url'])
+                    : '../img/avt.jpg';
+
+                // Frame giống code bạn gửi
+           // Frame avatar (KHÔNG dùng $user, mà dùng $mem)
+$frame = '';
+if (!empty($mem['avatar_frame'])) {
+
+    $name = htmlspecialchars($mem['avatar_frame']); // vd: fire, ice, gold
+    $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
+
+    foreach ($possibleExtensions as $ext) {
+
+        $realPath = __DIR__ . '/../frames/' . $name . '.' . $ext;
+        $webPath  = '../frames/' . $name . '.' . $ext;
+
+        // DEBUG — xem file có tồn tại không
+        if (!file_exists($realPath)) {
+            // echo "<p style='color:red'>Không tìm thấy: $realPath</p>";
+        }
+
+        if (file_exists($realPath)) {
+            $frame = $webPath;
+            break;
+        }
+    }
+}
+
+
+                // Role
+                $roleName = ($mem['vai_tro'] === 'QuanTri') ? 'Quản trị viên' : 'Nhân viên';
                 ?>
-            </div>
-        </section>
+
+                <div class="member">
+                    <div class="avatar-container">
+                        <!-- Avatar -->
+                        <img src="<?= $avatar ?>" alt="Avatar" class="avatar">
+
+                        <!-- Frame overlay -->
+                        <?php if (!empty($frame)): ?>
+                            <img src="<?= $frame ?>" alt="Frame" class="frame-overlay">
+                        <?php endif; ?>
+                    </div>
+
+                    <h4><?= htmlspecialchars($mem['ho_ten']) ?></h4>
+                    <span><?= $roleName ?></span>
+                </div>
+
+                <?php
+            }
+
+        } else {
+            echo '<p>Hiện chưa có thành viên nào trong đội ngũ.</p>';
+        }
+        ?>
+    </div>
+</section>
+
     </main>
 
     <footer class="site-footer">
