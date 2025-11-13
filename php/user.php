@@ -29,22 +29,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_request'])) {
 }
 
 // Xử lý xóa tài khoản khi người dùng nhấn nút
+// Xử lý xóa tài khoản khi người dùng nhấn nút
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
-    // Xóa thông tin người dùng khỏi bảng "khachhang"
-    $stmt = $pdo->prepare("DELETE FROM khachhang WHERE id_kh = :id");
-    $stmt->bindParam(':id', $id_kh);
-    $stmt->execute();
 
-    // Xóa thông tin người dùng khỏi bảng "taotaikhoan" nếu có
+    // 1️⃣ Xóa trong bảng taotaikhoan
     $stmt = $pdo->prepare("DELETE FROM taotaikhoan WHERE id_kh = :id");
     $stmt->bindParam(':id', $id_kh);
     $stmt->execute();
 
-    // Đăng xuất người dùng và chuyển hướng về trang chủ
+    // 2️⃣ Xóa trong bảng dangnhap (dùng username)
+    $stmt = $pdo->prepare("
+        DELETE FROM dangnhap 
+        WHERE username = (
+            SELECT username FROM taotaikhoan WHERE id_kh = :id LIMIT 1
+        )
+    ");
+    $stmt->bindParam(':id', $id_kh);
+    $stmt->execute();
+
+    // 3️⃣ Xóa trong bảng khachhang
+    $stmt = $pdo->prepare("DELETE FROM khachhang WHERE id_kh = :id");
+    $stmt->bindParam(':id', $id_kh);
+    $stmt->execute();
+
+    // Đăng xuất người dùng và chuyển về trang chủ
     session_destroy();
     header('Location: index.php');
     exit;
 }
+
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
 $stmt = $pdo->prepare("
     SELECT kh.*, tk.ngay_tao
@@ -223,26 +236,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- Đổi mật khẩu ---
-    if (isset($_POST['update_pass'])) {
-        $matkhau_cu = $_POST['matkhau_cu'] ?? '';
-        $matkhau_moi = $_POST['matkhau_moi'] ?? '';
+   // --- Đổi mật khẩu ---
+if (isset($_POST['update_pass'])) {
+    $matkhau_cu = $_POST['matkhau_cu'] ?? '';
+    $matkhau_moi = $_POST['matkhau_moi'] ?? '';
 
-        $stmt = $pdo->prepare("SELECT mat_khau FROM doimatkhau WHERE id_kh = :id ORDER BY id_dmk DESC LIMIT 1");
-        $stmt->execute([':id' => $id_kh]);
-        $matkhau = $stmt->fetchColumn();
+    // 1️⃣ Lấy mật khẩu hiện tại từ bảng taotaikhoan
+    $stmt = $pdo->prepare("SELECT username, password FROM taotaikhoan WHERE id_kh = :id LIMIT 1");
+    $stmt->execute([':id' => $id_kh]);
+    $account = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($matkhau && password_verify($matkhau_cu, $matkhau)) {
-            $hash = password_hash($matkhau_moi, PASSWORD_DEFAULT);
-            $up = $pdo->prepare("INSERT INTO doimatkhau (id_kh, mat_khau, ngay_tao) VALUES (:id, :matkhau, NOW())");
-            $up->execute([':matkhau' => $hash, ':id' => $id_kh]);
-            $_SESSION['success'] = "✅ Đổi mật khẩu thành công!";
-        } else {
-            $_SESSION['error'] = "❌ Mật khẩu hiện tại không đúng!";
-        }
-        header("Location: user.php");
+    if (!$account) {
+        $_SESSION['error'] = "❌ Không tìm thấy tài khoản!";
+        header("Location: user.php?view=settings");
         exit;
     }
+
+    $username = $account['username'];
+    $password_hash = $account['password'];
+
+    // 2️⃣ Mật khẩu cũ KHÔNG phải hash → so sánh trực tiếp
+    if ($matkhau_cu !== $password_hash) {
+        $_SESSION['error'] = "❌ Mật khẩu hiện tại không đúng!";
+        header("Location: user.php?view=settings");
+        exit;
+    }
+
+    // 3️⃣ Hash mật khẩu mới
+    $newHash = $matkhau_moi; // nếu bạn chưa dùng hash
+    // Nếu bạn muốn hash thực sự thì dùng:
+    // $newHash = password_hash($matkhau_moi, PASSWORD_DEFAULT);
+
+    // 4️⃣ Cập nhật taotaikhoan
+    $stmt = $pdo->prepare("
+        UPDATE taotaikhoan
+        SET password = :pass, confirm_password = :pass
+        WHERE id_kh = :id
+    ");
+    $stmt->execute([
+        ':pass' => $newHash,
+        ':id' => $id_kh
+    ]);
+
+    // 5️⃣ Cập nhật dangnhap theo username
+    $stmt = $pdo->prepare("UPDATE dangnhap SET password = :pass WHERE username = :username");
+    $stmt->execute([
+        ':pass' => $newHash,
+        ':username' => $username
+    ]);
+
+    $_SESSION['success'] = "✅ Đổi mật khẩu thành công!";
+    header("Location: user.php?view=settings");
+    exit;
+}
+
 }
 ?>
 <!DOCTYPE html>

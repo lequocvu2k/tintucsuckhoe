@@ -205,7 +205,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
-    <script src="../js/index.js"></script>
+ 
 </head>
 
 <body>
@@ -484,25 +484,39 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="top-grid">
             <!-- LEFT: Editor's Picks -->
             <section class="editors">
-                <h2>EDITOR'S PICKS</h2>
-                <?php foreach ($editors as $e): ?>
-                    <div class="editor-item">
-                        <a href="./post.php?slug=<?= urlencode($e['duong_dan'] ?? '') ?>">
-                            <img src="<?= htmlspecialchars($e['anh_bv'] ?? '') ?>" alt="">
-                            <div class="editor-info">
-                                <h3><?= htmlspecialchars($e['tieu_de'] ?? 'No Title') ?></h3>
-                                <div class="author-date">
-                                    <span>By
-                                        <b><?= !empty($author_name) ? htmlspecialchars($author_name) : 'Unknown Author' ?></b>
-                                    </span> •
-                                    <span><?= date("F d, Y", strtotime($e['ngay_dang'])) ?></span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+    <h2>EDITOR'S PICKS</h2>
 
-                <?php endforeach; ?>
-            </section>
+    <?php foreach ($editors as $e): ?>
+
+        <?php
+        // 🔍 Lấy tên tác giả đúng theo id_kh trong bảng baiviet
+        $stmtAuthor = $pdo->prepare("
+            SELECT ho_ten 
+            FROM khachhang 
+            WHERE id_kh = ?
+            LIMIT 1
+        ");
+        $stmtAuthor->execute([$e['id_kh']]);
+        $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
+        ?>
+
+        <div class="editor-item">
+            <a href="./post.php?slug=<?= urlencode($e['duong_dan'] ?? '') ?>">
+                <img src="<?= htmlspecialchars($e['anh_bv'] ?? '') ?>" alt="">
+                <div class="editor-info">
+                    <h3><?= htmlspecialchars($e['tieu_de'] ?? 'No Title') ?></h3>
+
+                    <div class="author-date">
+                        <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
+                        <span><?= date("F d, Y", strtotime($e['ngay_dang'])) ?></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    <?php endforeach; ?>
+</section>
+
 
             <!-- RIGHT: Main Highlights -->
             <section class="highlights">
@@ -540,51 +554,75 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <section class="latest">
                 <h2>LATEST POSTS</h2>
                 <div class="latest-grid">
-                    <?php foreach ($latest as $l): ?>
-                        <div class="latest-item">
-                            <a href="./post.php?slug=<?= urlencode($l['duong_dan']) ?>">
-                                <img src="<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
-                                <!-- Tiêu đề đậm -->
-                                <p class="post-title"><?= htmlspecialchars($l['tieu_de']) ?></p>
-                                <!-- Thêm thông tin tác giả và ngày đăng -->
-                                <div class="author-date">
-                                    <span>By
-                                        <b><?= !empty($author_name) ? htmlspecialchars($author_name) : 'Unknown Author' ?></b>
-                                    </span> •
-                                    <span><?= date("F d, Y", strtotime($l['ngay_dang'])) ?></span>
-                                </div>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
+                   <?php foreach ($latest as $l): ?>
+
+    <?php
+    // Lấy tác giả đúng từ bảng khachhang theo id_kh của bài viết
+    $stmtAuthor = $pdo->prepare("
+        SELECT ho_ten 
+        FROM khachhang 
+        WHERE id_kh = ?
+        LIMIT 1
+    ");
+    $stmtAuthor->execute([$l['id_kh']]);
+    $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
+    ?>
+
+    <div class="latest-item">
+        <a href="./post.php?slug=<?= urlencode($l['duong_dan']) ?>">
+            <img src="<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
+            <p class="post-title"><?= htmlspecialchars($l['tieu_de']) ?></p>
+
+            <div class="author-date">
+                <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
+                <span><?= date("F d, Y", strtotime($l['ngay_dang'])) ?></span>
+            </div>
+        </a>
+    </div>
+
+<?php endforeach; ?>
+
                 </div>
             </section>
 
 
-            <aside class="popular">
-                <section class="latest">
-                    <h2>POPULAR POSTS</h2>
-                    <ul>
-                        <?php foreach ($popular as $p): ?>
-                            <li>
-                                <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
-                                    <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
-                                    <div>
-                                        <p class="post-title"><?= htmlspecialchars($p['tieu_de']) ?></p>
-                                        <!-- Tiêu đề đậm -->
-                                        <p class="author-date"> <!-- Thông tin tác giả và ngày đăng nhạt -->
-                                            <span>By
-                                                <b><?= !empty($author_name) ? htmlspecialchars($author_name) : 'Unknown Author' ?></b>
-                                            </span> •
-                                            <span><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></span>
-                                        </p>
-                                    </div>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
+           <aside class="popular">
+    <section class="latest">
+        <h2>POPULAR POSTS</h2>
+        <ul>
+            <?php foreach ($popular as $p): ?>
 
-                    </ul>
-                </section>
-            </aside>
+                <?php
+                // 🔍 Lấy tên tác giả đúng của bài viết
+                $stmtAuthor = $pdo->prepare("
+                    SELECT ho_ten 
+                    FROM khachhang 
+                    WHERE id_kh = ?
+                    LIMIT 1
+                ");
+                $stmtAuthor->execute([$p['id_kh']]);
+                $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
+                ?>
+
+                <li>
+                    <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
+                        <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                        <div>
+                            <p class="post-title"><?= htmlspecialchars($p['tieu_de']) ?></p>
+
+                            <p class="author-date">
+                                <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
+                                <span><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></span>
+                            </p>
+                        </div>
+                    </a>
+                </li>
+
+            <?php endforeach; ?>
+        </ul>
+    </section>
+</aside>
+
 </div>
             <div class="triple-section">
                 <!-- Rankings -->
@@ -693,6 +731,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             © 2025 <strong>Nhóm 6</strong> — Tin tức Sức khỏe 🌱 | Lan tỏa kiến thức · Sống khỏe mỗi ngày
         </div>
     </footer>
+       <script src="../js/index.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const slider = document.querySelector(".slider");
@@ -715,8 +754,8 @@ document.addEventListener("DOMContentLoaded", function () {
         showSlide(index - 1);
     });
 });
-</script>
 
+</script>
 </body>
 
 </html>
