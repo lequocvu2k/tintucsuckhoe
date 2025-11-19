@@ -285,6 +285,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <!-- Thanh tìm kiếm -->
             <div class="search-bar" id="searchBar">
                 <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
+                <ul id="searchSuggestions" class="search-suggestions"></ul>
                 <button id="searchSubmit"><i class="fas fa-arrow-right"></i></button>
             </div>
 
@@ -390,15 +391,6 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </div>
     </header>
-
-    <!-- Overlay tìm kiếm -->
-    <div id="searchOverlay" class="search-overlay" aria-hidden="true">
-        <div class="search-box">
-            <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput" />
-            <button id="searchSubmit" class="btn">Tìm</button>
-            <button id="closeSearch" class="btn-close" aria-label="Đóng">✕</button>
-        </div>
-    </div>
     <!-- Popup -->
     <?php $popupChecked = isset($_GET['error']) ? 'checked' : ''; ?>
     <input type="radio" name="popup" id="showLogin" hidden>

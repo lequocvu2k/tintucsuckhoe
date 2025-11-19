@@ -86,3 +86,50 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+const searchInput = document.getElementById("searchInput");
+const suggestionsBox = document.getElementById("searchSuggestions");
+
+// Gợi ý theo thời gian thực
+searchInput.addEventListener("input", function () {
+  const keyword = searchInput.value.trim();
+
+  if (keyword.length < 1) {
+    suggestionsBox.innerHTML = "";
+    suggestionsBox.style.display = "none";
+    return;
+  }
+
+  fetch(`search_ajax.php?q=${encodeURIComponent(keyword)}`)
+    .then((res) => res.json())
+    .then((data) => {
+      suggestionsBox.innerHTML = "";
+      suggestionsBox.style.display = "block";
+
+      if (data.length === 0) {
+        suggestionsBox.innerHTML = "<li class='no-result'>Không tìm thấy</li>";
+        return;
+      }
+
+      data.forEach((item) => {
+        const li = document.createElement("li");
+        li.classList.add("suggest-item");
+        li.innerHTML = `
+                    <img src="${item.anh_bv}" alt="">
+                    <span>${item.tieu_de}</span>
+                `;
+        li.onclick = () => {
+          window.location.href =
+            "post.php?slug=" + encodeURIComponent(item.duong_dan);
+        };
+        suggestionsBox.appendChild(li);
+      });
+    });
+});
+
+// Nhấn Enter → sang trang search
+searchInput.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    const keyword = searchInput.value.trim();
+    window.location.href = "search.php?q=" + encodeURIComponent(keyword);
+  }
+});

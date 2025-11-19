@@ -142,6 +142,8 @@ try {
             <!-- Thanh tìm kiếm -->
             <div class="search-bar" id="searchBar">
                 <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
+                <ul id="searchSuggestions" class="search-suggestions"></ul>
+
                 <button id="searchSubmit"><i class="fas fa-arrow-right"></i></button>
             </div>
 
