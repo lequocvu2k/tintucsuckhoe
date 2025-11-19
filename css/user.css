@@ -1196,6 +1196,61 @@ form button {
 .level-1 {
     color: #8c8c8c; /* Màu xám cho cấp thấp */
 }
+/* ====================== BÀI VIẾT ĐÃ LƯU ====================== */
+
+.saved-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.saved-item {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.saved-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.saved-item img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.saved-item h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 12px;
+}
+
+.saved-item p {
+    font-size: 13px;
+    color: #777;
+    margin: 0 12px 12px;
+}
+
+/* Icon giống lịch sử đọc */
+.saved-item .tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #00c6a7;
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 8px;
+}
+.saved-grid a {
+    text-decoration: none !important;
+    color: inherit; /* Giữ nguyên màu chữ */
+}
 
 /* Responsive tinh chỉnh kích cỡ card */
 @media (min-width: 1280px) {

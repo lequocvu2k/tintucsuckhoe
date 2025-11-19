@@ -236,59 +236,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-   // --- Đổi mật khẩu ---
-if (isset($_POST['update_pass'])) {
-    $matkhau_cu = $_POST['matkhau_cu'] ?? '';
-    $matkhau_moi = $_POST['matkhau_moi'] ?? '';
+    // --- Đổi mật khẩu ---
+    if (isset($_POST['update_pass'])) {
+        $matkhau_cu = $_POST['matkhau_cu'] ?? '';
+        $matkhau_moi = $_POST['matkhau_moi'] ?? '';
 
-    // 1️⃣ Lấy mật khẩu hiện tại từ bảng taotaikhoan
-    $stmt = $pdo->prepare("SELECT username, password FROM taotaikhoan WHERE id_kh = :id LIMIT 1");
-    $stmt->execute([':id' => $id_kh]);
-    $account = $stmt->fetch(PDO::FETCH_ASSOC);
+        // 1️⃣ Lấy mật khẩu hiện tại từ bảng taotaikhoan
+        $stmt = $pdo->prepare("SELECT username, password FROM taotaikhoan WHERE id_kh = :id LIMIT 1");
+        $stmt->execute([':id' => $id_kh]);
+        $account = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$account) {
-        $_SESSION['error'] = "❌ Không tìm thấy tài khoản!";
-        header("Location: user.php?view=settings");
-        exit;
-    }
+        if (!$account) {
+            $_SESSION['error'] = "❌ Không tìm thấy tài khoản!";
+            header("Location: user.php?view=settings");
+            exit;
+        }
 
-    $username = $account['username'];
-    $password_hash = $account['password'];
+        $username = $account['username'];
+        $password_hash = $account['password'];
 
-    // 2️⃣ Mật khẩu cũ KHÔNG phải hash → so sánh trực tiếp
-    if ($matkhau_cu !== $password_hash) {
-        $_SESSION['error'] = "❌ Mật khẩu hiện tại không đúng!";
-        header("Location: user.php?view=settings");
-        exit;
-    }
+        // 2️⃣ Mật khẩu cũ KHÔNG phải hash → so sánh trực tiếp
+        if ($matkhau_cu !== $password_hash) {
+            $_SESSION['error'] = "❌ Mật khẩu hiện tại không đúng!";
+            header("Location: user.php?view=settings");
+            exit;
+        }
 
-    // 3️⃣ Hash mật khẩu mới
-    $newHash = $matkhau_moi; // nếu bạn chưa dùng hash
-    // Nếu bạn muốn hash thực sự thì dùng:
-    // $newHash = password_hash($matkhau_moi, PASSWORD_DEFAULT);
+        // 3️⃣ Hash mật khẩu mới
+        $newHash = $matkhau_moi; // nếu bạn chưa dùng hash
+        // Nếu bạn muốn hash thực sự thì dùng:
+        // $newHash = password_hash($matkhau_moi, PASSWORD_DEFAULT);
 
-    // 4️⃣ Cập nhật taotaikhoan
-    $stmt = $pdo->prepare("
+        // 4️⃣ Cập nhật taotaikhoan
+        $stmt = $pdo->prepare("
         UPDATE taotaikhoan
         SET password = :pass, confirm_password = :pass
         WHERE id_kh = :id
     ");
-    $stmt->execute([
-        ':pass' => $newHash,
-        ':id' => $id_kh
-    ]);
+        $stmt->execute([
+            ':pass' => $newHash,
+            ':id' => $id_kh
+        ]);
 
-    // 5️⃣ Cập nhật dangnhap theo username
-    $stmt = $pdo->prepare("UPDATE dangnhap SET password = :pass WHERE username = :username");
-    $stmt->execute([
-        ':pass' => $newHash,
-        ':username' => $username
-    ]);
+        // 5️⃣ Cập nhật dangnhap theo username
+        $stmt = $pdo->prepare("UPDATE dangnhap SET password = :pass WHERE username = :username");
+        $stmt->execute([
+            ':pass' => $newHash,
+            ':username' => $username
+        ]);
 
-    $_SESSION['success'] = "✅ Đổi mật khẩu thành công!";
-    header("Location: user.php?view=settings");
-    exit;
-}
+        $_SESSION['success'] = "✅ Đổi mật khẩu thành công!";
+        header("Location: user.php?view=settings");
+        exit;
+    }
 
 }
 ?>
@@ -314,11 +314,11 @@ if (isset($_POST['update_pass'])) {
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
-    <div class="left">
-    <a href="index.php" class="logo-link">
-        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
-    </a>
-</div>
+        <div class="left">
+            <a href="index.php" class="logo-link">
+                <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+            </a>
+        </div>
 
 
         <!-- NAVIGATION -->
@@ -474,6 +474,8 @@ if (isset($_POST['update_pass'])) {
                                                 <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
                                                     <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
                                                     </li>
+                                                    <li><a href="./hethongduyetbai.php"><i class="fas fa-check-circle"></i> Duyệt
+                                                            bài viết</a></li>
                                                 <?php endif; ?>
                                             </ul>
                                         </li>
@@ -955,21 +957,56 @@ if (isset($_POST['update_pass'])) {
                 </div>
 
             <?php elseif ($view === 'saved'): ?>
-                <div class="tab-content <?= ($view === 'saved') ? 'active' : '' ?>" id="saved">
+                <div class="tab-content active" id="saved">
                     <h2>Bài viết đã lưu</h2>
-                    <p>Danh sách các bài viết bạn lưu sẽ hiển thị ở đây.</p>
-                </div>
-            <?php elseif ($view === 'notifications'): ?>
-                <div class="tab-content <?= ($view === 'notifications') ? 'active' : '' ?>" id="notifications">
-                    <h2>🔔 Thông báo của bạn</h2>
 
                     <?php
                     $stmt = $pdo->prepare("
-        SELECT noi_dung, created_at, da_doc 
-        FROM thongbao 
-        WHERE id_kh = ? 
-        ORDER BY created_at DESC
+        SELECT b.tieu_de, b.duong_dan, b.anh_bv, b.ngay_dang
+        FROM saved_posts s
+        JOIN baiviet b ON s.ma_bai_viet = b.ma_bai_viet
+        WHERE s.id_kh = ?
+        ORDER BY s.saved_at DESC
     ");
+                    $stmt->execute([$user['id_kh']]);
+                    $saved = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    ?>
+
+                    <?php if ($saved): ?>
+                        <div class="saved-grid">
+                            <?php foreach ($saved as $item): ?>
+                                <div class="saved-item">
+                                    <a href="post.php?slug=<?= urlencode($item['duong_dan']) ?>">
+
+                                        <img src="<?= htmlspecialchars($item['anh_bv']) ?>" alt="">
+                                        <h3><?= htmlspecialchars($item['tieu_de']) ?></h3>
+                                        <p><?= date("F d, Y", strtotime($item['ngay_dang'])) ?></p>
+                                    </a>
+                                </div>
+
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <p>Bạn chưa lưu bài viết nào.</p>
+                    <?php endif; ?>
+                </div>
+
+            <?php elseif ($view === 'notifications'): ?>
+                <div class="tab-content active" id="notifications">
+                    <h2>🔔 Thông báo của bạn</h2>
+
+                    <?php
+                    // Đánh dấu tất cả thông báo đã đọc
+                    $pdo->prepare("UPDATE thongbao SET da_doc = 1 WHERE id_kh = ?")
+                        ->execute([$user['id_kh']]);
+
+                    // Lấy thông báo
+                    $stmt = $pdo->prepare("
+            SELECT noi_dung, created_at, da_doc 
+            FROM thongbao 
+            WHERE id_kh = ? 
+            ORDER BY created_at DESC
+        ");
                     $stmt->execute([$user['id_kh']]);
                     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     ?>
@@ -978,7 +1015,7 @@ if (isset($_POST['update_pass'])) {
                         <ul class="notification-list">
                             <?php foreach ($notifications as $n): ?>
                                 <li class="notification-item <?= $n['da_doc'] ? 'read' : 'unread' ?>">
-                                    <p><?= htmlspecialchars($n['noi_dung']) ?></p>
+                                    <p><?= $n['noi_dung'] ?></p> <!-- không htmlspecialchars -->
                                     <span class="time">
                                         🕒 <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
                                     </span>

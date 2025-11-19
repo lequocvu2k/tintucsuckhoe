@@ -1,0 +1,174 @@
+/* ======= TIÊU ĐỀ ======= */
+.page-title {
+  text-align: center;
+  margin: 40px 0 20px;
+  font-size: 36px;
+  font-weight: 800;
+  color: #2c7a7b;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title i {
+  font-size: 40px;
+  color: #38b2ac;
+}
+
+/* ======= THÔNG BÁO ======= */
+.message-success,
+.message-error {
+  width: 60%;
+  padding: 15px;
+  margin: 15px auto;
+  border-radius: 10px;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 600;
+  animation: fadeIn 0.4s ease;
+}
+
+.message-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-left: 6px solid #28a745;
+}
+
+.message-error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-left: 6px solid #dc3545;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.no-posts {
+    width: 90%;
+    margin: 30px auto 70px;
+    padding: 40px;
+    background: #f0fff4;
+    border-left: 6px solid #38a169;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 20px;
+    color: #2f855a;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.no-posts i {
+    font-size: 50px;
+    color: #38a169;
+    margin-bottom: 10px;
+}
+
+/* ======= BẢNG DUYỆT BÀI ======= */
+.approve-table {
+  width: 95%;
+  margin: 30px auto;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+  margin-bottom: 60px; /* tạo khoảng dưới, đẩy footer xuống */
+}
+
+.approve-table thead th {
+  background: #2d3748;
+  color: white;
+  padding: 14px;
+  font-size: 16px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.approve-table tbody tr {
+  background: #ffffff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  transition: 0.2s ease;
+}
+
+.approve-table tbody tr:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.approve-table td {
+  padding: 16px;
+  font-size: 15px;
+  vertical-align: middle;
+}
+
+.approve-table img {
+  border-radius: 8px;
+  width: 85px;
+  height: 60px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ======= NÚT DUYỆT / TỪ CHỐI ======= */
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: 0.25s ease;
+}
+
+.btn.approve {
+  background: linear-gradient(135deg, #38a169, #2f855a);
+}
+
+.btn.reject {
+  background: linear-gradient(135deg, #e53e3e, #c53030);
+}
+
+.btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.role-badge {
+  background: linear-gradient(
+    45deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Màu sắc cầu vồng */
+  background-size: 400% 400%;
+  color: white;
+  position: relative;
+  top: -1px;
+  left: 10px;
+  padding: 2px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  animation: rainbowMovement 5s ease infinite;
+}
+/* Hiệu ứng di chuyển màu sắc cầu vồng */
+@keyframes rainbowMovement {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}

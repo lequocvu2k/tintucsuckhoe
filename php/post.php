@@ -207,11 +207,11 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
- <div class="left">
-    <a href="index.php" class="logo-link">
-        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
-    </a>
-</div>
+        <div class="left">
+            <a href="index.php" class="logo-link">
+                <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+            </a>
+        </div>
 
 
         <!-- NAVIGATION -->
@@ -365,6 +365,8 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
                                                     <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
                                                     </li>
+                                                    <li><a href="./hethongduyetbai.php"><i class="fas fa-check-circle"></i> Duyệt
+                                                            bài viết</a></li>
                                                 <?php endif; ?>
                                             </ul>
                                         </li>
@@ -468,6 +470,28 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
         <!-- Cột trái: bài viết -->
         <article class="post-content">
             <h1><?= htmlspecialchars($post['tieu_de']) ?></h1>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <form method="POST" action="save_post.php">
+                    <input type="hidden" name="ma_bai_viet" value="<?= $post['ma_bai_viet'] ?>">
+                    <input type="hidden" name="slug" value="<?= htmlspecialchars($slug) ?>">
+
+                    <?php
+                    // Kiểm tra đã lưu chưa
+                    $checkSaved = $pdo->prepare("SELECT COUNT(*) FROM saved_posts WHERE id_kh = ? AND ma_bai_viet = ?");
+                    $checkSaved->execute([$_SESSION['user_id'], $post['ma_bai_viet']]);
+                    $isSaved = $checkSaved->fetchColumn() > 0;
+                    ?>
+
+                    <button type="submit" class="save-btn">
+                        <?php if ($isSaved): ?>
+                            <i class="fa-solid fa-bookmark" style="color:#066a49"></i> Đã lưu
+                        <?php else: ?>
+                            <i class="fa-regular fa-bookmark"></i> Lưu bài viết
+                        <?php endif; ?>
+                    </button>
+                </form>
+            <?php endif; ?>
+
             <p><i class="fas fa-eye"></i> <?= $post['luot_xem'] ?> lượt xem</p>
 
             <!-- Thông tin bài viết -->

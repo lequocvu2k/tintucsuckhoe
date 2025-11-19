@@ -314,11 +314,11 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
-     <div class="left">
-    <a href="index.php" class="logo-link">
-        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
-    </a>
-</div>
+        <div class="left">
+            <a href="index.php" class="logo-link">
+                <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+            </a>
+        </div>
 
 
         <!-- NAVIGATION -->
@@ -472,6 +472,8 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
                                                     <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
                                                     </li>
+                                                    <li><a href="./hethongduyetbai.php"><i class="fas fa-check-circle"></i> Duyệt
+                                                            bài viết</a></li>
                                                 <?php endif; ?>
                                             </ul>
                                         </li>

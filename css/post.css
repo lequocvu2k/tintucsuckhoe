@@ -58,9 +58,9 @@ body {
 }
 
 .sidebar .popular-item img {
-    width: 80px; /* Adjust the image width to make it bigger */
-    height: auto;
-    margin-right: 15px; /* Space between the image and text */
+  width: 80px; /* Adjust the image width to make it bigger */
+  height: auto;
+  margin-right: 15px; /* Space between the image and text */
 }
 .popular-list {
   list-style: none;
@@ -794,9 +794,28 @@ footer {
   color: #007bff; /* Thêm màu cho hover nếu cần */
 }
 .popular-list .popular-item img {
-    width: 110px; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng của container */
-    height: auto; /* Để chiều cao tự động điều chỉnh theo tỷ lệ */
-    max-height: 250px; /* Đặt chiều cao tối đa cho ảnh */
-    object-fit: cover; /* Đảm bảo ảnh không bị méo, lấp đầy không gian */
-    border-radius: 10px; /* Cải thiện giao diện với góc bo tròn */
+  width: 110px; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng của container */
+  height: auto; /* Để chiều cao tự động điều chỉnh theo tỷ lệ */
+  max-height: 250px; /* Đặt chiều cao tối đa cho ảnh */
+  object-fit: cover; /* Đảm bảo ảnh không bị méo, lấp đầy không gian */
+  border-radius: 10px; /* Cải thiện giao diện với góc bo tròn */
+}
+.save-btn {
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #066a49;
+}
+
+.save-btn i {
+  font-size: 20px;
+}
+
+.save-form {
+  margin-top: 10px;
 }

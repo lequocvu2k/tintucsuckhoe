@@ -205,7 +205,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
- 
+
 </head>
 
 <body>
@@ -213,11 +213,11 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- ✅ HEADER -->
     <header class="site-header">
         <!-- LOGO -->
-      <div class="left">
-    <a href="index.php" class="logo-link">
-        <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
-    </a>
-</div>
+        <div class="left">
+            <a href="index.php" class="logo-link">
+                <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+            </a>
+        </div>
 
 
         <!-- NAVIGATION -->
@@ -372,6 +372,8 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
                                                     <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
                                                     </li>
+                                                    <li><a href="./hethongduyetbai.php"><i class="fas fa-check-circle"></i> Duyệt
+                                                            bài viết</a></li>
                                                 <?php endif; ?>
                                             </ul>
                                         </li>
@@ -484,38 +486,38 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="top-grid">
             <!-- LEFT: Editor's Picks -->
             <section class="editors">
-    <h2>EDITOR'S PICKS</h2>
+                <h2>EDITOR'S PICKS</h2>
 
-    <?php foreach ($editors as $e): ?>
+                <?php foreach ($editors as $e): ?>
 
-        <?php
-        // 🔍 Lấy tên tác giả đúng theo id_kh trong bảng baiviet
-        $stmtAuthor = $pdo->prepare("
+                    <?php
+                    // 🔍 Lấy tên tác giả đúng theo id_kh trong bảng baiviet
+                    $stmtAuthor = $pdo->prepare("
             SELECT ho_ten 
             FROM khachhang 
             WHERE id_kh = ?
             LIMIT 1
         ");
-        $stmtAuthor->execute([$e['id_kh']]);
-        $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
-        ?>
+                    $stmtAuthor->execute([$e['id_kh']]);
+                    $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
+                    ?>
 
-        <div class="editor-item">
-            <a href="./post.php?slug=<?= urlencode($e['duong_dan'] ?? '') ?>">
-                <img src="<?= htmlspecialchars($e['anh_bv'] ?? '') ?>" alt="">
-                <div class="editor-info">
-                    <h3><?= htmlspecialchars($e['tieu_de'] ?? 'No Title') ?></h3>
+                    <div class="editor-item">
+                        <a href="./post.php?slug=<?= urlencode($e['duong_dan'] ?? '') ?>">
+                            <img src="<?= htmlspecialchars($e['anh_bv'] ?? '') ?>" alt="">
+                            <div class="editor-info">
+                                <h3><?= htmlspecialchars($e['tieu_de'] ?? 'No Title') ?></h3>
 
-                    <div class="author-date">
-                        <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
-                        <span><?= date("F d, Y", strtotime($e['ngay_dang'])) ?></span>
+                                <div class="author-date">
+                                    <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
+                                    <span><?= date("F d, Y", strtotime($e['ngay_dang'])) ?></span>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </div>
-            </a>
-        </div>
 
-    <?php endforeach; ?>
-</section>
+                <?php endforeach; ?>
+            </section>
 
 
             <!-- RIGHT: Main Highlights -->
@@ -554,99 +556,81 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <section class="latest">
                 <h2>LATEST POSTS</h2>
                 <div class="latest-grid">
-                   <?php foreach ($latest as $l): ?>
+                    <?php foreach ($latest as $l): ?>
 
-    <?php
-    // Lấy tác giả đúng từ bảng khachhang theo id_kh của bài viết
-    $stmtAuthor = $pdo->prepare("
+                        <?php
+                        // Lấy tác giả đúng từ bảng khachhang theo id_kh của bài viết
+                        $stmtAuthor = $pdo->prepare("
         SELECT ho_ten 
         FROM khachhang 
         WHERE id_kh = ?
         LIMIT 1
     ");
-    $stmtAuthor->execute([$l['id_kh']]);
-    $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
-    ?>
+                        $stmtAuthor->execute([$l['id_kh']]);
+                        $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
+                        ?>
 
-    <div class="latest-item">
-        <a href="./post.php?slug=<?= urlencode($l['duong_dan']) ?>">
-            <img src="<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
-            <p class="post-title"><?= htmlspecialchars($l['tieu_de']) ?></p>
+                        <div class="latest-item">
+                            <a href="./post.php?slug=<?= urlencode($l['duong_dan']) ?>">
+                                <img src="<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
+                                <p class="post-title"><?= htmlspecialchars($l['tieu_de']) ?></p>
 
-            <div class="author-date">
-                <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
-                <span><?= date("F d, Y", strtotime($l['ngay_dang'])) ?></span>
-            </div>
-        </a>
-    </div>
+                                <div class="author-date">
+                                    <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
+                                    <span><?= date("F d, Y", strtotime($l['ngay_dang'])) ?></span>
+                                </div>
+                            </a>
+                        </div>
 
-<?php endforeach; ?>
+                    <?php endforeach; ?>
 
                 </div>
             </section>
 
 
-           <aside class="popular">
-    <section class="latest">
-        <h2>POPULAR POSTS</h2>
-        <ul>
-            <?php foreach ($popular as $p): ?>
+            <aside class="popular">
+                <section class="latest">
+                    <h2>POPULAR POSTS</h2>
+                    <ul>
+                        <?php foreach ($popular as $p): ?>
 
-                <?php
-                // 🔍 Lấy tên tác giả đúng của bài viết
-                $stmtAuthor = $pdo->prepare("
+                            <?php
+                            // 🔍 Lấy tên tác giả đúng của bài viết
+                            $stmtAuthor = $pdo->prepare("
                     SELECT ho_ten 
                     FROM khachhang 
                     WHERE id_kh = ?
                     LIMIT 1
                 ");
-                $stmtAuthor->execute([$p['id_kh']]);
-                $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
-                ?>
+                            $stmtAuthor->execute([$p['id_kh']]);
+                            $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
+                            ?>
 
-                <li>
-                    <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
-                        <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
-                        <div>
-                            <p class="post-title"><?= htmlspecialchars($p['tieu_de']) ?></p>
+                            <li>
+                                <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
+                                    <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                                    <div>
+                                        <p class="post-title"><?= htmlspecialchars($p['tieu_de']) ?></p>
 
-                            <p class="author-date">
-                                <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
-                                <span><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></span>
-                            </p>
-                        </div>
-                    </a>
-                </li>
+                                        <p class="author-date">
+                                            <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
+                                            <span><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></span>
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
 
-            <?php endforeach; ?>
-        </ul>
-    </section>
-</aside>
+                        <?php endforeach; ?>
+                    </ul>
+                </section>
+            </aside>
 
-</div>
-            <div class="triple-section">
-                <!-- Rankings -->
-                <section class="rankings">
-                    <h2>RANKINGS</h2>
-                    <?php foreach ($rankings as $r): ?>
-                        <div class="post-item">
-                            <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
-                                <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
-                                <div class="post-info">
-                                    <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
-                                </div>
-                            </a>
-                            <p class="meta">by <?= htmlspecialchars($r['tac_gia']) ?> |
-                                <?= date("F d, Y", strtotime($r['ngay_dang'])) ?>
-                            </p>
-                        </div>
-                </div>
-            <?php endforeach; ?>
-            </section>
-
-            <section class="interviews">
-                <h2>INTERVIEWS</h2>
-                <?php foreach ($interviews as $i): ?>
+        </div>
+        <div class="triple-section">
+            <!-- Rankings -->
+            <section class="rankings">
+                <h2>RANKINGS</h2>
+                <?php foreach ($rankings as $r): ?>
                     <div class="post-item">
                         <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
                             <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
@@ -654,13 +638,31 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                             </div>
                         </a>
-                        </h3>
-                        <p class="meta">by <?= htmlspecialchars($i['tac_gia']) ?> |
-                            <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
+                        <p class="meta">by <?= htmlspecialchars($r['tac_gia']) ?> |
+                            <?= date("F d, Y", strtotime($r['ngay_dang'])) ?>
                         </p>
                     </div>
             </div>
         <?php endforeach; ?>
+        </section>
+
+        <section class="interviews">
+            <h2>INTERVIEWS</h2>
+            <?php foreach ($interviews as $i): ?>
+                <div class="post-item">
+                    <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
+                        <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                        <div class="post-info">
+                            <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
+                        </div>
+                    </a>
+                    </h3>
+                    <p class="meta">by <?= htmlspecialchars($i['tac_gia']) ?> |
+                        <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
+                    </p>
+                </div>
+                </div>
+            <?php endforeach; ?>
         </section>
         <!-- Recommendations -->
         <section class="recommendations">
@@ -731,31 +733,31 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             © 2025 <strong>Nhóm 6</strong> — Tin tức Sức khỏe 🌱 | Lan tỏa kiến thức · Sống khỏe mỗi ngày
         </div>
     </footer>
-       <script src="../js/index.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const slider = document.querySelector(".slider");
-    const slides = document.querySelectorAll(".slide");
-    const prevBtn = document.querySelector(".prev");
-    const nextBtn = document.querySelector(".next");
+    <script src="../js/index.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const slider = document.querySelector(".slider");
+            const slides = document.querySelectorAll(".slide");
+            const prevBtn = document.querySelector(".prev");
+            const nextBtn = document.querySelector(".next");
 
-    let index = 0;
+            let index = 0;
 
-    function showSlide(i) {
-        index = (i + slides.length) % slides.length;
-        slider.style.transform = `translateX(${-index * 100}%)`;
-    }
+            function showSlide(i) {
+                index = (i + slides.length) % slides.length;
+                slider.style.transform = `translateX(${-index * 100}%)`;
+            }
 
-    nextBtn.addEventListener("click", () => {
-        showSlide(index + 1);
-    });
+            nextBtn.addEventListener("click", () => {
+                showSlide(index + 1);
+            });
 
-    prevBtn.addEventListener("click", () => {
-        showSlide(index - 1);
-    });
-});
+            prevBtn.addEventListener("click", () => {
+                showSlide(index - 1);
+            });
+        });
 
-</script>
+    </script>
 </body>
 
 </html>

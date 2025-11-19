@@ -1,8 +1,17 @@
 <?php
 session_start();
-require_once './db.php'; // file bạn đã có
-$user_id = $_SESSION['user_id'] ?? null; // Đảm bảo user_id đã được lưu trong session
-$members = [];
+require_once './db.php';
+
+// ❌ Chặn người không phải ADMIN
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'QuanTri') {
+    echo "<h2 style='color:red; text-align:center; margin-top:50px;'>🚫 Bạn không có quyền truy cập trang này!</h2>";
+    exit;
+}
+
+// ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
+$user = null; // Mặc định là khách
+$tier = "Member";
+
 if (isset($_SESSION['user_id'])) {
     $id_kh = $_SESSION['user_id'];
     $stmt = $pdo->prepare("
@@ -36,34 +45,92 @@ if (isset($_SESSION['user_id'])) {
         $tier = xacDinhCapDo($so_diem);
     }
 }
-try {
-    // Lấy danh sách thành viên có vai_tro là QuanTri hoặc NhanVien
-    $stmt = $pdo->query("
-        SELECT ho_ten, vai_tro, avatar_url
-        FROM khachhang
-        WHERE vai_tro IN ('QuanTri', 'NhanVien')
-        ORDER BY vai_tro DESC, ho_ten ASC
-    ");
-    $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $error = 'Lỗi truy vấn: ' . htmlspecialchars($e->getMessage());
+
+// 📝 Xử lý duyệt hoặc từ chối
+if (isset($_GET['action']) && isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $action = $_GET['action'];
+    if ($action == "approve") {
+
+        // Lấy thông tin bài viết để biết id_kh và tiêu đề
+        $stmt = $pdo->prepare("SELECT id_kh, tieu_de FROM baiviet WHERE ma_bai_viet = ?");
+        $stmt->execute([$id]);
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($post) {
+            // Cập nhật trạng thái published
+            $stmt = $pdo->prepare("UPDATE baiviet SET trang_thai = 'published' WHERE ma_bai_viet = ?");
+            $stmt->execute([$id]);
+
+            // Gửi thông báo
+            $msg = "🎉 Bài viết <b>" . $post['tieu_de'] . "</b> của bạn đã được duyệt!";
+            $notify = $pdo->prepare("
+            INSERT INTO thongbao (id_kh, noi_dung, da_doc, created_at)
+            VALUES (:id_kh, :noi_dung, 0, NOW())
+        ");
+            $notify->execute([
+                ':id_kh' => $post['id_kh'],
+                ':noi_dung' => $msg
+            ]);
+        }
+
+        $_SESSION['msg'] = "✔️ Đã duyệt bài viết!";
+    } elseif ($action == "reject") {
+
+        // Lấy thông tin bài viết trước khi từ chối
+        $stmt = $pdo->prepare("SELECT id_kh, tieu_de FROM baiviet WHERE ma_bai_viet = ?");
+        $stmt->execute([$id]);
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($post) {
+            // Cập nhật trạng thái rejected
+            $stmt = $pdo->prepare("UPDATE baiviet SET trang_thai = 'rejected' WHERE ma_bai_viet = ?");
+            $stmt->execute([$id]);
+
+            // Gửi thông báo
+            $msg = "⚠️ Bài viết <b>" . $post['tieu_de'] . "</b> của bạn đã bị từ chối.";
+            $notify = $pdo->prepare("
+            INSERT INTO thongbao (id_kh, noi_dung, da_doc, created_at)
+            VALUES (:id_kh, :noi_dung, 0, NOW())
+        ");
+            $notify->execute([
+                ':id_kh' => $post['id_kh'],
+                ':noi_dung' => $msg
+            ]);
+        }
+
+        $_SESSION['msg'] = "❌ Đã từ chối bài viết!";
+    }
+
+    header("Location: hethongduyetbai.php");
+    exit;
 }
+
+// 📝 Lấy tất cả bài viết đang chờ duyệt
+$stmt = $pdo->query("
+    SELECT b.*, k.ho_ten 
+    FROM baiviet b 
+    JOIN khachhang k ON b.id_kh = k.id_kh
+    WHERE b.trang_thai = 'pending'
+    ORDER BY b.ngay_dang DESC
+");
+$pending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Giới thiệu</title>
+    <meta charset="UTF-8">
+    <title>Hệ thống duyệt bài</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/fw.css">
-    <link rel="stylesheet" href="../css/about.css">
+    <link rel="stylesheet" href="../css/hethongduyetbai.css">
     <link rel="stylesheet" href="../css/menu.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
-    <script src="../js/index.js"></script>
 </head>
 
 <body>
@@ -76,6 +143,7 @@ try {
                 <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
             </a>
         </div>
+
 
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">
@@ -167,7 +235,6 @@ try {
                             }
                         }
 
-
                         // Hiển thị avatar
                         echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
                         if ($frame) {
@@ -248,113 +315,51 @@ try {
             <?php endif; ?>
         </div>
     </header>
-    <div class="about-hero" id="about">
-        <h1>Về chúng tôi</h1>
-        <p>
-            “Tin tức Sức khỏe” là trang thông tin tổng hợp giúp bạn cập nhật kiến thức về tập luyện, dinh dưỡng,
-            nghỉ ngơi và tinh thần — hướng đến một cuộc sống cân bằng và lành mạnh hơn.
+    <h1 class="page-title"><i class="fas fa-check-circle"></i> HỆ THỐNG DUYỆT BÀI</h1>
+
+    <?php if (isset($_SESSION['msg'])): ?>
+        <p style="color:green; font-weight:bold; text-align:center;">
+            <?= $_SESSION['msg'];
+            unset($_SESSION['msg']); ?>
         </p>
-    </div>
+    <?php endif; ?>
 
-    <main>
-        <section id="mission">
-            <h2>Tầm nhìn & Sứ mệnh</h2>
-            <p><strong>Tầm nhìn:</strong> Trở thành nguồn tin cậy hàng đầu về sức khỏe, lan tỏa lối sống tích cực và
-                khoa học.</p>
-            <p><strong>Sứ mệnh:</strong> Cung cấp thông tin dễ hiểu, dễ áp dụng, mang lại giá trị thực tế cho mọi người.
-            </p>
-            <ul>
-                <li>Đưa kiến thức y học đến gần với cộng đồng.</li>
-                <li>Truyền cảm hứng về chăm sóc sức khỏe thể chất & tinh thần.</li>
-                <li>Khuyến khích lối sống năng động, ăn uống lành mạnh.</li>
-            </ul>
-        </section>
+    <table class="approve-table">
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Tác giả</th>
+                <th>Ngày đăng</th>
+                <th>Ảnh</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
 
-        <section id="policy">
-            <h2>Chính sách biên tập</h2>
-            <p>
-                Tất cả nội dung trên trang đều được biên soạn cẩn thận, đảm bảo tính trung thực, chính xác và dễ tiếp
-                cận.
-                Chúng tôi tuân thủ các nguyên tắc:
-            </p>
-            <ul>
-                <li>Không đăng nội dung sai lệch hoặc thiếu nguồn gốc.</li>
-                <li>Luôn ghi rõ nguồn tham khảo và ngày cập nhật.</li>
-                <li>Không thay thế lời khuyên của bác sĩ chuyên khoa.</li>
-            </ul>
-        </section>
-
-        <section id="team">
-            <h2>Đội ngũ của chúng tôi</h2>
-            <div class="team">
-                <?php
-                if (isset($error)) {
-                    echo '<p style="color:red;">' . $error . '</p>';
-                } elseif ($members) {
-
-                    foreach ($members as $mem) {
-
-                        // Avatar user
-                        $avatar = (!empty($mem['avatar_url']) && file_exists($mem['avatar_url']))
-                            ? htmlspecialchars($mem['avatar_url'])
-                            : '../img/avt.jpg';
-
-                        // Frame giống code bạn gửi
-                        // Frame avatar (KHÔNG dùng $user, mà dùng $mem)
-                        $frame = '';
-                        if (!empty($mem['avatar_frame'])) {
-
-                            $name = htmlspecialchars($mem['avatar_frame']); // vd: fire, ice, gold
-                            $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
-
-                            foreach ($possibleExtensions as $ext) {
-
-                                $realPath = __DIR__ . '/../frames/' . $name . '.' . $ext;
-                                $webPath = '../frames/' . $name . '.' . $ext;
-
-                                // DEBUG — xem file có tồn tại không
-                                if (!file_exists($realPath)) {
-                                    // echo "<p style='color:red'>Không tìm thấy: $realPath</p>";
-                                }
-
-                                if (file_exists($realPath)) {
-                                    $frame = $webPath;
-                                    break;
-                                }
-                            }
-                        }
-
-
-                        // Role
-                        $roleName = ($mem['vai_tro'] === 'QuanTri') ? 'Quản trị viên' : 'Nhân viên';
-                        ?>
-
-                        <div class="member">
-                            <div class="avatar-container">
-                                <!-- Avatar -->
-                                <img src="<?= $avatar ?>" alt="Avatar" class="avatar">
-
-                                <!-- Frame overlay -->
-                                <?php if (!empty($frame)): ?>
-                                    <img src="<?= $frame ?>" alt="Frame" class="frame-overlay">
-                                <?php endif; ?>
-                            </div>
-
-                            <h4><?= htmlspecialchars($mem['ho_ten']) ?></h4>
-                            <span><?= $roleName ?></span>
-                        </div>
-
-                        <?php
-                    }
-
-                } else {
-                    echo '<p>Hiện chưa có thành viên nào trong đội ngũ.</p>';
-                }
-                ?>
-            </div>
-        </section>
-
-    </main>
+        <tbody>
+            <?php foreach ($pending_posts as $post): ?>
+                <tr>
+                    <td><?= htmlspecialchars($post['tieu_de']) ?></td>
+                    <td><?= htmlspecialchars($post['ho_ten']) ?></td>
+                    <td><?= date("d/m/Y", strtotime($post['ngay_dang'])) ?></td>
+                    <td>
+                        <img src="<?= htmlspecialchars($post['anh_bv']) ?>" alt="Ảnh bài viết">
+                    </td>
+                    <td>
+                        <a class="btn approve"
+                            href="hethongduyetbai.php?action=approve&id=<?= $post['ma_bai_viet'] ?>">Duyệt</a>
+                        <a class="btn reject" href="hethongduyetbai.php?action=reject&id=<?= $post['ma_bai_viet'] ?>">Từ
+                            chối</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php if (count($pending_posts) === 0): ?>
+        <div class="no-posts">
+            <i class="fas fa-folder-open"></i>
+            <p>Hiện không có bài viết nào đang chờ duyệt.</p>
+        </div>
+    <?php endif; ?>
 
     <footer class="site-footer">
         <div class="footer-container">
@@ -403,6 +408,7 @@ try {
             © 2025 <strong>Nhóm 6</strong> — Tin tức Sức khỏe 🌱 | Lan tỏa kiến thức · Sống khỏe mỗi ngày
         </div>
     </footer>
+
 </body>
 
 </html>
