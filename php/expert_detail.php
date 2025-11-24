@@ -2,25 +2,26 @@
 session_start();
 require_once './db.php';
 
-$id_kh = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-if ($id_kh <= 0) {
+$id_chuyen_gia = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+if ($id_chuyen_gia <= 0) {
     echo "<h2 style='color:red;text-align:center;margin-top:50px;'>⚠️ Chuyên gia không hợp lệ!</h2>";
     exit;
 }
-// ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
-$user = null; // Mặc định là khách
+
+/* ====================== LẤY THÔNG TIN NGƯỜI DÙNG ĐĂNG NHẬP ====================== */
+$user = null;
 $tier = "Member";
 
-if (isset($_SESSION['user_id'])) {
-    $id_kh = $_SESSION['user_id'];
+$id_kh = $_SESSION['user_id'] ?? null; // người dùng đăng nhập
+
+if ($id_kh) {
     $stmt = $pdo->prepare("
         SELECT kh.*, tk.ngay_tao
         FROM khachhang kh
         LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
         WHERE kh.id_kh = :id
     ");
-    $stmt->bindParam(':id', $id_kh);
-    $stmt->execute();
+    $stmt->execute([':id' => $id_kh]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
@@ -44,13 +45,14 @@ if (isset($_SESSION['user_id'])) {
         $tier = xacDinhCapDo($so_diem);
     }
 }
-// Lấy thông tin chuyên gia
+
+/* ====================== LẤY THÔNG TIN CHUYÊN GIA ====================== */
 $stmt = $pdo->prepare("
     SELECT ho_ten, avatar_url, chuyen_mon, mo_ta_chuyen_gia, is_chuyen_gia
     FROM khachhang
     WHERE id_kh = ?
 ");
-$stmt->execute([$id_kh]);
+$stmt->execute([$id_chuyen_gia]);
 $expert = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$expert || !$expert['is_chuyen_gia']) {
@@ -58,18 +60,18 @@ if (!$expert || !$expert['is_chuyen_gia']) {
     exit;
 }
 
-// Lấy danh sách bài viết của chuyên gia
+/* ====================== LẤY BÀI VIẾT CHUYÊN GIA ====================== */
 $stmtPost = $pdo->prepare("
     SELECT ma_bai_viet, tieu_de, duong_dan, anh_bv, ngay_dang
     FROM baiviet
- WHERE id_kh = ? AND trang_thai = 'published'
-
+    WHERE id_kh = ? AND trang_thai = 'published'
     ORDER BY ngay_dang DESC
     LIMIT 20
 ");
-$stmtPost->execute([$id_kh]);
+$stmtPost->execute([$id_chuyen_gia]);
 $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -278,6 +280,12 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
     <div class="expert-detail-wrapper">
         <!-- Thông tin chuyên gia -->
         <div class="expert-info-card">
+            <?php if (isset($_GET['sent']) && $_GET['sent'] == 1): ?>
+                <div class="alert-success">
+                    🎉 <b>Bạn đã gửi câu hỏi thành công!</b> Vui lòng chờ chuyên gia trả lời.
+                </div>
+            <?php endif; ?>
+
             <div class="avatar">
                 <img src="<?= htmlspecialchars($expert['avatar_url'] ?: './img/avt.jpg') ?>" alt="Avatar">
             </div>
@@ -335,7 +343,7 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </div>
     </div>
-   <footer class="site-footer">
+    <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-column">
                 <h3>🩺 Về chúng tôi</h3>

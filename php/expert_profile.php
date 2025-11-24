@@ -317,6 +317,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <div class="expert-container">
+        <?php if (isset($_GET['sent_answer'])): ?>
+            <div class="alert-success">
+                🎉 <b>Đã gửi câu trả lời thành công!</b>
+            </div>
+        <?php endif; ?>
+
         <div class="expert-header">
             <img src="<?= htmlspecialchars($info['avatar_url'] ?: './img/avt.jpg') ?>" alt="Avatar">
             <div>
@@ -356,7 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="qa-box">
                     <p><b><?= htmlspecialchars($q['ho_ten']) ?> hỏi:</b> <?= nl2br($q['cau_hoi']) ?></p>
 
-                    <form action="answer_question.php" method="POST">
+                    <form action="send_answer.php" method="POST">
                         <input type="hidden" name="id" value="<?= $q['id'] ?>">
                         <textarea name="answer" placeholder="Nhập câu trả lời..." required></textarea>
                         <button type="submit" class="reply-btn">Trả lời</button>

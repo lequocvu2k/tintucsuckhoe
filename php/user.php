@@ -1005,29 +1005,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $pdo->prepare("UPDATE thongbao SET da_doc = 1 WHERE id_kh = ?")
                         ->execute([$user['id_kh']]);
 
-                    // Lấy thông báo
+                    // Lấy thông báo + câu trả lời
                     $stmt = $pdo->prepare("
-    SELECT t.noi_dung, t.created_at, t.da_doc,
-           h.id, h.cau_tra_loi, h.danh_gia   -- 👈 lấy thêm
-    FROM thongbao t
-    LEFT JOIN hoi_dap h ON t.id_hoi_dap = h.id   -- 👈 join để biết câu trả lời
-    WHERE t.id_kh = ?
-    ORDER BY t.created_at DESC
-");
+  SELECT t.noi_dung, t.created_at, t.da_doc,
+       h.id, h.cau_hoi, h.cau_tra_loi, h.danh_gia
+FROM thongbao t
+LEFT JOIN hoi_dap h ON t.id_hoi_dap = h.id
+WHERE t.id_kh = ?
+ORDER BY t.created_at DESC
+
+    ");
                     $stmt->execute([$user['id_kh']]);
                     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
                     ?>
 
                     <?php if ($notifications): ?>
                         <ul class="notification-list">
                             <?php foreach ($notifications as $n): ?>
                                 <li class="notification-item <?= $n['da_doc'] ? 'read' : 'unread' ?>">
-                                    <p><?= $n['noi_dung'] ?></p>
+
+                                    <!-- ❓ CÙNG HIỂN THỊ CÂU HỎI -->
+                                    <?php if (!empty($n['cau_hoi'])): ?>
+                                        <p class="question-user">
+                                            ❓ <b>Câu hỏi bạn đã gửi:</b><br>
+                                            <?= nl2br(htmlspecialchars($n['cau_hoi'])) ?>
+                                        </p>
+                                    <?php endif; ?>
+
+                                    <!-- 💬 HIỆN CÂU TRẢ LỜI -->
+                                    <?php if (!empty($n['cau_tra_loi'])): ?>
+                                        <p class="answer-preview">
+                                            💬 <b>Trả lời:</b><br>
+                                            <?= nl2br(htmlspecialchars($n['cau_tra_loi'])) ?>
+                                        </p>
+                                    <?php endif; ?>
+
                                     <span class="time">
                                         🕒 <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
                                     </span>
 
+                                    <!-- ⭐ HIỆN NÚT ĐÁNH GIÁ -->
                                     <?php if (!empty($n['cau_tra_loi']) && $n['danh_gia'] === null): ?>
                                         <form action="rate_answer.php" method="POST" class="rate-form">
                                             <input type="hidden" name="id" value="<?= $n['id'] ?>">
@@ -1041,22 +1058,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </select>
                                             <button type="submit">Gửi</button>
                                         </form>
-
                                     <?php elseif ($n['danh_gia'] !== null): ?>
-                                        <p>⭐ Đánh giá của bạn: <b><?= $n['danh_gia'] ?>/5</b></p>
+                                        <p>⭐ <b>Đánh giá của bạn: <?= $n['danh_gia'] ?>/5</b></p>
                                     <?php endif; ?>
+
                                 </li>
 
-                                <span class="time">
-                                    🕒 <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
-                                </span>
-                                </li>
                             <?php endforeach; ?>
                         </ul>
                     <?php else: ?>
                         <p>Không có thông báo mới.</p>
                     <?php endif; ?>
-
                 </div>
 
             <?php elseif ($view === 'settings'): ?>
