@@ -76,7 +76,17 @@ if (isset($_SESSION['user_id'])) {
     // Nếu chưa đọc trong 24 giờ, cộng điểm và ghi lại
     if ($already_added == 0) {
         // Cộng điểm cho người dùng
-        $points_to_add = max(50, round(strlen(strip_tags($post['noi_dung'])) / 500));  // Điều chỉnh số điểm cộng tùy theo độ dài bài viết
+        $length = strlen(strip_tags($post['noi_dung'])); // độ dài thực tế (không tính HTML)
+
+        if ($length < 1000) {
+            $points_to_add = 50; // bài ngắn
+        } elseif ($length < 3000) {
+            $points_to_add = 100; // trung bình
+        } elseif ($length < 6000) {
+            $points_to_add = 200; // dài
+        } else {
+            $points_to_add = 400; // rất dài
+        }
 
         // Cập nhật điểm trong bảng khachhang
         $stmt_update = $pdo->prepare("
@@ -214,275 +224,9 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <canvas class="fireworks"></canvas>
-    <!-- ✅ HEADER -->
-    <header class="site-header">
-        <!-- LOGO -->
-        <div class="left">
-            <a href="index.php" class="logo-link">
-                <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
-            </a>
-        </div>
-
-
-        <!-- NAVIGATION -->
-        <nav class="main-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
-                <li><a href="./experts.php"><i class="fa-solid fa-user-nurse"></i> Chuyên gia</a></li>
-                <li><a href="./advice.php"><i class="fa-solid fa-stethoscope"></i> Tư vấn theo triệu chứng</a></li>
-                <li class="dropdowns">
-                    <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
-                    <ul class="dropdown-nav">
-                        <li><a href="#">Nhiều lượt xem hôm nay</a></li>
-                        <li><a href="#">Nhiều lượt xem tuần</a></li>
-                        <li><a href="#">Nhiều lượt xem tháng</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdowns">
-                    <a href="#"><i class="fa-solid fa-heart-pulse"></i> Sức khỏe ▾</a>
-                    <ul class="dropdown-nav">
-                        <li><a href="./category.php?id=1"><i class="fa-solid fa-newspaper"></i> Tin tức</a></li>
-                        <li><a href="./category.php?id=2"><i class="fa-solid fa-apple-whole"></i> Dinh dưỡng</a></li>
-                        <li><a href="./category.php?id=3"><i class="fa-solid fa-dumbbell"></i> Khỏe đẹp</a></li>
-                        <li><a href="./category.php?id=4"><i class="fa-solid fa-user-doctor"></i> Tư vấn</a></li>
-                        <li><a href="./category.php?id=5"><i class="fa-solid fa-hospital"></i> Dịch vụ y tế</a></li>
-                        <li><a href="./category.php?id=6"><i class="fa-solid fa-virus-covid"></i> Các bệnh</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdowns">
-                    <a href="#"><i class="fa-solid fa-circle-info"></i> Giới thiệu ▾</a>
-                    <ul class="dropdown-nav">
-                        <li><a href="./about.php#about"><i class="fa-solid fa-circle-info"></i> Về chúng tôi</a></li>
-                        <li><a href="./about.php#mission"><i class="fa-solid fa-bullseye"></i> Tầm nhìn & Sứ mệnh</a>
-                        </li>
-                        <li><a href="./about.php#policy"><i class="fa-solid fa-scale-balanced"></i> Chính sách biên
-                                tập</a></li>
-                        <li><a href="./about.php#team"><i class="fa-solid fa-people-group"></i> Đội ngũ</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdowns">
-                    <a href="#"><i class="fa-solid fa-envelope-circle-check"></i> Liên hệ ▾</a>
-                    <ul class="dropdown-nav">
-                        <li><a href="mailto:vuliztva1@gmail.com"><i class="fa-solid fa-envelope"></i> Email hỗ trợ</a>
-                        </li>
-                        <li><a href="https://www.facebook.com/Shiroko412/" target="_blank"><i
-                                    class="fa-brands fa-facebook"></i> Fanpage Facebook</a></li>
-                        <li><a href="https://zalo.me/0332138297" target="_blank"><i class="fa-brands fa-zhihu"></i> Zalo
-                                liên hệ</a></li>
-                        <li><a href="../mail/formmail.php"><i class="fa-solid fa-pen-to-square"></i> Gửi phản hồi</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- PHẦN BÊN PHẢI -->
-        <div class="right">
-            <!-- Nút tìm kiếm -->
-            <button class="icon-btn" id="openSearch" aria-label="Tìm kiếm">
-                <i class="fas fa-search"></i>
-            </button>
-
-            <!-- Thanh tìm kiếm -->
-            <div class="search-bar" id="searchBar">
-                <input type="text" placeholder="Tìm kiếm bài viết..." id="searchInput">
-                <ul id="searchSuggestions" class="search-suggestions"></ul>
-                <button id="searchSubmit"><i class="fas fa-arrow-right"></i></button>
-            </div>
-
-            <!-- USER INFO -->
-            <?php if (isset($_SESSION['username'])): ?>
-                <div class="header-user">
-                    <div class="avatar-container">
-                        <?php
-                        // Lấy avatar: nếu có thì dùng avatar của user, nếu không thì dùng avt.jpg mặc định
-                        $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
-                            ? htmlspecialchars($user['avatar_url'])
-                            : '../img/avt.jpg';
-
-                        $frame = '';
-                        if (!empty($user['avatar_frame'])) {
-                            $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
-                            foreach ($possibleExtensions as $ext) {
-                                $path = '../frames/' . htmlspecialchars($user['avatar_frame']) . '.' . $ext;
-                                if (file_exists($path)) {
-                                    $frame = $path;
-                                    break;
-                                }
-                            }
-                        }
-
-                        // Hiển thị avatar
-                        echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
-                        if ($frame) {
-                            echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
-                        }
-                        ?>
-                    </div>
-
-                    <div class="account-info">
-                        <div class="name-container">
-                            <p class="name"><?= htmlspecialchars($user['ho_ten']) ?></p>
-                            <div class="user-email">
-                                <?php if ($user['email'] == 'baka@gmail.com'): ?>
-                                    <span class="role-badge">ADMIN</span>
-                                <?php else: ?>
-
-                                <?php endif; ?>
-
-                                <!-- Ẩn VIP tier nếu là admin -->
-                                <?php if ($user['email'] != 'baka@gmail.com'): ?>
-                                    <p>
-                                        <b class="vip-tier <?= strtolower(str_replace(' ', '-', $tier)) ?>">
-                                            <?= htmlspecialchars($tier) ?>
-                                        </b>
-                                    </p>
-                                <?php endif; ?>
-                            </div>
-                            <!-- Dropdown menu -->
-                            <div class="dropdown-menu">
-                                <ul>
-                                    <li>
-                                        <a href="./user.php">
-                                            <i class="fas fa-user"></i> Tài khoản
-                                            <!-- Kiểm tra nếu người dùng là ADMIN, hiển thị ADMIN -->
-                                            <b
-                                                class="vip-tier <?= ($_SESSION['username'] === 'admin') ? 'admin' : strtolower(str_replace(' ', '-', $tier)) ?>">
-                                                <?php
-                                                if ($_SESSION['username'] === 'admin') {
-                                                    echo '<span class="role-badge">ADMIN</span>';  // Hiển thị "ADMIN" cho người dùng admin
-                                                } else {
-                                                    echo htmlspecialchars($tier);  // Hiển thị cấp độ thành viên cho người dùng khác
-                                                }
-                                                ?>
-                                            </b>
-
-                                        </a>
-                                    </li>
-
-                                    <li><a href="./user.php?view=history"><i class="fas fa-history"></i> Lịch sử</a></li>
-                                    <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
-                                    <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
-                                    </li>
-                                    <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'NhanVien' || $_SESSION['user_role'] === 'QuanTri')): ?>
-                                        <li><a href="./expert_profile.php"><i class="fa-solid fa-user-doctor"></i> Hồ sơ Chuyên
-                                                gia</a></li>
-                                    <?php endif; ?>
-                                    <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'QuanTri' || $_SESSION['user_role'] === 'NhanVien')): ?>
-                                        <li class="dropdown">
-                                            <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
-                                                lý</a>
-                                            <ul class="dropdown-content">
-                                                <li><a href="./quanlybv.php"><i class="fas fa-pencil-alt"></i> Quản lý bài
-                                                        viết</a></li>
-                                                <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
-                                                    <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
-                                                    </li>
-                                                    <li><a href="./hethongduyetbai.php"><i class="fas fa-check-circle"></i> Duyệt
-                                                            bài viết</a></li>
-                                                <?php endif; ?>
-                                            </ul>
-                                        </li>
-                                    <?php endif; ?>
-
-                                    <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php else: ?>
-                <label for="showLogin">Đăng nhập</label>
-            <?php endif; ?>
-        </div>
-    </header>
-    <!-- Các Radio Buttons -->
-    <input type="radio" name="popup" id="showLogin" hidden>
-    <input type="radio" name="popup" id="showSignup" hidden>
-    <input type="radio" name="popup" id="hidePopup" hidden checked>
-
-    <!-- Popup Login -->
-    <div class="popup" id="loginPopup">
-        <div class="popup-content">
-            <!-- Thêm hình ảnh tròn -->
-            <div class="avatar-container">
-                <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
-            </div>
-            <h2>Đăng nhập</h2>
-            <form method="post" action="./login.php" autocomplete="off">
-                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
-
-                <div class="password-wrapper">
-                    <input type="password" name="password" id="loginPassword" placeholder="Mật khẩu" required>
-                    <span class="toggle-password" data-target="loginPassword"><i class="fa fa-eye"></i></span>
-                </div>
-
-                <button type="submit">Đăng nhập</button>
-            </form>
-            <label for="hidePopup" class="close-btn">Đóng</label>
-            <label for="showSignup" class="switch-link">Chưa có tài khoản? Đăng ký</label>
-        </div>
-    </div>
-
-    <!-- Popup Signup -->
-    <div class="popup" id="signupPopup">
-        <div class="popup-content">
-            <!-- Thêm hình ảnh tròn -->
-            <div class="avatar-container">
-                <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
-            </div>
-            <h2>Đăng ký</h2>
-            <form method="POST" action="./signup.php" autocomplete="off">
-                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
-                <input type="text" name="ho_ten" placeholder="Họ và tên" required><br><br>
-                <input type="email" name="email" placeholder="Email" required><br><br>
-
-                <div class="password-wrapper">
-                    <input type="password" name="password" id="signupPassword" placeholder="Mật khẩu" required>
-                    <span class="toggle-password" data-target="signupPassword"><i class="fa fa-eye"></i></span>
-                </div>
-
-                <div class="password-wrapper">
-                    <input type="password" name="confirm_password" id="signupConfirmPassword"
-                        placeholder="Xác nhận mật khẩu" required>
-                    <span class="toggle-password" data-target="signupConfirmPassword"><i class="fa fa-eye"></i></span>
-                </div>
-
-                <button type="submit">Đăng ký</button>
-            </form>
-            <label for="hidePopup" class="close-btn">Đóng</label>
-            <br>
-            <label for="showLogin" class="switch-link">Đã có tài khoản? Đăng nhập</label>
-        </div>
-    </div>
-
-    <br>
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="message-error">
-            <?= htmlspecialchars($_SESSION['error']); ?>
-        </div>
-        <?php unset($_SESSION['error']); ?>
-    <?php elseif (isset($_SESSION['signup_error'])): ?>
-        <div class="message-error">
-            <?= htmlspecialchars($_SESSION['signup_error']); ?>
-        </div>
-        <?php unset($_SESSION['signup_error']); ?>
-    <?php elseif (isset($_SESSION['login_error'])): ?>
-        <div class="message-error">
-            <?= htmlspecialchars($_SESSION['login_error']); ?>
-        </div>
-        <?php unset($_SESSION['login_error']); ?>
-    <?php elseif (isset($_SESSION['msg'])): ?>
-        <div class="message-success">
-            <?= htmlspecialchars($_SESSION['msg']); ?>
-        </div>
-        <?php unset($_SESSION['msg']); ?>
-    <?php endif; ?>
-
+    <?php include '../partials/header.php'; ?>
+    <?php include '../partials/login.php'; ?>
+   
     <main class="post-container">
         <!-- Cột trái: bài viết -->
         <article class="post-content">
@@ -494,7 +238,7 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
                     <span class="tag-item"><?= htmlspecialchars($post['ten_chuyen_muc']) ?></span>
                 </div>
             <?php endif; ?>
-<br>
+            <br>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <form method="POST" action="save_post.php">
                     <input type="hidden" name="ma_bai_viet" value="<?= $post['ma_bai_viet'] ?>">
@@ -518,6 +262,41 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
             <?php endif; ?>
 
             <p><i class="fas fa-eye"></i> <?= $post['luot_xem'] ?> lượt xem</p>
+            <?php
+            // Đếm tổng like
+            $stmt_likes = $pdo->prepare("SELECT COUNT(*) FROM likes WHERE ma_bai_viet=?");
+            $stmt_likes->execute([$post['ma_bai_viet']]);
+            $totalLikes = $stmt_likes->fetchColumn();
+
+            // Kiểm tra người dùng đã like chưa
+            $liked = false;
+            if (isset($_SESSION['user_id'])) {
+                $checkLike = $pdo->prepare("SELECT COUNT(*) FROM likes WHERE id_kh=? AND ma_bai_viet=?");
+                $checkLike->execute([$_SESSION['user_id'], $post['ma_bai_viet']]);
+                $liked = $checkLike->fetchColumn() > 0;
+            }
+            ?>
+
+            <button class="like-btn" id="likeBtn" onclick="likePost(<?= $post['ma_bai_viet'] ?>)" <?= $liked ? 'disabled' : '' ?>>
+                <i class="fa-solid fa-heart" style="color:<?= $liked ? '#ff004c' : '#888' ?>;"></i>
+                <span id="likeCount"><?= $totalLikes ?></span> Thích
+            </button>
+
+            <style>
+                .like-btn {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: #e74c3c;
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+
+                .like-btn:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            </style>
 
             <!-- Thông tin bài viết -->
             <div class="post-meta">
@@ -623,7 +402,7 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
                     <?php endforeach; ?>
                 </div>
             </section>
-
+            <br>
             <div class="comment-section">
                 <h3>THAM GIA BÌNH LUẬN</h3>
 
@@ -758,53 +537,8 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
         </aside>
     </main>
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-column">
-                <h3>🩺 Về chúng tôi</h3>
-                <p>
-                    “Tin tức Sức khỏe” là nền tảng chia sẻ kiến thức về tập luyện, dinh dưỡng và chăm sóc tinh thần,
-                    giúp bạn sống khỏe hơn mỗi ngày.
-                </p>
-            </div>
+    <?php include '../partials/footer.php'; ?>
 
-            <div class="footer-column">
-                <h3>📚 Thông tin</h3>
-                <ul>
-                    <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
-                    <li><a href="./about.php#policy">Chính sách biên tập</a></li>
-                    <li><a href="./about.php#team">Đội ngũ biên tập</a></li>
-                    <li><a href="./about.php#about">Về chúng tôi</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h3>📞 Liên hệ</h3>
-                <ul>
-                    <li><i class="fa-solid fa-envelope"></i> <a
-                            href="mailto:vuliztva1@gmail.com">vuliztva1@gmail.com</a></li>
-                    <li><i class="fa-brands fa-facebook"></i> <a href="https://facebook.com/Shiroko412"
-                            target="_blank">Fanpage Facebook</a></li>
-                    <li><i class="fa-brands fa-zhihu"></i> <a href="https://zalo.me/0332138297" target="_blank">Zalo hỗ
-                            trợ</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h3>🌐 Kết nối</h3>
-                <div class="social-icons">
-                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            © 2025 <strong>Nhóm 6</strong> — Tin tức Sức khỏe 🌱 | Lan tỏa kiến thức · Sống khỏe mỗi ngày
-        </div>
-    </footer>
 </body>
 
 </html>

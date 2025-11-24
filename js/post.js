@@ -65,3 +65,47 @@ function sortComments() {
   // Thực hiện chuyển hướng lại với tham số sort
   window.location.href = "post.php?slug=" + slug + "&sort=" + sortValue;
 }
+function likePost(id) {
+  fetch("like_post.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "ma_bai_viet=" + id,
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === "success") {
+        let count = document.getElementById("likeCount");
+        count.textContent = parseInt(count.textContent) + 1;
+
+        // đổi style nút
+        let btn = document.getElementById("likeBtn");
+        btn.querySelector("i").style.color = "#ff004c";
+        btn.disabled = true;
+
+        // popup +12 điểm
+        const popup = document.createElement("div");
+        popup.textContent = "+12 điểm!";
+        popup.style.position = "fixed";
+        popup.style.bottom = "80px";
+        popup.style.right = "30px";
+        popup.style.background = "rgba(0, 200, 0, 0.9)";
+        popup.style.color = "#fff";
+        popup.style.padding = "10px 20px";
+        popup.style.borderRadius = "10px";
+        popup.style.fontWeight = "bold";
+        popup.style.fontSize = "18px";
+        popup.style.zIndex = "9999";
+        popup.style.boxShadow = "0 0 10px rgba(0,0,0,0.3)";
+        document.body.appendChild(popup);
+        setTimeout(() => {
+          popup.style.opacity = "0";
+          popup.style.transform = "translateY(-50px)";
+        }, 1500);
+        setTimeout(() => {
+          popup.remove();
+        }, 2000);
+      } else {
+        alert("Hãy đăng nhập để like bài viết!");
+      }
+    });
+}

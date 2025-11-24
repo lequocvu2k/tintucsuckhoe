@@ -665,3 +665,16 @@
     margin-right: 10px;
     object-fit: cover;
 }
+.nav-menu li a {
+    white-space: nowrap;
+}
+.dropdown-nav {
+    max-height: 280px;
+    overflow-y: auto;
+}
+.avatar-circle {
+  width: 100px; /* Đặt kích thước hình ảnh */
+  height: 100px;
+  border-radius: 50%; /* Đảm bảo hình ảnh có dạng tròn */
+  object-fit: cover; /* Cắt hình ảnh nếu cần thiết để vừa với khung */
+}
