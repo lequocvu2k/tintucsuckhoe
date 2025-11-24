@@ -1,6 +1,30 @@
 <?php
 session_start();
-require_once './db.php';
+require_once './db.php'; // file bạn đã có
+
+$ketqua = [];
+$tu_khoa = '';
+
+if (isset($_GET['symptom'])) {
+    $tu_khoa = trim($_GET['symptom']);
+    if ($tu_khoa !== '') {
+        $sql = "
+        SELECT DISTINCT b.ma_bai_viet, b.tieu_de, b.duong_dan, b.anh_bv, b.ngay_dang
+        FROM baiviet b
+        LEFT JOIN baiviet_tag bt ON b.ma_bai_viet = bt.ma_bai_viet
+        LEFT JOIN tags t ON bt.id_tag = t.id
+        WHERE 
+            b.tieu_de LIKE :kw 
+            OR b.noi_dung LIKE :kw
+            OR t.ten_tag LIKE :kw
+        ORDER BY b.ngay_dang DESC LIMIT 12
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':kw' => "%$tu_khoa%"]);
+        $ketqua = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
 $user = null; // Mặc định là khách
 $tier = "Member";
@@ -38,25 +62,17 @@ if (isset($_SESSION['user_id'])) {
         $tier = xacDinhCapDo($so_diem);
     }
 }
-// Lấy danh sách chuyên gia (chỉ những ai is_chuyen_gia = 1)
-$stmt = $pdo->prepare("
-    SELECT id_kh, ho_ten, avatar_url, chuyen_mon, mo_ta_chuyen_gia
-    FROM khachhang
-    WHERE is_chuyen_gia = 1
-    ORDER BY id_kh DESC
-");
-$stmt->execute();
-$experts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
-    <title>Chuyên gia sức khỏe</title>
+    <title>Tư vấn sức khỏe theo triệu chứng</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/fw.css">
-    <link rel="stylesheet" href="../css/experts.css">
+    <link rel="stylesheet" href="../css/advice.css">
     <link rel="stylesheet" href="../css/menu.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
@@ -76,13 +92,13 @@ $experts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </a>
         </div>
 
-
         <!-- NAVIGATION -->
         <nav class="main-nav" aria-label="Main navigation">
             <ul class="nav-menu">
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
                 <li><a href="./experts.php"><i class="fa-solid fa-user-nurse"></i> Chuyên gia</a></li>
                 <li><a href="./advice.php"><i class="fa-solid fa-stethoscope"></i> Tư vấn theo triệu chứng</a></li>
+
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
                     <ul class="dropdown-nav">
@@ -157,7 +173,6 @@ $experts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             ? htmlspecialchars($user['avatar_url'])
                             : '../img/avt.jpg';
 
-                        // Khung avatar (frame)
                         $frame = '';
                         if (!empty($user['avatar_frame'])) {
                             $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
@@ -185,7 +200,6 @@ $experts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php if ($user['email'] == 'baka@gmail.com'): ?>
                                     <span class="role-badge">ADMIN</span>
                                 <?php else: ?>
-
                                 <?php endif; ?>
 
                                 <!-- Ẩn VIP tier nếu là admin -->
@@ -197,6 +211,7 @@ $experts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </p>
                                 <?php endif; ?>
                             </div>
+
                             <!-- Dropdown menu -->
                             <div class="dropdown-menu">
                                 <ul>
@@ -243,7 +258,6 @@ $experts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </li>
                                     <?php endif; ?>
 
-
                                     <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                                 </ul>
                             </div>
@@ -255,82 +269,37 @@ $experts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </div>
     </header>
+    <div class="advice-container">
+        <h1><i class="fa-solid fa-stethoscope"></i> Tư vấn sức khỏe theo triệu chứng</h1>
 
-    <div class="experts-wrapper">
-        <div class="experts-title">
-            <h1>👨‍⚕️ Chuyên gia sức khỏe</h1>
-            <p>Đội ngũ cộng tác viên & nhân viên chia sẻ kiến thức sức khỏe đáng tin cậy.</p>
-        </div>
+        <p class="des">Nhập triệu chứng bạn đang gặp để nhận gợi ý:</p>
 
-        <?php if (!$experts): ?>
-            <p style="text-align:center;">Hiện chưa có chuyên gia nào được hiển thị.</p>
-        <?php else: ?>
-            <div class="experts-grid">
-                <?php foreach ($experts as $cg): ?>
-                    <div class="expert-card">
-                        <img src="<?= htmlspecialchars($cg['avatar_url'] ?: './img/avt.jpg') ?>" alt="Avatar">
-                        <div class="expert-name"><?= htmlspecialchars($cg['ho_ten'] ?: 'Chưa có tên') ?></div>
-                        <?php if (!empty($cg['chuyen_mon'])): ?>
-                            <div class="expert-speciality">Chuyên môn: <?= htmlspecialchars($cg['chuyen_mon']) ?></div>
-                        <?php endif; ?>
-                        <?php if (!empty($cg['mo_ta_chuyen_gia'])): ?>
-                            <div class="expert-desc">
-                                <?= nl2br(htmlspecialchars(mb_strimwidth($cg['mo_ta_chuyen_gia'], 0, 140, '...'))) ?>
-                            </div>
-                        <?php endif; ?>
-                        <a href="expert_detail.php?id=<?= (int) $cg['id_kh'] ?>">Xem hồ sơ & bài viết →</a>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+        <form method="GET">
+            <input type="text" name="symptom" placeholder="Ví dụ: đau lưng, mất ngủ..."
+                value="<?= htmlspecialchars($tu_khoa) ?>" required>
+            <button type="submit">🔍 Tư vấn ngay</button>
+        </form>
+
+        <?php if ($tu_khoa !== ''): ?>
+            <h2>Kết quả cho triệu chứng: <span class="highlight">“<?= htmlspecialchars($tu_khoa) ?>”</span></h2>
+
+            <?php if ($ketqua): ?>
+                <div class="advice-grid">
+                    <?php foreach ($ketqua as $bv): ?>
+                        <a class="advice-item" href="post.php?slug=<?= urlencode($bv['duong_dan']) ?>">
+                            <img src="<?= htmlspecialchars($bv['anh_bv']) ?>" alt="">
+                            <h3><?= htmlspecialchars($bv['tieu_de']) ?></h3>
+                            <p><small>📅 <?= date("d/m/Y", strtotime($bv['ngay_dang'])) ?></small></p>
+                        </a>
+
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="no-result">❌ Không tìm thấy kết quả phù hợp. Vui lòng thử từ khóa khác.</p>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-column">
-                <h3>🩺 Về chúng tôi</h3>
-                <p>
-                    “Tin tức Sức khỏe” là nền tảng chia sẻ kiến thức về tập luyện, dinh dưỡng và chăm sóc tinh thần,
-                    giúp bạn sống khỏe hơn mỗi ngày.
-                </p>
-            </div>
 
-            <div class="footer-column">
-                <h3>📚 Thông tin</h3>
-                <ul>
-                    <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
-                    <li><a href="./about.php#policy">Chính sách biên tập</a></li>
-                    <li><a href="./about.php#team">Đội ngũ biên tập</a></li>
-                    <li><a href="./about.php#about">Về chúng tôi</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h3>📞 Liên hệ</h3>
-                <ul>
-                    <li><i class="fa-solid fa-envelope"></i> <a
-                            href="mailto:vuliztva1@gmail.com">vuliztva1@gmail.com</a></li>
-                    <li><i class="fa-brands fa-facebook"></i> <a href="https://facebook.com/Shiroko412"
-                            target="_blank">Fanpage Facebook</a></li>
-                    <li><i class="fa-brands fa-zhihu"></i> <a href="https://zalo.me/0332138297" target="_blank">Zalo hỗ
-                            trợ</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h3>🌐 Kết nối</h3>
-                <div class="social-icons">
-                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            © 2025 <strong>Nhóm 6</strong> — Tin tức Sức khỏe 🌱 | Lan tỏa kiến thức · Sống khỏe mỗi ngày
-        </div>
-    </footer>
 </body>
 
 </html>

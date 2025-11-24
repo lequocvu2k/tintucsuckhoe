@@ -176,8 +176,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ");
 
             $stmt->execute([$tieu_de, $duong_dan, $noi_dung, $anh_bv, $ma_tac_gia, $ma_chuyen_muc, $trang_thai, $danh_muc, $id_kh]);
+            // ⭐⭐⭐ TỰ ĐỘNG GÁN TAG NGẪU NHIÊN ⭐⭐⭐
 
+            // Lấy ID bài viết vừa thêm
+            $ma_bai_viet_moi = $pdo->lastInsertId();
 
+            // Lấy danh sách tag thuộc chuyên mục đó
+            $tagStmt = $pdo->prepare("SELECT id FROM tags WHERE ma_chuyen_muc = ?");
+            $tagStmt->execute([$ma_chuyen_muc]);
+            $allTags = $tagStmt->fetchAll(PDO::FETCH_COLUMN);
+
+            if ($allTags && count($allTags) > 0) {
+                // Chọn ngẫu nhiên 2 tags (hoặc 1 nếu chỉ có ít)
+                shuffle($allTags);
+                $randomTags = array_slice($allTags, 0, min(2, count($allTags)));
+
+                // Thêm vào bảng baiviet_tag
+                $insertTag = $pdo->prepare("INSERT INTO baiviet_tag (ma_bai_viet, id_tag) VALUES (?, ?)");
+
+                foreach ($randomTags as $tag) {
+                    $insertTag->execute([$ma_bai_viet_moi, $tag]);
+                }
+            }
 
             $_SESSION['success'] = "✅ Thêm bài viết thành công!";
             header("Location: quanlybv.php");
@@ -326,6 +346,7 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <ul class="nav-menu">
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
                 <li><a href="./experts.php"><i class="fa-solid fa-user-nurse"></i> Chuyên gia</a></li>
+                <li><a href="./advice.php"><i class="fa-solid fa-stethoscope"></i> Tư vấn theo triệu chứng</a></li>
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
                     <ul class="dropdown-nav">
@@ -719,7 +740,12 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= $bv['ma_bai_viet'] ?></td>
                     <td><img src="<?= htmlspecialchars($bv['anh_bv']) ?>" class="thumb" alt="Ảnh bài viết"></td>
                     <td><?= htmlspecialchars($bv['tieu_de']) ?></td>
-                    <td><?= htmlspecialchars($bv['duong_dan']) ?></td>
+                    <td>
+                        <a href="post.php?slug=<?= urlencode($bv['duong_dan']) ?>">
+                            <?= htmlspecialchars($bv['duong_dan']) ?>
+                        </a>
+                    </td>
+
                     <td><span class="category"><?= htmlspecialchars($bv['danh_muc']) ?></span></td> <!-- 🆕 -->
                     <td><?= htmlspecialchars($bv['ten_chuyen_muc'] ?? 'Không rõ') ?></td>
 

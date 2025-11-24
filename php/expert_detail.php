@@ -104,6 +104,7 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
             <ul class="nav-menu">
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
                 <li><a href="./experts.php"><i class="fa-solid fa-user-nurse"></i> Chuyên gia</a></li>
+                <li><a href="./advice.php"><i class="fa-solid fa-stethoscope"></i> Tư vấn theo triệu chứng</a></li>
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
                     <ul class="dropdown-nav">

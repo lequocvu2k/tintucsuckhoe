@@ -18,38 +18,35 @@ if ($id_hoi_dap <= 0 || $cau_tra_loi === '') {
 }
 
 // Cập nhật câu trả lời
-$stmt = $pdo->prepare("UPDATE hoi_dap SET cau_tra_loi = :answer WHERE id = :id");
+$stmt = $pdo->prepare("UPDATE hoi_dap SET cau_tra_loi = :answer, ngay_tra_loi = NOW() WHERE id = :id");
 $stmt->execute([
     ':answer' => $cau_tra_loi,
     ':id' => $id_hoi_dap
 ]);
 
-// Lấy thông tin người hỏi
+// Lấy người hỏi
 $stmtUser = $pdo->prepare("SELECT id_nguoi_hoi FROM hoi_dap WHERE id = ?");
 $stmtUser->execute([$id_hoi_dap]);
 $id_nguoi_hoi = $stmtUser->fetchColumn();
 
-// Gửi thông báo cho người hỏi
-// Gửi thông báo cho người hỏi
-if ($id_nguoi_hoi) {
-    $stmtNotify = $pdo->prepare("
-        INSERT INTO thongbao (id_kh, noi_dung, id_hoi_dap, created_at)
-        VALUES (?, ?, ?, NOW())
-    ");
-    $stmtNotify->execute([$id_nguoi_hoi, '', $id_hoi_dap]);
+// 🎁 CỘNG ĐIỂM THƯỞNG CHO NGƯỜI HỎI
+$stmtReward = $pdo->prepare("UPDATE hoi_dap SET diem_thuong = 10 WHERE id = ?");
+$stmtReward->execute([$id_hoi_dap]);
 
-    // 👉 Lấy ID thông báo vừa tạo
-    $tb_id = $pdo->lastInsertId();
+$stmtAddPoint = $pdo->prepare("UPDATE khachhang SET so_diem = so_diem + 10 WHERE id_kh = ?");
+$stmtAddPoint->execute([$id_nguoi_hoi]);
 
-    // 👉 Tạo nội dung chứa link đúng ID thông báo
-    $noi_dung = "💬 Câu hỏi của bạn đã được chuyên gia trả lời. ";
+// 🔔 Gửi thông báo cho người hỏi + link đúng
+$stmtNotify = $pdo->prepare("
+    INSERT INTO thongbao (id_kh, noi_dung, id_hoi_dap, created_at)
+    VALUES (?, ?, ?, NOW())
+");
+$stmtNotify->execute([
+    $id_nguoi_hoi,
+    "💬 Câu hỏi của bạn đã được chuyên gia trả lời. <a href='user.php?view=notifications#tb{$id_hoi_dap}'>Xem chi tiết</a>",
+    $id_hoi_dap
+]);
 
-    // 👉 Cập nhật lại thông báo
-    $stmtUpdate = $pdo->prepare("UPDATE thongbao SET noi_dung = ? WHERE id = ?");
-    $stmtUpdate->execute([$noi_dung, $tb_id]);
-}
-
-
-// Quay lại trang chuyên gia
+// 🔙 Quay lại
 header("Location: expert_profile.php?sent_answer=1");
 exit;

@@ -181,6 +181,17 @@ $stmt_comments = $pdo->prepare("
 ");
 $stmt_comments->execute([$post['ma_bai_viet']]);
 $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare("
+    SELECT b.*, c.ten_chuyen_muc
+    FROM baiviet b
+    LEFT JOIN chuyenmuc c ON b.ma_chuyen_muc = c.ma_chuyen_muc
+    WHERE b.duong_dan = ? AND b.trang_thai = 'published'
+");
+$stmt->execute([$slug]);
+$post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -219,6 +230,7 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
             <ul class="nav-menu">
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
                 <li><a href="./experts.php"><i class="fa-solid fa-user-nurse"></i> Chuyên gia</a></li>
+                <li><a href="./advice.php"><i class="fa-solid fa-stethoscope"></i> Tư vấn theo triệu chứng</a></li>
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
                     <ul class="dropdown-nav">
@@ -474,7 +486,15 @@ $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
     <main class="post-container">
         <!-- Cột trái: bài viết -->
         <article class="post-content">
+
             <h1><?= htmlspecialchars($post['tieu_de']) ?></h1>
+
+            <?php if (!empty($post['ten_chuyen_muc'])): ?>
+                <div class="post-tags">
+                    <span class="tag-item"><?= htmlspecialchars($post['ten_chuyen_muc']) ?></span>
+                </div>
+            <?php endif; ?>
+<br>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <form method="POST" action="save_post.php">
                     <input type="hidden" name="ma_bai_viet" value="<?= $post['ma_bai_viet'] ?>">

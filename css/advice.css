@@ -1,0 +1,150 @@
+/* --- Container tổng --- */
+.advice-container {
+    max-width: 950px;
+    margin: 60px auto;
+    padding: 35px 30px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 6px 25px rgba(0, 115, 91, 0.15);
+    text-align: center;
+    border: 1px solid #e8f5f1;
+    animation: fadeIn 0.6s ease;
+}
+
+/* --- Tiêu đề phong cách Y tế --- */
+.advice-container h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #0ca678;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.advice-container h1 i {
+    color: #007e5f;
+    font-size: 32px;
+}
+
+/* --- mô tả --- */
+.des {
+    color: #6c757d;
+    margin-bottom: 20px;
+    font-style: italic;
+    font-size: 17px;
+}
+
+/* --- Ô nhập triệu chứng --- */
+form input {
+    width: 75%;
+    padding: 13px 15px;
+    border-radius: 10px;
+    border: 2px solid #b7e5d8;
+    outline: none;
+    font-size: 17px;
+    transition: 0.3s;
+}
+form input:focus {
+    border-color: #0ca678;
+    box-shadow: 0 0 0 4px rgba(12,166,120,0.15);
+}
+
+/* --- Button --- */
+form button {
+    padding: 13px 22px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0ca678, #007e5f);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: 8px;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 126, 95, 0.25);
+}
+form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 126, 95, 0.35);
+}
+
+/* --- Lưới kết quả --- */
+.advice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+/* --- Item bài viết --- */
+.advice-item {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden; /* quan trọng để ảnh bo theo box */
+    transition: 0.35s;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    border: 1px solid #e6f7f1;
+    text-align: center;
+    cursor: pointer;
+}
+.advice-item img {
+    width: 100%;
+    height: 140px;              /* 🔥 fix chiều cao ảnh tuyệt đối peak */
+    object-fit: cover;          /* 🔥 ảnh cover chuẩn như card news */
+    display: block;
+}
+.advice-item p {
+    padding: 10px;
+    font-weight: 600;
+    color: #0b6e54;
+    font-size: 15px;
+}
+
+/* --- Hover hiệu ứng card --- */
+.advice-item:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 22px rgba(0, 115, 91, 0.2);
+    border-color: #0ca678;
+}
+
+/* --- Không có kết quả --- */
+.no-result {
+    color: #d9534f;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+/* --- Animation nhẹ --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* --- Link card không gạch chân + màu chuẩn --- */
+.advice-item {
+    text-decoration: none !important;
+    color: inherit;
+    display: block;
+}
+
+/* --- Tiêu đề trong card --- */
+.advice-item h3 {
+    font-size: 15px;
+    margin: 10px 0 5px;
+    color: #0b6e54;
+    font-weight: 700;
+    line-height: 1.3;
+    padding: 0 5px;
+    transition: 0.3s;
+}
+
+/* --- Ngày đăng nhẹ nhàng --- */
+.advice-item small {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+/* --- Hiệu ứng tiêu đề khi hover card --- */
+.advice-item:hover h3 {
+    color: #00865c;
+    text-decoration: underline;
+}
