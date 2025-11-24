@@ -9,16 +9,16 @@ if (isset($_GET['symptom'])) {
     $tu_khoa = trim($_GET['symptom']);
     if ($tu_khoa !== '') {
         $sql = "
-        SELECT DISTINCT b.ma_bai_viet, b.tieu_de, b.duong_dan, b.anh_bv, b.ngay_dang
-        FROM baiviet b
-        LEFT JOIN baiviet_tag bt ON b.ma_bai_viet = bt.ma_bai_viet
-        LEFT JOIN tags t ON bt.id_tag = t.id
-        WHERE 
-            b.tieu_de LIKE :kw 
-            OR b.noi_dung LIKE :kw
-            OR t.ten_tag LIKE :kw
-        ORDER BY b.ngay_dang DESC LIMIT 12
-        ";
+SELECT DISTINCT b.ma_bai_viet, b.tieu_de, b.duong_dan, b.anh_bv, b.ngay_dang, c.ten_chuyen_muc
+FROM baiviet b
+LEFT JOIN chuyenmuc c ON b.ma_chuyen_muc = c.ma_chuyen_muc
+WHERE 
+    b.tieu_de LIKE :kw 
+    OR b.noi_dung LIKE :kw
+    OR c.ten_chuyen_muc LIKE :kw
+ORDER BY b.ngay_dang DESC LIMIT 12
+";
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':kw' => "%$tu_khoa%"]);
         $ketqua = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -289,7 +289,11 @@ if (isset($_SESSION['user_id'])) {
                         <a class="advice-item" href="post.php?slug=<?= urlencode($bv['duong_dan']) ?>">
                             <img src="<?= htmlspecialchars($bv['anh_bv']) ?>" alt="">
                             <h3><?= htmlspecialchars($bv['tieu_de']) ?></h3>
+
+                            <span class="tag-item"><?= htmlspecialchars($bv['ten_chuyen_muc']) ?></span>
+
                             <p><small>📅 <?= date("d/m/Y", strtotime($bv['ngay_dang'])) ?></small></p>
+
                         </a>
 
                     <?php endforeach; ?>

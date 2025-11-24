@@ -142,6 +142,19 @@ form button:hover {
     color: #6c757d;
     font-size: 13px;
 }
+.tag-item {
+    display: inline-block;
+    background: #066a49;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    margin-top: 5px;
+    text-decoration: none;
+}
+.tag-item:hover {
+    background: #044f35;
+}
 
 /* --- Hiệu ứng tiêu đề khi hover card --- */
 .advice-item:hover h3 {
