@@ -48,26 +48,28 @@
                 </ul>
             </li>
 
-            <!-- THÔNG TIN -->
             <li class="dropdowns">
                 <a href="#"><i class="fa-solid fa-circle-info"></i> Thông tin ▾</a>
                 <ul class="dropdown-nav">
                     <li><a href="./about.php#about"><i class="fa-solid fa-users"></i> Về chúng tôi</a></li>
-                    <li><a href="./about.php#mission"><i class="fa-solid fa-bullseye"></i> Tầm nhìn & Sứ mệnh</a>
+                    <li><a href="./about.php#mission"><i class="fa-solid fa-bullseye"></i> Tầm nhìn & Sứ mệnh</a></li>
+                    <li><a href="./about.php#policy"><i class="fa-solid fa-scale-balanced"></i> Chính sách biên tập</a>
                     </li>
-                    <li><a href="./about.php#policy"><i class="fa-solid fa-scale-balanced"></i> Chính sách biên
-                            tập</a></li>
                     <li><a href="./about.php#team"><i class="fa-solid fa-people-group"></i> Đội ngũ</a></li>
-                    <li><a href="../mail/formmail.php"><i class="fa-solid fa-pen-to-square"></i> Gửi phản hồi</a>
-                    </li>
-                    <li><a href="mailto:vuliztva1@gmail.com"><i class="fa-solid fa-envelope"></i> Email hỗ trợ</a>
-                    </li>
+                </ul>
+            </li>
+            <li class="dropdowns">
+                <a href="#"><i class="fa-solid fa-envelope-circle-check"></i> Liên hệ ▾</a>
+                <ul class="dropdown-nav">
+                    <li><a href="../mail/formmail.php"><i class="fa-solid fa-pen-to-square"></i> Gửi phản hồi</a></li>
+                    <li><a href="mailto:vuliztva1@gmail.com"><i class="fa-solid fa-envelope"></i> Email hỗ trợ</a></li>
                     <li><a href="https://www.facebook.com/Shiroko412/" target="_blank"><i
                                 class="fa-brands fa-facebook"></i> Fanpage</a></li>
                     <li><a href="https://zalo.me/0332138297" target="_blank"><i class="fa-brands fa-zhihu"></i> Zalo
                             liên hệ</a></li>
                 </ul>
             </li>
+
         </ul>
     </nav>
 

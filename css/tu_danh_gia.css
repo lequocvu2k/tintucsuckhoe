@@ -205,6 +205,310 @@ form.health-form {
   background: #e6f4ff;
   transform: translateY(-2px);
 }
+.reset-actions {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.reset-btn {
+  background: #e63946;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.reset-btn:hover {
+  background: #b92c36;
+  transform: scale(1.02);
+}
+.nutrition-section {
+  margin-top: 24px;
+}
+
+.nutrition-section h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nutrition-section .note {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.nutrition-box {
+  background: #fffceb;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.sleep-section {
+  margin-top: 20px;
+}
+
+.sleep-section h2 {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.sleep-section .note {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.sleep-box {
+  background: #eef7ff;
+  border: 1px solid #93c5fd;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.exercise-section {
+  margin-top: 20px;
+}
+
+.exercise-section h2 {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.exercise-section .note {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.exercise-box {
+  background: #eaffec;
+  border: 1px solid #86efac;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.water-section {
+  margin-top: 20px;
+}
+
+.water-section h2 {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.water-section .note {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.water-box {
+  background: #ecfeff;
+  border: 1px solid #67e8f9;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.workout-section {
+  margin-top: 24px;
+}
+
+.workout-section h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.workout-controls {
+  margin-bottom: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workout-list {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  list-style: disc;
+  margin-left: 18px;
+}
+/* --- GRID BỐ CỤC --- */
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+/* --- THẺ CHUNG --- */
+.result-card,
+.nutrition-section,
+.sleep-section,
+.exercise-section,
+.water-section {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 15px 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Căn đều tiêu đề + nội dung */
+.result-card h3,
+.nutrition-section h2,
+.sleep-section h2,
+.exercise-section h2,
+.water-section h2 {
+  font-size: 17px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* --- NHÃN TRẠNG THÁI --- */
+.badge {
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-left: 5px;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.badge.good {
+  background: #d1fae5;
+  color: #047857;
+}
+.badge.mid {
+  background: #fef9c3;
+  color: #92400e;
+}
+.badge.warn {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* --- CÁC BOX NỘI DUNG GỢI Ý --- */
+.nutrition-box,
+.sleep-box,
+.exercise-box,
+.water-box {
+  background: #f8fafc;
+  border-left: 4px solid #38bdf8;
+  padding: 12px 14px;
+  border-radius: 6px;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* --- PHẦN GỢI Ý BÀI VIẾT --- */
+.recommend-section {
+  margin-top: 35px;
+}
+
+.recommend-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.recommend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  width: calc(50% - 10px);
+  text-decoration: none;
+  border: 1px solid #eee;
+  transition: 0.2s;
+}
+
+.recommend-item:hover {
+  background: #f0fdf4;
+}
+.recommend-item img {
+  width: 65px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.ai-box {
+    margin-top: 30px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f5fff7;
+    border: 1px solid #bdeebb;
+}
+
+.ai-box h3 {
+    margin-bottom: 10px;
+    color: #0b6837;
+    font-weight: 700;
+}
+
+.ai-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.ai-input input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #b5d8b1;
+}
+
+.ai-input button {
+    padding: 8px 14px;
+    background: #09934d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.ai-input button:hover {
+    background: #066b38;
+}
+
+#reply {
+    background: #ffffff;
+    padding: 12px;
+    border: 1px solid #aae1b0;
+    border-radius: 6px;
+    display: none;
+}
 
 @media (max-width: 600px) {
   .health-wrapper {

@@ -59,6 +59,7 @@ try {
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/about.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/popup.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
@@ -68,6 +69,7 @@ try {
 
 <body>
     <?php include '../partials/header.php'; ?>
+    <?php include '../partials/login.php'; ?>
     <div class="about-hero" id="about">
         <h1>Về chúng tôi</h1>
         <p>
@@ -78,7 +80,7 @@ try {
 
     <main>
         <section id="mission">
-            <h2>Tầm nhìn & Sứ mệnh</h2>
+            <h1>Tầm nhìn & Sứ mệnh</h1>
             <p><strong>Tầm nhìn:</strong> Trở thành nguồn tin cậy hàng đầu về sức khỏe, lan tỏa lối sống tích cực và
                 khoa học.</p>
             <p><strong>Sứ mệnh:</strong> Cung cấp thông tin dễ hiểu, dễ áp dụng, mang lại giá trị thực tế cho mọi người.
@@ -91,7 +93,7 @@ try {
         </section>
 
         <section id="policy">
-            <h2>Chính sách biên tập</h2>
+            <h1>Chính sách biên tập</h1>
             <p>
                 Tất cả nội dung trên trang đều được biên soạn cẩn thận, đảm bảo tính trung thực, chính xác và dễ tiếp
                 cận.
@@ -105,7 +107,7 @@ try {
         </section>
 
         <section id="team">
-            <h2>Đội ngũ của chúng tôi</h2>
+            <h1>Đội ngũ của chúng tôi</h1>
             <div class="team">
                 <?php
                 if (isset($error)) {

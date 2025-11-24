@@ -315,8 +315,6 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 </div>
             </section>
-
-
             <aside class="popular">
                 <section class="latest">
                     <h2>POPULAR POSTS</h2>
