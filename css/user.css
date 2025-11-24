@@ -1251,6 +1251,29 @@ form button {
     text-decoration: none !important;
     color: inherit; /* Giữ nguyên màu chữ */
 }
+.rate-form {
+    margin-top: 10px;
+    padding: 8px;
+    background: #f1fff1;
+    border-left: 4px solid #4caf50;
+    border-radius: 6px;
+}
+
+.rate-form select, .rate-form button {
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.rate-form button {
+    background: #1da857;
+    color: #fff;
+    cursor: pointer;
+}
+
+.rate-form button:hover {
+    background: #14773e;
+}
 
 /* Responsive tinh chỉnh kích cỡ card */
 @media (min-width: 1280px) {

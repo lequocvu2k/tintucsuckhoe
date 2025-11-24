@@ -224,6 +224,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <nav class="main-nav" aria-label="Main navigation">
             <ul class="nav-menu">
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
+                <li><a href="./experts.php"><i class="fa-solid fa-user-nurse"></i> Chuyên gia</a></li>
 
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
@@ -363,6 +364,10 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
+                                    <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'NhanVien' || $_SESSION['user_role'] === 'QuanTri')): ?>
+                                        <li><a href="./expert_profile.php"><i class="fa-solid fa-user-doctor"></i> Hồ sơ Chuyên
+                                                gia</a></li>
+                                    <?php endif; ?>
                                     <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'QuanTri' || $_SESSION['user_role'] === 'NhanVien')): ?>
                                         <li class="dropdown">
                                             <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản

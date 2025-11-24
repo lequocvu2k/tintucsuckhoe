@@ -325,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav class="main-nav" aria-label="Main navigation">
             <ul class="nav-menu">
                 <li><a href="index.php"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
-
+                <li><a href="./experts.php"><i class="fa-solid fa-user-nurse"></i> Chuyên gia</a></li>
                 <li class="dropdowns">
                     <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
                     <ul class="dropdown-nav">
@@ -465,6 +465,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <li><a href="./user.php?view=saved"><i class="fas fa-bookmark"></i> Đã lưu</a></li>
                                     <li><a href="./user.php?view=notifications"><i class="fas fa-bell"></i> Thông báo</a>
                                     </li>
+                                    <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'NhanVien' || $_SESSION['user_role'] === 'QuanTri')): ?>
+                                        <li><a href="./expert_profile.php"><i class="fa-solid fa-user-doctor"></i> Hồ sơ Chuyên
+                                                gia</a></li>
+                                    <?php endif; ?>
                                     <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'QuanTri' || $_SESSION['user_role'] === 'NhanVien')): ?>
                                         <li class="dropdown">
                                             <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
@@ -1003,29 +1007,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Lấy thông báo
                     $stmt = $pdo->prepare("
-            SELECT noi_dung, created_at, da_doc 
-            FROM thongbao 
-            WHERE id_kh = ? 
-            ORDER BY created_at DESC
-        ");
+    SELECT t.noi_dung, t.created_at, t.da_doc,
+           h.id, h.cau_tra_loi, h.danh_gia   -- 👈 lấy thêm
+    FROM thongbao t
+    LEFT JOIN hoi_dap h ON t.id_hoi_dap = h.id   -- 👈 join để biết câu trả lời
+    WHERE t.id_kh = ?
+    ORDER BY t.created_at DESC
+");
                     $stmt->execute([$user['id_kh']]);
                     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
                     ?>
 
                     <?php if ($notifications): ?>
                         <ul class="notification-list">
                             <?php foreach ($notifications as $n): ?>
                                 <li class="notification-item <?= $n['da_doc'] ? 'read' : 'unread' ?>">
-                                    <p><?= $n['noi_dung'] ?></p> <!-- không htmlspecialchars -->
+                                    <p><?= $n['noi_dung'] ?></p>
                                     <span class="time">
                                         🕒 <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
                                     </span>
+
+                                    <?php if (!empty($n['cau_tra_loi']) && $n['danh_gia'] === null): ?>
+                                        <form action="rate_answer.php" method="POST" class="rate-form">
+                                            <input type="hidden" name="id" value="<?= $n['id'] ?>">
+                                            <label>⭐ Đánh giá câu trả lời:</label>
+                                            <select name="rating" required>
+                                                <option value="1">⭐ (Kém)</option>
+                                                <option value="2">⭐⭐</option>
+                                                <option value="3">⭐⭐⭐ (Tốt)</option>
+                                                <option value="4">⭐⭐⭐⭐</option>
+                                                <option value="5">⭐⭐⭐⭐⭐ (Xuất sắc)</option>
+                                            </select>
+                                            <button type="submit">Gửi</button>
+                                        </form>
+
+                                    <?php elseif ($n['danh_gia'] !== null): ?>
+                                        <p>⭐ Đánh giá của bạn: <b><?= $n['danh_gia'] ?>/5</b></p>
+                                    <?php endif; ?>
+                                </li>
+
+                                <span class="time">
+                                    🕒 <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
+                                </span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
                     <?php else: ?>
                         <p>Không có thông báo mới.</p>
                     <?php endif; ?>
+
                 </div>
 
             <?php elseif ($view === 'settings'): ?>

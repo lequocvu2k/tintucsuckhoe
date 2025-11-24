@@ -1,0 +1,126 @@
+.expert-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.expert-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.expert-header img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #4caf50;
+}
+
+.expert-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.expert-header span {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.expert-form label {
+  display: block;
+  margin: 12px 0 4px;
+  font-weight: 600;
+}
+
+.expert-form input[type="text"],
+.expert-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cfd8dc;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.expert-form textarea {
+  min-height: 120px;
+}
+
+.expert-form .checkbox-row {
+  margin: 12px 0;
+}
+
+.expert-form button {
+  margin-top: 16px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 999px;
+  background: #43a047;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.expert-form button:hover {
+  background: #2e7d32;
+}
+
+.back-link {
+    display: inline-block;
+    text-decoration: none;     /* 🚫 Bỏ gạch chân */
+    font-size: 15px;
+    font-weight: 600;
+    color: #2e7d32;            /* Màu xanh sức khỏe */
+    background: #e8f5e9;       /* Nền xanh nhạt */
+    padding: 6px 14px;
+    border-radius: 999px;      /* Bo tròn dạng pill */
+    transition: 0.25s ease-in-out;
+}
+
+.back-link:hover {
+    background: #c8e6c9;
+    color: #1b5e20;
+    transform: translateX(-3px);  /* ⚡ Hiệu ứng dịch sang trái */
+}
+
+.qa-box {
+    background: #f9fff9;
+    border: 1px solid #d6f5d6;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.qa-box textarea {
+    width: 100%;
+    height: 80px;
+    border-radius: 6px;
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+.reply-btn {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: #1da857;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.reply-btn:hover {
+    background: #14773e;
+}
