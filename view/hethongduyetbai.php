@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 // ❌ Chặn người không phải ADMIN
 if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'QuanTri') {
@@ -162,7 +162,7 @@ $pending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($post['ho_ten']) ?></td>
                     <td><?= date("d/m/Y", strtotime($post['ngay_dang'])) ?></td>
                     <td>
-                        <img src="<?= htmlspecialchars($post['anh_bv']) ?>" alt="Ảnh bài viết">
+                        <img src="/php/<?= htmlspecialchars($post['anh_bv']) ?>" alt="Ảnh bài viết">
                     </td>
                     <td>
                         <a class="btn approve"

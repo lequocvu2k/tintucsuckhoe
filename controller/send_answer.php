@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 // Chỉ admin hoặc nhân viên mới được trả lời
 if (!isset($_SESSION['user_role']) || ($_SESSION['user_role'] !== 'NhanVien' && $_SESSION['user_role'] !== 'QuanTri')) {
@@ -43,10 +43,10 @@ $stmtNotify = $pdo->prepare("
 ");
 $stmtNotify->execute([
     $id_nguoi_hoi,
-    "💬 Câu hỏi của bạn đã được chuyên gia trả lời. <a href='user.php?view=notifications#tb{$id_hoi_dap}'>Xem chi tiết</a>",
+    "💬 Câu hỏi của bạn đã được chuyên gia trả lời. <a href='../view/user.php?view=notifications#tb{$id_hoi_dap}'>Xem chi tiết</a>",
     $id_hoi_dap
 ]);
 
 // 🔙 Quay lại
-header("Location: expert_profile.php?sent_answer=1");
+header("Location: ../view/expert_profile.php?sent_answer=1");
 exit;

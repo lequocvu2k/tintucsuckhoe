@@ -1,75 +1,64 @@
-let sort = "newest";
-let offset = 0;
-let id = document.body.getAttribute("data-id");
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("questionContainer");
+  const loadBtn = document.getElementById("loadMore");
+  const sortSelect = document.getElementById("sortQuestion");
 
-function loadQuestions(reset = false) {
-  if (reset) {
-    offset = 0;
-    document.getElementById("questionContainer").innerHTML = "";
-  }
+  const expertID = document.body.getAttribute("data-id");
+  let offset = 0;
+  let sort = "newest";
 
-  fetch(
-    `expert_detail.php?api_questions=1&id=${id}&offset=${offset}&sort=${sort}`
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.length === 0 && offset === 0) {
-        document.getElementById("questionContainer").innerHTML =
-          "<p>💬 Chưa có câu hỏi nào.</p>";
-        document.getElementById("loadMore").style.display = "none";
-        return;
-      }
+  function loadQuestions(reset = false) {
+    fetch(`../view/expert_detail.php?api_questions=1&id=${expertID}&offset=${offset}&sort=${sort}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (reset) container.innerHTML = "";
 
-      if (data.length === 0) {
-        document.getElementById("loadMore").innerText = "✔️ Hết câu hỏi";
-        document.getElementById("loadMore").disabled = true;
-        return;
-      }
-
-      data.forEach((q) => {
-        let avatar = q.avatar_url || "../img/avt.jpg";
-        let answerHTML = "";
-
-        if (q.cau_tra_loi) {
-          answerHTML = `
-                        <div class="answer-block">
-                            <p><b>Trả lời:</b> ${q.cau_tra_loi}</p>
-                        </div>
-                    `;
-        } else {
-          answerHTML = `<p class="waiting">⏳ Chưa có câu trả lời</p>`;
+        if (data.length === 0 && offset === 0) {
+          container.innerHTML = "<p>❌ Chưa có câu hỏi nào.</p>";
+          loadBtn.style.display = "none";
+          return;
         }
 
-        let item = `
-                    <div class="question-item">
-                        <div class='question-user'>
-                            <img src='${avatar}' class='avatar'>
-                            <div>
-                                <strong>${q.ho_ten}</strong>
-                                <span class='time'>${q.ngay_hoi}</span>
-                            </div>
-                        </div>
-                        <p> ${q.cau_hoi}</p>
-                        ${answerHTML}
-                    </div>`;
-        document
-          .getElementById("questionContainer")
-          .insertAdjacentHTML("beforeend", item);
+        loadBtn.style.display = data.length < 5 ? "none" : "block";
+
+        data.forEach((q) => {
+          container.innerHTML += `
+        <div class="question-item">
+            <div class="question-user">
+                <img src="${q.avatar_url || "../img/avt.jpg"}" class="avatar-sm">
+                <span>${q.ho_ten}</span>
+            </div>
+            <p class="question-text">${q.cau_hoi}</p>
+            <div class="question-date">📅 Hỏi lúc: ${new Date(q.ngay_hoi).toLocaleDateString("vi-VN")}</div>
+
+            ${
+              q.cau_tra_loi
+                ? `
+        <div class="answer-box">
+            <div class="answer-user">
+                <img src="${q.expert_avatar || "../img/avt.jpg"}" class="avatar-sm answer-avatar">
+                <b>${q.expert_name}</b>
+            </div>
+            <p class="answer-text"><b>Trả lời:</b> ${q.cau_tra_loi}</p>
+            <div class="answer-date">📌 ${new Date(q.ngay_tra_loi).toLocaleDateString("vi-VN")}</div>
+        </div>`
+                : `<p class="waiting-answer">⏳ Chưa có câu trả lời...</p>`
+            }
+        </div>`;
+        });
       });
-
-      offset += 5;
-    });
-}
-
-loadQuestions();
-
-document.getElementById("loadMore").onclick = () => loadQuestions();
-document.getElementById("sortQuestion").onchange = function () {
-  sort = this.value;
-  loadQuestions(true);
-};
-window.onscroll = function () {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-    loadQuestions();
   }
-};
+
+  loadBtn.addEventListener("click", () => {
+    offset += 5;
+    loadQuestions();
+  });
+
+  sortSelect.addEventListener("change", () => {
+    sort = sortSelect.value;
+    offset = 0;
+    loadQuestions(true);
+  });
+
+  loadQuestions();
+});

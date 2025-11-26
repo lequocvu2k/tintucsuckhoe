@@ -1,5 +1,5 @@
 <?php
-require_once './db.php';
+require_once '../php/db.php';
 
 $slug = $_GET['slug'] ?? '';
 if (empty($slug)) {

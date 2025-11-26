@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
 $user = null; // Mặc định là khách
 $tier = "Member";

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 // ====================== KIỂM TRA ĐĂNG NHẬP ======================
 if (!isset($_SESSION['user_id'])) {
@@ -560,7 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             mình. Hãy điền thông tin dưới đây để chúng tôi có thể liên hệ với bạn ngay!</p>
 
                         <!-- Form yêu cầu trở thành nhân viên -->
-                        <form method="POST" action="xac_nhan.php">
+                        <form method="POST" action="../controller/xac_nhan.php">
                             <label for="ho_ten">Họ và tên:</label>
                             <input type="text" id="ho_ten" name="ho_ten" placeholder="Nhập họ tên của bạn" required>
 
@@ -746,7 +746,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="history-card">
                                     <a href="post.php?slug=<?= htmlspecialchars($item['duong_dan']) ?>">
                                         <div class="thumb">
-                                            <img src="<?= !empty($item['anh_bv']) ? htmlspecialchars($item['anh_bv']) : '../img/noimage.jpg' ?>"
+                                            <img src="/php/<?= !empty($item['anh_bv']) ? htmlspecialchars($item['anh_bv']) : '../img/noimage.jpg' ?>"
                                                 alt="<?= htmlspecialchars($item['tieu_de']) ?>">
 
                                             <!-- ✅ Badge lượt xem -->
@@ -795,7 +795,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="saved-item">
                                     <a href="post.php?slug=<?= urlencode($item['duong_dan']) ?>">
 
-                                        <img src="<?= htmlspecialchars($item['anh_bv']) ?>" alt="">
+                                        <img src="/php/<?= htmlspecialchars($item['anh_bv']) ?>" alt="">
                                         <h3><?= htmlspecialchars($item['tieu_de']) ?></h3>
                                         <p><?= date("F d, Y", strtotime($item['ngay_dang'])) ?></p>
                                     </a>
@@ -858,7 +858,7 @@ ORDER BY t.created_at DESC
 
                                     <!-- ⭐ HIỆN NÚT ĐÁNH GIÁ -->
                                     <?php if (!empty($n['cau_tra_loi']) && $n['danh_gia'] === null): ?>
-                                        <form action="rate_answer.php" method="POST" class="rate-form">
+                                        <form action="../controller/rate_answer.php" method="POST" class="rate-form">
                                             <input type="hidden" name="id" value="<?= $n['id'] ?>">
                                             <label>⭐ Đánh giá câu trả lời:</label>
                                             <select name="rating" required>

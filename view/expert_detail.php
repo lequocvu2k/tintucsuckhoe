@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 /* ========== API Load + Sort Câu Hỏi ========== */
 if (isset($_GET['api_questions']) && isset($_GET['id'])) {
     $id = (int) $_GET['id'];
@@ -23,14 +23,28 @@ if (isset($_GET['api_questions']) && isset($_GET['id'])) {
     }
 
     $stmtQ = $pdo->prepare("
-        SELECT h.*, kh.ho_ten, kh.avatar_url, kh.avatar_frame
-        FROM hoi_dap h
-        JOIN khachhang kh ON h.id_nguoi_hoi = kh.id_kh
-        WHERE h.id_chuyen_gia = ?
-        $order
-        LIMIT 5 OFFSET $offset
-    ");
+    SELECT 
+        h.*, h.cau_tra_loi, h.ngay_tra_loi,
+
+        -- Người hỏi
+        kh.ho_ten, kh.avatar_url, kh.avatar_frame,
+
+        -- Chuyên gia trả lời
+        cg.ho_ten AS expert_name,
+        cg.avatar_url AS expert_avatar,
+        cg.avatar_frame AS expert_frame
+
+    FROM hoi_dap h
+    JOIN khachhang kh ON h.id_nguoi_hoi = kh.id_kh   -- người đặt câu hỏi
+    JOIN khachhang cg ON h.id_chuyen_gia = cg.id_kh  -- chuyên gia
+
+    WHERE h.id_chuyen_gia = ?
+    $order
+    LIMIT 5 OFFSET $offset
+");
+
     $stmtQ->execute([$id]);
+    
     echo json_encode($stmtQ->fetchAll(PDO::FETCH_ASSOC));
     exit;
 }
@@ -153,7 +167,7 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
             <?php if (isset($_SESSION['user_id'])): ?>
                 <div class="ask-box">
                     <h3>🗨️ Đặt câu hỏi cho chuyên gia</h3>
-                    <form action="send_question.php" method="POST">
+                    <form action="../controller/send_question.php" method="POST">
                         <input type="hidden" name="id_chuyen_gia" value="<?= $id_chuyen_gia ?>">
                         <textarea name="question" placeholder="Nhập câu hỏi của bạn về sức khỏe..." required></textarea>
                         <button type="submit" class="ask-btn">Gửi câu hỏi</button>
@@ -176,7 +190,7 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
                     <div class="expert-post-item">
                         <?php if (!empty($p['anh_bv'])): ?>
                             <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
-                                <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                                <img src="/php/<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
                             </a>
                         <?php endif; ?>
 
@@ -214,7 +228,7 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
     </div>
-
+    <script src="../js/expert_detail.js" defer></script>
     <?php include '../partials/footer.php'; ?>
 
 </body>

@@ -4,7 +4,7 @@ function editComment(commentId) {
   var newCommentText = prompt("Nhập bình luận mới:");
   if (newCommentText) {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "edit_comment.php", true);
+    xhr.open("POST", "../controller/edit_comment.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
       if (xhr.readyState == 4 && xhr.status == 200) {
@@ -27,7 +27,7 @@ function deleteComment(commentId, slug) {
     var xhr = new XMLHttpRequest();
     xhr.open(
       "GET",
-      "delete_comment.php?id=" + commentId + "&slug=" + slug,
+      "../controller/delete_comment.php?id=" + commentId + "&slug=" + slug,
       true
     );
     xhr.onreadystatechange = function () {
@@ -47,7 +47,7 @@ function sortComments() {
 
   // Gửi yêu cầu AJAX
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "post.php?slug=" + slug + "&sort=" + sortValue, true);
+  xhr.open("GET", "../view/post.php?slug=" + slug + "&sort=" + sortValue, true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.status == 200) {
       // Cập nhật lại phần bình luận
@@ -63,10 +63,10 @@ function sortComments() {
   var slug = window.location.search.split("=")[1]; // Lấy slug từ URL
 
   // Thực hiện chuyển hướng lại với tham số sort
-  window.location.href = "post.php?slug=" + slug + "&sort=" + sortValue;
+  window.location.href = "../view/post.php?slug=" + slug + "&sort=" + sortValue;
 }
 function likePost(id) {
-  fetch("like_post.php", {
+  fetch("../controller/like_post.php", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "ma_bai_viet=" + id,

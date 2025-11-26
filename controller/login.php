@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php//db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Kiểm tra nếu các trường bắt buộc không để trống
     if (empty($username) || empty($password)) {
         $_SESSION['login_error'] = "❌ Vui lòng nhập đầy đủ thông tin!";
-        header("Location: index.php");
+        header("Location: ../view/index.php");
         exit;
     }
 
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$username, $user['password']]);  // Dùng mật khẩu thuần túy
 
             // Đăng nhập thành công, chuyển hướng về trang chính
-            header("Location: index.php");
+            header("Location: ../view/index.php");
             exit;
         } else {
             $_SESSION['login_error'] = "❌ Sai mật khẩu!";
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Chuyển hướng lại trang đăng nhập nếu có lỗi
-    header("Location: index.php");
+    header("Location: ../view/index.php");
     exit;
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
@@ -35,6 +35,6 @@ if ($exists == 0) {
 }
 
 // Quay lại đúng bài viết
-header("Location: post.php?slug=" . urlencode($slug));
+header("Location: ../view/post.php?slug=" . urlencode($slug));
 exit;
 ?>

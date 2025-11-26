@@ -205,6 +205,43 @@ footer {
   flex: 1;
   width: 30%;
 }
+/* Reset chung cho 2 label */
+.login-link,
+.signup-link {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 2px solid #2f8f46;
+    border-radius: 6px;
+    color: #2f8f46;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.25s ease;
+}
+
+/* Hover animation */
+.login-link:hover,
+.signup-link:hover {
+    background: #2f8f46;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(47, 143, 70, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Khi click */
+.login-link:active,
+.signup-link:active {
+    transform: scale(0.96);
+}
+.signup-link {
+    border-color: #d67735;
+    color: #d67735;
+}
+
+.signup-link:hover {
+    background: #d67735;
+    box-shadow: 0 2px 6px rgba(214, 119, 53, 0.4);
+}
 
 /* Danh sách Bài phổ biến */
 .popular-list {

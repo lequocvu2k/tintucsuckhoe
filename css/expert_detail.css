@@ -206,3 +206,128 @@
     color: #888;
     margin-top: 4px;
 }
+.question-item {
+    background: #f8fff8;
+    border: 1px solid #d7eed7;
+    padding: 10px 15px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+}
+
+.question-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.question-text {
+    margin: 8px 0;
+}
+
+.question-date {
+    font-size: 12px;
+    color: #888;
+}
+/* ====== BOX CÂU HỎI ====== */
+.question-item {
+    background: #f8fff8;
+    border: 1px solid #cde8d6;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+}
+
+/* ====== NGƯỜI HỎI ====== */
+.question-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.question-text {
+    margin: 8px 0 4px 0;
+}
+
+.question-date {
+    font-size: 12px;
+    color: #888;
+}
+
+/* ====== CHƯA CÓ TRẢ LỜI ====== */
+.waiting-answer {
+    font-style: italic;
+    color: #777;
+    padding-top: 5px;
+}
+/* ====== BOX TRẢ LỜI ====== */
+.answer-box {
+    background: #e9f5ff;
+    border: 1px solid #b9dfff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* ====== TÊN + AVATAR CHUYÊN GIA ====== */
+.answer-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+/* ====== WRAPPER CHO ẢNH + FRAME ====== */
+.answer-avatar-wrapper {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    display: inline-block;
+}
+
+/* ====== ẢNH CHUYÊN GIA ====== */
+.answer-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ====== FRAME OVERLAY ====== */
+.frame-overlay {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    top: -4px;
+    left: -4px;
+    pointer-events: none;
+    object-fit: contain;
+}
+
+/* ====== TEXT TRẢ LỜI ====== */
+.answer-text {
+    margin: 5px 0 3px 0;
+}
+
+.answer-date {
+    font-size: 12px;
+    color: #2a83c7;
+}
+.answer-avatar:not(.has-frame) {
+    border: 2px solid #3db17c;
+}

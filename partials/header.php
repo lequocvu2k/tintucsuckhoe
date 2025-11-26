@@ -4,7 +4,7 @@
     <!-- LOGO -->
     <div class="left">
         <a href="index.php" class="logo-link">
-            <img src="../img/health-logo.png" alt="Logo" class="logo-img" />
+            <img src="/img/health-logo.png" alt="Logo" class="logo-img" />
         </a>
     </div>
 
@@ -61,7 +61,7 @@
             <li class="dropdowns">
                 <a href="#"><i class="fa-solid fa-envelope-circle-check"></i> Liên hệ ▾</a>
                 <ul class="dropdown-nav">
-                    <li><a href="../mail/formmail.php"><i class="fa-solid fa-pen-to-square"></i> Gửi phản hồi</a></li>
+                    <li><a href="/mail/formmail.php"><i class="fa-solid fa-pen-to-square"></i> Gửi phản hồi</a></li>
                     <li><a href="mailto:vuliztva1@gmail.com"><i class="fa-solid fa-envelope"></i> Email hỗ trợ</a></li>
                     <li><a href="https://www.facebook.com/Shiroko412/" target="_blank"><i
                                 class="fa-brands fa-facebook"></i> Fanpage</a></li>
@@ -93,29 +93,31 @@
             <div class="header-user">
                 <div class="avatar-container">
                     <?php
-                    // Lấy avatar: nếu có thì dùng avatar của user, nếu không thì dùng avt.jpg mặc định
-                    $avatar = (!empty($user['avatar_url']) && file_exists($user['avatar_url']))
+                    // 🖼 Avatar
+                    $avatar = (!empty($user['avatar_url']) && file_exists($_SERVER['DOCUMENT_ROOT'] . $user['avatar_url']))
                         ? htmlspecialchars($user['avatar_url'])
-                        : '../img/avt.jpg';
+                        : '/img/avt.jpg';
 
+                    // 🎨 Frame (nằm ngoài thư mục php)
                     $frame = '';
                     if (!empty($user['avatar_frame'])) {
                         $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
                         foreach ($possibleExtensions as $ext) {
-                            $path = '../frames/' . htmlspecialchars($user['avatar_frame']) . '.' . $ext;
-                            if (file_exists($path)) {
-                                $frame = $path;
+                            $relativePath = '/frames/' . htmlspecialchars($user['avatar_frame']) . '.' . $ext;
+                            if (file_exists($_SERVER['DOCUMENT_ROOT'] . $relativePath)) {
+                                $frame = $relativePath;
                                 break;
                             }
                         }
                     }
 
-                    // Hiển thị avatar
+                    // ✔ Hiển thị ảnh
                     echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
                     if ($frame) {
                         echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
                     }
                     ?>
+
                 </div>
 
                 <div class="account-info">
@@ -183,7 +185,8 @@
                                     </li>
                                 <?php endif; ?>
 
-                                <li><a href="./logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+                                <li><a href="../controller/logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                                </li>
                             </ul>
                         </div>
                     </div>

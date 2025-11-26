@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php'; // file bạn đã có
+require_once '../php/db.php'; // file bạn đã có
 $user_id = $_SESSION['user_id'] ?? null; // Đảm bảo user_id đã được lưu trong session
 $members = [];
 if (isset($_SESSION['user_id'])) {

@@ -1,7 +1,8 @@
+
 <footer class="site-footer">
     <div class="footer-container">
         <div class="footer-column">
-            <h3>🩺 Về chúng tôi</h3>
+            <h3><i class="fa-solid fa-heart-pulse"></i> Về chúng tôi</h3>
             <p>
                 “Tin tức Sức khỏe” là nền tảng chia sẻ kiến thức về tập luyện, dinh dưỡng và chăm sóc tinh thần,
                 giúp bạn sống khỏe hơn mỗi ngày.
@@ -9,7 +10,7 @@
         </div>
 
         <div class="footer-column">
-            <h3>📚 Thông tin</h3>
+            <h3><i class="fa-solid fa-book"></i> Thông tin</h3>
             <ul>
                 <li><a href="./about.php#mission">Tầm nhìn & Sứ mệnh</a></li>
                 <li><a href="./about.php#policy">Chính sách biên tập</a></li>
@@ -19,7 +20,8 @@
         </div>
 
         <div class="footer-column">
-            <h3>📞 Liên hệ</h3>
+            <h3><i class="fa-solid fa-phone"></i> Liên hệ</h3>
+
             <ul>
                 <li><i class="fa-solid fa-envelope"></i> <a href="mailto:vuliztva1@gmail.com">vuliztva1@gmail.com</a>
                 </li>
@@ -31,7 +33,7 @@
         </div>
 
         <div class="footer-column">
-            <h3>🌐 Kết nối</h3>
+            <h3><i class="fa-solid fa-globe"></i> Kết nối</h3>
             <div class="social-icons">
                 <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="#"><i class="fa-brands fa-instagram"></i></a>

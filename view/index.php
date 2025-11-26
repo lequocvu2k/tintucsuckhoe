@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php'; // file bạn đã có
+require_once '../php/db.php'; // file bạn đã có
 // Lấy thông tin user
 $user_id = $_SESSION['user_id'] ?? null; // Đảm bảo user_id đã được lưu trong session
 // --- Lấy thông tin tác giả ---
@@ -233,7 +233,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="editor-item">
                         <a href="./post.php?slug=<?= urlencode($e['duong_dan'] ?? '') ?>">
-                            <img src="<?= htmlspecialchars($e['anh_bv'] ?? '') ?>" alt="">
+                            <img src="/php/<?= htmlspecialchars($e['anh_bv'] ?? '') ?>" alt="">
                             <div class="editor-info">
                                 <h3><?= htmlspecialchars($e['tieu_de'] ?? 'No Title') ?></h3>
 
@@ -262,7 +262,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <?php foreach ($group as $h): ?>
                                         <div class="slide-item">
                                             <a href="./post.php?slug=<?= urlencode($h['duong_dan']) ?>">
-                                                <img src="<?= htmlspecialchars($h['anh_bv']) ?>" alt="">
+                                                <img src="/php/<?= htmlspecialchars($h['anh_bv']) ?>" alt="">
                                                 <div class="overlay">
                                                     <h3><?= htmlspecialchars($h['tieu_de']) ?></h3>
                                                 </div>
@@ -301,7 +301,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                         <div class="latest-item">
                             <a href="./post.php?slug=<?= urlencode($l['duong_dan']) ?>">
-                                <img src="<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
+                                <img src="/php/<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
                                 <p class="post-title"><?= htmlspecialchars($l['tieu_de']) ?></p>
 
                                 <div class="author-date">
@@ -335,7 +335,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                             <li>
                                 <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
-                                    <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                                    <img src="/php/<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
                                     <div>
                                         <p class="post-title"><?= htmlspecialchars($p['tieu_de']) ?></p>
 
@@ -360,7 +360,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($rankings as $r): ?>
                     <div class="post-item">
                         <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
-                            <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                            <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
                             <div class="post-info">
                                 <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                             </div>
@@ -378,7 +378,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($interviews as $i): ?>
                 <div class="post-item">
                     <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
-                        <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                        <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
                         <div class="post-info">
                             <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                         </div>
@@ -397,7 +397,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($recommendations as $rec): ?>
                 <div class="post-item">
                     <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
-                        <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                        <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
                         <div class="post-info">
                             <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                         </div>

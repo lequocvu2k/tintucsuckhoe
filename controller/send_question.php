@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 if (!isset($_SESSION['user_id'])) {
     die("<script>alert('⚠️ Bạn phải đăng nhập mới có thể đặt câu hỏi!'); history.back();</script>");
@@ -74,6 +74,6 @@ $pdo->prepare("
     VALUES (?, ?, NOW())
 ")->execute([$id_user, $noi_dung_tb]);
 
-echo "<script>alert('🎉 Gửi câu hỏi thành công! Bạn được +15 điểm.'); window.location.href='expert_detail.php?id={$id_chuyen_gia}&sent=1';</script>";
+echo "<script>alert('🎉 Gửi câu hỏi thành công! Bạn được +15 điểm.'); window.location.href='../view/expert_detail.php?id={$id_chuyen_gia}&sent=1';</script>";
 exit;
 ?>

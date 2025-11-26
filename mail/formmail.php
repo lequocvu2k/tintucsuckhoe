@@ -22,7 +22,7 @@
   <div class="form-container">
     <div class="form-header">
       <h2> Gửi thư cho chúng tôi</h2>
-      <a href="../php/index.php" class="backhome">❌</a>
+      <a href="../view/index.php" class="backhome">❌</a>
     </div>
     <hr>
     <form action="mail.php" method="POST" autocomplete="off">

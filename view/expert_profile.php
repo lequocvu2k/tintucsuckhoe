@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
 $user = null; // Mặc định là khách
 $tier = "Member";
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="qa-box">
                     <p><b><?= htmlspecialchars($q['ho_ten']) ?> hỏi:</b> <?= nl2br($q['cau_hoi']) ?></p>
 
-                    <form action="send_answer.php" method="POST">
+                    <form action="../controller/send_answer.php" method="POST">
                         <input type="hidden" name="id" value="<?= $q['id'] ?>">
                         <textarea name="answer" placeholder="Nhập câu trả lời..." required></textarea>
                         <button type="submit" class="reply-btn">Trả lời</button>

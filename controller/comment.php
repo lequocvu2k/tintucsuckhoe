@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 // Kiểm tra nếu người dùng đã đăng nhập
 if (!isset($_SESSION['user_id'])) {

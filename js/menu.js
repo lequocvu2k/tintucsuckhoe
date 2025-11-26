@@ -99,7 +99,7 @@ searchInput.addEventListener("input", function () {
     return;
   }
 
-  fetch(`search_ajax.php?q=${encodeURIComponent(keyword)}`)
+  fetch(`../controller/search_ajax.php?q=${encodeURIComponent(keyword)}`)
     .then((res) => res.json())
     .then((data) => {
       suggestionsBox.innerHTML = "";
@@ -114,12 +114,12 @@ searchInput.addEventListener("input", function () {
         const li = document.createElement("li");
         li.classList.add("suggest-item");
         li.innerHTML = `
-                    <img src="${item.anh_bv}" alt="">
+                    <img src="/php/${item.anh_bv}" alt="">
                     <span>${item.tieu_de}</span>
                 `;
         li.onclick = () => {
           window.location.href =
-            "post.php?slug=" + encodeURIComponent(item.duong_dan);
+            "../view/post.php?slug=" + encodeURIComponent(item.duong_dan);
         };
         suggestionsBox.appendChild(li);
       });
@@ -130,6 +130,6 @@ searchInput.addEventListener("input", function () {
 searchInput.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const keyword = searchInput.value.trim();
-    window.location.href = "search.php?q=" + encodeURIComponent(keyword);
+    window.location.href = "../view/search.php?q=" + encodeURIComponent(keyword);
   }
 });

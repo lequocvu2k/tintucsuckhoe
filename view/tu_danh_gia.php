@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php'; // đường dẫn tới file kết nối DB của bạn
+require_once '../php/db.php'; // đường dẫn tới file kết nối DB của bạn
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
 $user = null; // Mặc định là khách
 $tier = "Member";
@@ -355,7 +355,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
-
+    <script src="../js/tu_danh_gia.js"></script>
 </head>
 
 <body>
@@ -594,31 +594,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div id="reply"></div>
         </div>
-
-
-        <script>
-            function askAI() {
-                const q = document.getElementById('question').value.trim();
-                if (q === "") return alert("❓ Vui lòng nhập câu hỏi!");
-
-                document.getElementById('reply').style.display = "block";
-                document.getElementById('reply').innerHTML = "⏳ Đang phân tích...";
-
-                fetch("health_faq.php", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: "question=" + encodeURIComponent(q)
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById('reply').innerHTML = data.answer;
-                    })
-                    .catch(() => {
-                        document.getElementById('reply').innerHTML = "⚠️ Không thể kết nối đến AI!";
-                    });
-            }
-
-        </script>
 
     </div>
 

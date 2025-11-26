@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 // Kiểm tra quyền admin
 if ($_SESSION['username'] !== 'admin') {

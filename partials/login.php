@@ -8,10 +8,10 @@
     <div class="popup-content">
         <!-- Thêm hình ảnh tròn -->
         <div class="avatar-container">
-            <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
+            <img src="/img/yuuka.png" alt="Avatar" class="avatar-circle">
         </div>
         <h2>Đăng nhập</h2>
-        <form method="post" action="./login.php" autocomplete="off">
+        <form method="post" action="../controller/login.php" autocomplete="off">
             <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
 
             <div class="password-wrapper">
@@ -31,10 +31,10 @@
     <div class="popup-content">
         <!-- Thêm hình ảnh tròn -->
         <div class="avatar-container">
-            <img src="../img/yuuka.png" alt="Avatar" class="avatar-circle">
+            <img src="/img/yuuka.png" alt="Avatar" class="avatar-circle">
         </div>
         <h2>Đăng ký</h2>
-        <form method="POST" action="./signup.php" autocomplete="off">
+        <form method="POST" action="../controller/signup.php" autocomplete="off">
             <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
             <input type="text" name="ho_ten" placeholder="Họ và tên" required><br><br>
             <input type="email" name="email" placeholder="Email" required><br><br>

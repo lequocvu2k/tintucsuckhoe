@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 // ✅ CHỈ ADMIN HOẶC NHÂN VIÊN MỚI ĐƯỢC TRUY CẬP
 if (!isset($_SESSION['username']) || ($_SESSION['username'] !== 'admin' && $_SESSION['user_role'] !== 'NhanVien')) {
@@ -310,89 +310,7 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
     <?php include '../partials/header.php'; ?>
-    <!-- Các Radio Buttons -->
-    <input type="radio" name="popup" id="showLogin" hidden>
-    <input type="radio" name="popup" id="showSignup" hidden>
-    <input type="radio" name="popup" id="hidePopup" hidden checked>
-
-    <!-- Popup Login -->
-    <div class="popup" id="loginPopup">
-        <div class="popup-content">
-            <h2>Đăng nhập</h2>
-            <form method="post" action="./login.php" autocomplete="off">
-                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
-
-                <div class="password-wrapper">
-                    <input type="password" name="password" id="loginPassword" placeholder="Mật khẩu" required>
-                    <span class="toggle-password" data-target="loginPassword"><i class="fa fa-eye"></i></span>
-                </div>
-
-                <button type="submit">Đăng nhập</button>
-            </form>
-            <label for="hidePopup" class="close-btn">Đóng</label>
-            <label for="showSignup" class="switch-link">Chưa có tài khoản? Đăng ký</label>
-        </div>
-    </div>
-
-    <!-- Popup Signup -->
-    <div class="popup" id="signupPopup">
-        <div class="popup-content">
-            <h2>Đăng ký</h2>
-            <form method="POST" action="./signup.php" autocomplete="off">
-                <input type="text" name="username" placeholder="Tên đăng nhập" required><br><br>
-                <input type="text" name="ho_ten" placeholder="Họ và tên" required><br><br>
-                <input type="email" name="email" placeholder="Email" required><br><br>
-
-                <div class="password-wrapper">
-                    <input type="password" name="password" id="signupPassword" placeholder="Mật khẩu" required>
-                    <span class="toggle-password" data-target="signupPassword"><i class="fa fa-eye"></i></span>
-                </div>
-
-                <div class="password-wrapper">
-                    <input type="password" name="confirm_password" id="signupConfirmPassword"
-                        placeholder="Xác nhận mật khẩu" required>
-                    <span class="toggle-password" data-target="signupConfirmPassword"><i class="fa fa-eye"></i></span>
-                </div>
-
-                <button type="submit">Đăng ký</button>
-            </form>
-            <label for="hidePopup" class="close-btn">Đóng</label>
-            <br>
-            <label for="showLogin" class="switch-link">Đã có tài khoản? Đăng nhập</label>
-        </div>
-    </div>
-
-    <br>
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="message-error">
-            <?= htmlspecialchars($_SESSION['error']); ?>
-        </div>
-        <?php unset($_SESSION['error']); ?>
-    <?php elseif (isset($_SESSION['signup_error'])): ?>
-        <div class="message-error">
-            <?= htmlspecialchars($_SESSION['signup_error']); ?>
-        </div>
-        <?php unset($_SESSION['signup_error']); ?>
-    <?php elseif (isset($_SESSION['login_error'])): ?>
-        <div class="message-error">
-            <?= htmlspecialchars($_SESSION['login_error']); ?>
-        </div>
-        <?php unset($_SESSION['login_error']); ?>
-    <?php elseif (isset($_SESSION['msg'])): ?>
-        <div class="message-success">
-            <?= htmlspecialchars($_SESSION['msg']); ?>
-        </div>
-        <?php unset($_SESSION['msg']); ?>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="message-success"><?= htmlspecialchars($_SESSION['success']); ?></div>
-        <?php unset($_SESSION['success']); ?>
-    <?php elseif (isset($_SESSION['error'])): ?>
-        <div class="message-error"><?= htmlspecialchars($_SESSION['error']); ?></div>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-
+    <?php include '../partials/login.php'; ?>
     <h2 class="page-title">📰 Quản lý Bài Viết</h2>
     <!-- FORM THÊM / SỬA -->
     <div class="card">
@@ -533,7 +451,7 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($baiviet as $bv): ?>
                 <tr>
                     <td><?= $bv['ma_bai_viet'] ?></td>
-                    <td><img src="<?= htmlspecialchars($bv['anh_bv']) ?>" class="thumb" alt="Ảnh bài viết"></td>
+                    <td><img src="/php/<?= htmlspecialchars($bv['anh_bv']) ?>" class="thumb" alt="Ảnh bài viết"></td>
                     <td><?= htmlspecialchars($bv['tieu_de']) ?></td>
                     <td>
                         <a href="post.php?slug=<?= urlencode($bv['duong_dan']) ?>">

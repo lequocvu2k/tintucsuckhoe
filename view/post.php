@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 // --- Lấy slug --- 
 $slug = $_GET['slug'] ?? '';
@@ -240,7 +240,7 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
             <?php endif; ?>
             <br>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <form method="POST" action="save_post.php">
+                <form method="POST" action="../controller/save_post.php">
                     <input type="hidden" name="ma_bai_viet" value="<?= $post['ma_bai_viet'] ?>">
                     <input type="hidden" name="slug" value="<?= htmlspecialchars($slug) ?>">
 
@@ -305,7 +305,7 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
 
             <?php if (!empty($post['anh_bv'])): ?>
-                <img src="<?= htmlspecialchars($post['anh_bv']) ?>" alt="Ảnh bài viết" class="main-image">
+                <img src="/php/<?= htmlspecialchars($post['anh_bv']) ?>" alt="Ảnh bài viết" class="main-image">
             <?php endif; ?>
 
             <div class="post-body">
@@ -394,7 +394,7 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
                     foreach ($related as $r): ?>
                         <div class="related-item">
                             <a href="post.php?slug=<?= urlencode($r['duong_dan']) ?>">
-                                <img src="<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                                <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
                                 <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                                 <p><?= date("F d, Y", strtotime($r['ngay_dang'])) ?></p>
                             </a>
@@ -407,9 +407,9 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
                 <h3>THAM GIA BÌNH LUẬN</h3>
 
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <form class="comment-form" action="comment.php?slug=<?= htmlspecialchars($slug) ?>" method="POST">
+                    <form class="comment-form" action="../controller/comment.php?slug=<?= htmlspecialchars($slug) ?>" method="POST">
                         <textarea name="comment_text" placeholder="Leave a comment..." required></textarea>
-                        <button type="submit" class="submit-btn">SUBMIT</button>
+                        <button type="submit" class="submit-btn">Gửi bình luận</button>
                     </form>
                 <?php else: ?>
                     <div class="login-prompt">
@@ -516,7 +516,7 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
                     <li class="popular-item">
                         <!-- Bọc ảnh trong thẻ <a> -->
                         <a href="post.php?slug=<?= urlencode($p['duong_dan']) ?>">
-                            <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                            <img src="/php/<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
                         </a>
                         <div class="info">
                             <!-- Tiêu đề vẫn là một liên kết -->

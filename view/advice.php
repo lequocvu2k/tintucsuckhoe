@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php'; // file bạn đã có
+require_once '../php/db.php'; // file bạn đã có
 
 $ketqua = [];
 $tu_khoa = '';
@@ -74,6 +74,7 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/advice.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/popup.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
@@ -83,6 +84,7 @@ if (isset($_SESSION['user_id'])) {
 
 <body>
     <?php include '../partials/header.php'; ?>
+    <?php include '../partials/login.php'; ?>
     <div class="advice-container">
         <h1><i class="fa-solid fa-stethoscope"></i> Tư vấn sức khỏe theo triệu chứng</h1>
 

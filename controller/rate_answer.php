@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['rating'])) {
     $id = (int) $_POST['id'];
@@ -15,5 +15,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['rating'
     $_SESSION['success'] = "🎉 Cảm ơn bạn đã đánh giá!";
 }
 
-header("Location: user.php?view=notifications");
+header("Location: ../view/user.php?view=notifications");
 exit;

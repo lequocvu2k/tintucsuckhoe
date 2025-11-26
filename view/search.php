@@ -1,5 +1,5 @@
 <?php
-require_once './db.php';
+require_once '../php/db.php';
 
 $q = trim($_GET['q'] ?? '');
 
@@ -32,7 +32,7 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php foreach ($results as $r): ?>
             <div class="result-item">
                 <a href="post.php?slug=<?= urlencode($r['duong_dan']) ?>">
-                    <img src="<?= $r['anh_bv'] ?>" width="120">
+                    <img src="/php/<?= $r['anh_bv'] ?>" width="120">
                     <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                     <p>Mã chuyên mục: <?= htmlspecialchars($r['ma_chuyen_muc']) ?></p>
                 </a>

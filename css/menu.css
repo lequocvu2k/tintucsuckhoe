@@ -28,9 +28,106 @@
   display: flex;
   align-items: center;
 }
-
+.role-badge {
+  background: linear-gradient(
+    45deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Màu sắc cầu vồng */
+  background-size: 400% 400%;
+  color: white;
+  position: relative;
+  top: 5px;
+  left: 4px;
+  padding: 2px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  animation: rainbowMovement 5s ease infinite;
+}
+@keyframes rainbowMovement {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
 .logo-img:hover {
   transform: scale(1.05);
+}
+/* Nút ĐĂNG NHẬP siêu cấp */
+label[for="showLogin"] {
+    display: inline-block;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #1db954, #14863c);
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border: 2px solid #19a44b;
+    box-shadow: 0 4px 12px rgba(29,185,84,0.4), inset 0 0 6px rgba(255,255,255,0.25);
+    transition: all 0.25s ease;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.35);
+}
+
+/* Hover hiệu ứng glossy + glow */
+label[for="showLogin"]:hover {
+    background: linear-gradient(135deg, #22d25e, #1da14d);
+    box-shadow: 0 0 12px #2fe873, 0 4px 12px rgba(29,185,84,0.6);
+    transform: translateY(-2px);
+}
+
+/* Nhấn xuống */
+label[for="showLogin"]:active {
+    transform: scale(0.96);
+    box-shadow: 0 0 8px #20b150 inset;
+}
+/* Nút ĐĂNG KÝ Legendary VIP */
+label[for="showSignup"] {
+    display: inline-block;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #ffcc33, #e9a100);
+    color: #4b3205;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.7px;
+    cursor: pointer;
+    border: 2px solid #ffdb56;
+    box-shadow: 
+        0 4px 14px rgba(255, 204, 51, 0.6),
+        inset 0 0 6px rgba(255, 255, 255, 0.4),
+        0 0 10px rgba(255, 221, 94, 0.9);
+    text-shadow: 0 1px 3px rgba(255,255,255,0.75);
+    transition: all 0.3s ease;
+}
+
+/* Hover Legendary Glow */
+label[for="showSignup"]:hover {
+    background: linear-gradient(135deg, #ffdf64, #ffc727);
+    box-shadow:
+        0 0 16px #ffe98f,
+        0 6px 16px rgba(255, 204, 51, 0.7),
+        inset 0 0 10px rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+/* Pressed Animation – Gold Compression */
+label[for="showSignup"]:active {
+    transform: scale(0.95);
+    box-shadow: 
+        inset 0 0 12px rgba(229, 148, 0, 0.7),
+        inset 0 0 18px rgba(255, 255, 255, 0.4);
+    background: linear-gradient(135deg, #ffc340, #eaaa00);
 }
 
 /* ============================
@@ -624,57 +721,61 @@
   color: #999;
 }
 .search-box {
-    position: relative;
+  position: relative;
 }
 
 /* Danh sách gợi ý */
 .search-suggestions {
-    position: absolute;
-    top: 45px;           /* ĐẨY XUỐNG DƯỚI INPUT */
-    left: 0;
-    width: 100%;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    list-style: none;
-    padding: 0;
-    margin: 5px 0 0 0;
-    z-index: 9999;       /* ĐÈ LÊN TẤT CẢ NGỌN */
-    max-height: 300px;
-    overflow-y: auto;
+  position: absolute;
+  top: 45px; /* ĐẨY XUỐNG DƯỚI INPUT */
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 5px 0 0 0;
+  z-index: 9999; /* ĐÈ LÊN TẤT CẢ NGỌN */
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 /* Từng item */
 .search-suggestions li {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
-    transition: 0.2s;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .search-suggestions li:hover {
-    background: #f2f2f2;
+  background: #f2f2f2;
 }
 
 /* Ảnh trong item */
 .search-suggestions li img {
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    margin-right: 10px;
-    object-fit: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  margin-right: 10px;
+  object-fit: cover;
 }
 .nav-menu li a {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 .dropdown-nav {
-    max-height: 280px;
-    overflow-y: auto;
+  max-height: 280px;
+  overflow-y: auto;
 }
 .avatar-circle {
   width: 100px; /* Đặt kích thước hình ảnh */
   height: 100px;
   border-radius: 50%; /* Đảm bảo hình ảnh có dạng tròn */
   object-fit: cover; /* Cắt hình ảnh nếu cần thiết để vừa với khung */
+}
+.site-footer h3 i {
+  margin-right: 6px;
+  color: var(--primary-color); /* hoặc màu đỏ, xanh tùy theme */
 }

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './db.php';
+require_once '../php/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"] ?? "");
@@ -12,13 +12,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Kiểm tra bắt buộc
     if ($username === "" || $password === "" || $confirm_password === "" || $ho_ten === "" || $email === "") {
         $_SESSION["signup_error"] = "❌ Vui lòng điền đầy đủ thông tin!";
-        header("Location: index.php");
+        header("Location: ../view/index.php");
         exit;
     }
 
     if ($password !== $confirm_password) {
         $_SESSION["signup_error"] = "❌ Mật khẩu xác nhận không khớp!";
-        header("Location: index.php");
+        header("Location: ../view/index.php");
         exit;
     }
 
@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($stmt->rowCount() > 0) {
         $_SESSION["signup_error"] = "❌ Tên đăng nhập đã tồn tại!";
-        header("Location: index.php");
+        header("Location: ../view/index.php");
         exit;
     }
 
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute([$email]);
     if ($stmt->rowCount() > 0) {
         $_SESSION["signup_error"] = "❌ Email đã được sử dụng!";
-        header("Location: index.php");
+        header("Location: ../view/index.php");
         exit;
     }
 
@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt = $pdo->prepare("INSERT INTO khachhang (ho_ten, email) VALUES (?, ?)");
     if (!$stmt->execute([$ho_ten, $email])) {
         $_SESSION["signup_error"] = "❌ Lỗi khi thêm khách hàng!";
-        header("Location: index.php");
+        header("Location: ../view/index.php");
         exit;
     }
 
@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION["signup_error"] = "❌ Có lỗi xảy ra, vui lòng thử lại!";
     }
 
-    header("Location: index.php");
+    header("Location: ../view/index.php");
     exit;
 }
 ?>

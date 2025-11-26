@@ -1,6 +1,6 @@
 <?php
 // Kết nối tới cơ sở dữ liệu
-require_once './db.php'; // Đảm bảo đường dẫn đúng đến file kết nối CSDL của bạn
+require_once '../php/db.php';
 
 // Kiểm tra nếu có dữ liệu từ form gửi lên
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Kiểm tra nếu các trường bắt buộc không trống
     if (empty($ho_ten) || empty($sdt) || empty($the_loai)) {
-        echo "<script>alert('Vui lòng điền đầy đủ thông tin yêu cầu.'); window.location.href = 'index.php';</script>";
+        echo "<script>alert('Vui lòng điền đầy đủ thông tin yêu cầu.'); window.location.href = '../view/index.php';</script>";
         exit;
     }
 
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Kiểm tra nếu người dùng chưa đăng nhập
     if (!$id_kh) {
-        echo "<script>alert('Vui lòng đăng nhập trước khi gửi yêu cầu.'); window.location.href = 'login.php';</script>";
+        echo "<script>alert('Vui lòng đăng nhập trước khi gửi yêu cầu.'); window.location.href = '../view/index.php';</script>";
         exit;
     }
 
@@ -32,9 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$id_kh, $ho_ten, $sdt, $the_loai]);
 
         // Gửi thông báo thành công
-        echo "<script>alert('Yêu cầu trở thành nhân viên đã được gửi thành công và đang chờ duyệt!'); window.location.href = 'user.php';</script>";
+        echo "<script>alert('Yêu cầu trở thành nhân viên đã được gửi thành công và đang chờ duyệt!'); window.location.href = '../view/user.php';</script>";
     } catch (PDOException $e) {
-        echo "<script>alert('Đã có lỗi xảy ra. Vui lòng thử lại sau.'); window.location.href = 'user.php';</script>";
+        echo "<script>alert('Đã có lỗi xảy ra. Vui lòng thử lại sau.'); window.location.href = '../view/user.php';</script>";
         error_log($e->getMessage());
     }
 }
