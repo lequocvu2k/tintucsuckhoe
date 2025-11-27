@@ -1,0 +1,4 @@
+*.php linguist-language=Hack
+*.js linguist-language=Hack
+*.css linguist-language=Hack
+*.txt linguist-language=Hack
