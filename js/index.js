@@ -69,66 +69,69 @@ if (openSearch && searchBar) {
   });
 }
 // ===============================
-  // 👤 DROPDOWN USER (TÀI KHOẢN)
-  // ===============================
-  const accountInfo = document.querySelector(".account-info");
-  const nameContainer = accountInfo?.querySelector(".name-container");
-  const dropdown = nameContainer?.querySelector(".dropdown-menu");
+// 👤 DROPDOWN USER (TÀI KHOẢN)
+// ===============================
+const accountInfo = document.querySelector(".account-info");
+const nameContainer = accountInfo?.querySelector(".name-container");
+const dropdown = nameContainer?.querySelector(".dropdown-menu");
 
-  if (nameContainer && dropdown) {
-    // Khi click vào tên hoặc avatar (nếu thêm sau này)
-    nameContainer.addEventListener("click", (e) => {
-      e.stopPropagation();
-      dropdown.classList.toggle("show");
-    });
+if (nameContainer && dropdown) {
+  // Khi click vào tên hoặc avatar (nếu thêm sau này)
+  nameContainer.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+  });
 
-    // Ẩn dropdown khi click ra ngoài
-    document.addEventListener("click", (e) => {
-      if (!accountInfo.contains(e.target)) {
-        dropdown.classList.remove("show");
-      }
-    });
-  }
+  // Ẩn dropdown khi click ra ngoài
+  document.addEventListener("click", (e) => {
+    if (!accountInfo.contains(e.target)) {
+      dropdown.classList.remove("show");
+    }
+  });
+}
 let currentPage = 1;
 
 function loadLatest(page = 1) {
-    fetch(`../controller/api_latest.php?page=${page}`)
-        .then(res => res.json())
-        .then(data => {
-            currentPage = data.page;
+  fetch(`../controller/api_latest.php?page=${page}`)
+    .then((res) => res.json())
+    .then((data) => {
+      currentPage = data.page;
 
-            const grid = document.getElementById("latest-grid");
-            grid.innerHTML = "";
+      const grid = document.getElementById("latest-grid");
+      grid.innerHTML = "";
 
-            data.posts.forEach(p => {
-                grid.innerHTML += `
+      data.posts.forEach((p) => {
+        grid.innerHTML += `
                 <div class="latest-item">
-                    <a href="./post.php?slug=${encodeURIComponent(p.duong_dan)}">
+                    <a href="./post.php?slug=${encodeURIComponent(
+                      p.duong_dan
+                    )}">
                         <img src="/php/${p.anh_bv}" alt="">
                         <p class="post-title">${p.tieu_de}</p>
                         <div class="author-date">
-                            <span>By <b>${p.ho_ten ?? "Unknown"}</b></span> •
+                             <span>By <b>${p.tac_gia ?? "Unknown"}</b></span>
                             <span>${new Date(p.ngay_dang).toDateString()}</span>
                         </div>
                     </a>
                 </div>`;
-            });
+      });
 
-            // Disable buttons if needed
-            document.getElementById("btnPrev").style.opacity = (page > 1) ? "1" : "0.3";
-            document.getElementById("btnNext").style.opacity = (page < data.totalPages) ? "1" : "0.3";
+      // Disable buttons if needed
+      document.getElementById("btnPrev").style.opacity = page > 1 ? "1" : "0.3";
+      document.getElementById("btnNext").style.opacity =
+        page < data.totalPages ? "1" : "0.3";
 
-            // Save total pages
-            window.latestTotalPages = data.totalPages;
-        });
+      // Save total pages
+      window.latestTotalPages = data.totalPages;
+    });
 }
 
 // Nút chuyển trang
 document.getElementById("btnPrev").addEventListener("click", () => {
-    if (currentPage > 1) loadLatest(currentPage - 1);
+  if (currentPage > 1) loadLatest(currentPage - 1);
 });
 document.getElementById("btnNext").addEventListener("click", () => {
-    if (currentPage < window.latestTotalPages) loadLatest(currentPage + 1);
+  if (currentPage < window.latestTotalPages) loadLatest(currentPage + 1);
 });
 
 // Load lần đầu

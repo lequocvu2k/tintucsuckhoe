@@ -8,11 +8,13 @@ if ($page < 1)
 
 $offset = ($page - 1) * $limit;
 
-/* Lấy bài thuộc danh mục LATEST POSTS */
+/* Lấy bài + tác giả chính xác */
 $stmt = $pdo->prepare("
-    SELECT SQL_CALC_FOUND_ROWS bv.*, kh.ho_ten
+    SELECT SQL_CALC_FOUND_ROWS 
+        bv.*, 
+        kh.ho_ten AS tac_gia
     FROM baiviet bv
-    LEFT JOIN khachhang kh ON bv.ma_tac_gia = kh.id_kh
+    LEFT JOIN khachhang kh ON bv.id_kh = kh.id_kh   -- 🔥 SỬA ĐÚNG Ở ĐÂY
     WHERE bv.trang_thai = 'published'
       AND bv.danh_muc = 'LATEST POSTS'
     ORDER BY bv.ngay_dang DESC
@@ -25,14 +27,12 @@ $stmt->execute();
 
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Đếm tổng số bài trong LATEST POSTS */
 $total = $pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
 $totalPages = ceil($total / $limit);
 
-header('Content-Type: application/json');
+header("Content-Type: application/json; charset=UTF-8");
 echo json_encode([
     "posts" => $posts,
     "page" => $page,
     "totalPages" => $totalPages
-]);
-?>
+], JSON_UNESCAPED_UNICODE);
