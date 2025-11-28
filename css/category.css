@@ -1,0 +1,287 @@
+/* ===========================
+   LAYOUT
+=========================== */
+
+.category-container {
+    width: 90%;
+    max-width: 1250px;
+    margin: 30px auto;
+}
+
+.main-content {
+    display: flex;
+    gap: 35px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.breadcrumb a {
+    color: #6a8ce6;
+    text-decoration: none;
+}
+
+/* COLUMN LEFT */
+.left-column {
+    width: 70%;
+}
+
+/* CATEGORY TITLE */
+.cat-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.cat-title span {
+    color: #d92828;
+}
+
+/* Category description */
+.cat-description {
+    font-size: 15px;
+    color: #555;
+    max-width: 700px;
+    margin-bottom: 25px;
+}
+
+/* ARTICLE LIST ITEM */
+.article-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.article-thumb img {
+    width: 270px;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.article-content h3 {
+    margin: 0;
+}
+
+.article-content h3 a {
+    color: #333;
+    font-size: 20px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.article-content h3 a:hover {
+    color: #d92828;
+}
+
+.meta {
+    font-size: 14px;
+    color: #777;
+}
+
+.excerpt {
+    font-size: 15px;
+    margin-top: 8px;
+    color: #444;
+    max-width: 90%;
+}
+
+/* Divider */
+.divider {
+    border: none;
+    border-bottom: 1px solid #eee;
+    margin: 25px 0;
+}
+
+/* ===========================
+   RIGHT SIDEBAR
+=========================== */
+
+.right-column {
+    width: 30%;
+}
+
+.sidebar-title {
+    background: #d92828;
+    padding: 12px;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.popular-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.popular-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.cat-title {
+    text-align: center;
+}
+
+.rank {
+    font-size: 20px;
+    font-weight: 900;
+    color: #222;
+}
+/* ===========================
+   BREADCRUMB STYLE
+=========================== */
+
+.breadcrumb {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap; /* tránh vỡ dòng trên mobile */
+}
+
+.breadcrumb a {
+    color: #4a6ee0;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.breadcrumb a:hover {
+    color: #d92828;
+}
+
+.breadcrumb span {
+    color: #222;
+    font-weight: 600;
+}
+/* ======= PAGINATION MINIMAL ======= */
+.pagination-minimal {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #777;
+}
+
+.pag-btn {
+    color: #777;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.pag-btn:hover {
+    color: #111;
+}
+
+.pag-btn.disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.separator {
+    color: #aaa;
+    user-select: none;
+}
+/* ======= PAGINATION MINIMAL ======= */
+.pagination-minimal {
+    margin: 25px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #777;
+}
+
+.pag-btn {
+    color: #777;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.pag-btn:hover {
+    color: #111;
+}
+
+.pag-btn.disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.separator {
+    color: #aaa;
+    user-select: none;
+}
+
+.breadcrumb i {
+    font-size: 12px;
+    color: #999;
+}
+
+/* nếu muốn dấu mũi tên đẹp hơn */
+.breadcrumb-sep {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.pop-thumb img {
+    width: 65px;
+    height: 65px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.pop-title {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.pop-title:hover {
+    color: #d92828;
+}
+
+.pop-date {
+    font-size: 12px;
+    color: #888;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 992px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .left-column, .right-column {
+        width: 100%;
+    }
+
+    .article-item {
+        flex-direction: column;
+    }
+
+    .article-thumb img {
+        width: 100%;
+        height: 210px;
+    }
+}

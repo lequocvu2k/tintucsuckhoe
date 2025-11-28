@@ -141,14 +141,36 @@ $stmt = $pdo->query("
 $highlight = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Latest posts (8 bài thuộc danh mục LATEST POSTS)
+/* ====================== LATEST POSTS — PHÂN TRANG ====================== */
+$latestLimit = 6;
+$latestPage = isset($_GET['lp']) ? max(1, intval($_GET['lp'])) : 1;
+$latestOffset = ($latestPage - 1) * $latestLimit;
+
+/* Đếm tổng số bài */
 $stmt = $pdo->query("
-    SELECT * FROM baiviet
-    WHERE trang_thai = 'published' 
+    SELECT COUNT(*) 
+    FROM baiviet
+    WHERE trang_thai = 'published'
+      AND danh_muc = 'LATEST POSTS'
+");
+$latestTotal = $stmt->fetchColumn();
+$latestTotalPages = ceil($latestTotal / $latestLimit);
+
+/* Lấy 6 bài theo trang */
+$stmt = $pdo->prepare("
+    SELECT * 
+    FROM baiviet
+    WHERE trang_thai = 'published'
       AND danh_muc = 'LATEST POSTS'
     ORDER BY ngay_dang DESC
-    LIMIT 8
+    LIMIT :limit OFFSET :offset
 ");
+$stmt->bindValue(':limit', $latestLimit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $latestOffset, PDO::PARAM_INT);
+$stmt->execute();
+
 $latest = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 // Popular posts (5 bài thuộc danh mục POPULAR POSTS)
 $stmt = $pdo->query("
@@ -284,37 +306,16 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="bottom-section">
             <section class="latest">
                 <h2>LATEST POSTS</h2>
-                <div class="latest-grid">
-                    <?php foreach ($latest as $l): ?>
 
-                        <?php
-                        // Lấy tác giả đúng từ bảng khachhang theo id_kh của bài viết
-                        $stmtAuthor = $pdo->prepare("
-        SELECT ho_ten 
-        FROM khachhang 
-        WHERE id_kh = ?
-        LIMIT 1
-    ");
-                        $stmtAuthor->execute([$l['id_kh']]);
-                        $postAuthor = $stmtAuthor->fetchColumn() ?: "Unknown Author";
-                        ?>
+                <div id="latest-grid" class="latest-grid"></div>
 
-                        <div class="latest-item">
-                            <a href="./post.php?slug=<?= urlencode($l['duong_dan']) ?>">
-                                <img src="/php/<?= htmlspecialchars($l['anh_bv']) ?>" alt="">
-                                <p class="post-title"><?= htmlspecialchars($l['tieu_de']) ?></p>
-
-                                <div class="author-date">
-                                    <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
-                                    <span><?= date("F d, Y", strtotime($l['ngay_dang'])) ?></span>
-                                </div>
-                            </a>
-                        </div>
-
-                    <?php endforeach; ?>
-
+                <div class="pagination-minimal">
+                    <a id="btnPrev" class="pag-btn">‹ NEWER POSTS</a>
+                    <span class="separator">/</span>
+                    <a id="btnNext" class="pag-btn">OLDER POSTS ›</a>
                 </div>
             </section>
+
             <aside class="popular">
                 <section class="latest">
                     <h2>POPULAR POSTS</h2>
@@ -414,6 +415,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </main>
     <script src="../js/index.js"></script>
     <script>
+
         document.addEventListener("DOMContentLoaded", function () {
             const slider = document.querySelector(".slider");
             const slides = document.querySelectorAll(".slide");

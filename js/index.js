@@ -89,7 +89,50 @@ if (openSearch && searchBar) {
       }
     });
   }
+let currentPage = 1;
 
+function loadLatest(page = 1) {
+    fetch(`../controller/api_latest.php?page=${page}`)
+        .then(res => res.json())
+        .then(data => {
+            currentPage = data.page;
+
+            const grid = document.getElementById("latest-grid");
+            grid.innerHTML = "";
+
+            data.posts.forEach(p => {
+                grid.innerHTML += `
+                <div class="latest-item">
+                    <a href="./post.php?slug=${encodeURIComponent(p.duong_dan)}">
+                        <img src="/php/${p.anh_bv}" alt="">
+                        <p class="post-title">${p.tieu_de}</p>
+                        <div class="author-date">
+                            <span>By <b>${p.ho_ten ?? "Unknown"}</b></span> •
+                            <span>${new Date(p.ngay_dang).toDateString()}</span>
+                        </div>
+                    </a>
+                </div>`;
+            });
+
+            // Disable buttons if needed
+            document.getElementById("btnPrev").style.opacity = (page > 1) ? "1" : "0.3";
+            document.getElementById("btnNext").style.opacity = (page < data.totalPages) ? "1" : "0.3";
+
+            // Save total pages
+            window.latestTotalPages = data.totalPages;
+        });
+}
+
+// Nút chuyển trang
+document.getElementById("btnPrev").addEventListener("click", () => {
+    if (currentPage > 1) loadLatest(currentPage - 1);
+});
+document.getElementById("btnNext").addEventListener("click", () => {
+    if (currentPage < window.latestTotalPages) loadLatest(currentPage + 1);
+});
+
+// Load lần đầu
+loadLatest();
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     document
