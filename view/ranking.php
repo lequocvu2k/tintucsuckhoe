@@ -2,44 +2,80 @@
 session_start();
 require_once '../php/db.php';
 
+/* ====================== LOẠI XẾP HẠNG ====================== */
+$type = $_GET['type'] ?? 'likes';
+
+switch ($type) {
+
+    case 'likes':
+        $title = "Top bài viết được like nhiều nhất";
+        $orderSQL = "
+            SELECT b.*, COUNT(l.id_like) AS score, kh.ho_ten, kh.avatar_url
+            FROM baiviet b
+            LEFT JOIN likes l ON b.ma_bai_viet = l.ma_bai_viet
+            LEFT JOIN khachhang kh ON b.ma_tac_gia = kh.id_kh
+            WHERE b.trang_thai = 'published'
+            GROUP BY b.ma_bai_viet
+            ORDER BY score DESC, b.ngay_dang DESC
+        ";
+        break;
+    case 'weekview':
+        $title = "Top bài viết xem nhiều nhất";
+
+        $orderSQL = "
+        SELECT b.*, b.luot_xem AS score, kh.ho_ten, kh.avatar_url
+        FROM baiviet b
+        LEFT JOIN khachhang kh ON b.ma_tac_gia = kh.id_kh
+        WHERE b.trang_thai = 'published'
+        ORDER BY b.luot_xem DESC
+    ";
+        break;
+
+
+    case 'comments':
+        $title = "Top bài viết có nhiều bình luận nhất";
+        $orderSQL = "
+            SELECT b.*, COUNT(bl.id_binhluan) AS score, kh.ho_ten, kh.avatar_url
+            FROM baiviet b
+            LEFT JOIN binhluan bl ON b.ma_bai_viet = bl.ma_bai_viet
+            LEFT JOIN khachhang kh ON b.ma_tac_gia = kh.id_kh
+            WHERE b.trang_thai = 'published'
+            GROUP BY b.ma_bai_viet
+            ORDER BY score DESC, b.ngay_dang DESC
+        ";
+        break;
+}
+
 /* ====================== PHÂN TRANG ====================== */
-$limit = 10; // số bài / trang
+$limit = 10;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 
-/* Lấy tổng số bài viết */
-$totalStmt = $pdo->query("SELECT COUNT(*) FROM baiviet WHERE trang_thai='published'");
+/* Tổng bài */
+$totalStmt = $pdo->query("SELECT COUNT(*) FROM ($orderSQL) AS temp");
 $totalPosts = $totalStmt->fetchColumn();
 $totalPages = ceil($totalPosts / $limit);
 
-/* Lấy bài viết theo trang */
-$stmt = $pdo->prepare("
-    SELECT bv.*, kh.ho_ten, kh.avatar_url
-    FROM baiviet bv
-    LEFT JOIN khachhang kh ON bv.ma_tac_gia = kh.id_kh
-    WHERE bv.trang_thai = 'published'
-    ORDER BY bv.ngay_dang DESC
-    LIMIT :limit OFFSET :offset
-");
+/* Lấy bài theo Ranking */
+$stmt = $pdo->prepare("$orderSQL LIMIT :limit OFFSET :offset");
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
 /* ====================== POPULAR POSTS ====================== */
-$stmt = $pdo->query("
+$popularStmt = $pdo->query("
     SELECT * FROM baiviet 
     WHERE trang_thai='published' 
       AND danh_muc='POPULAR POSTS'
     ORDER BY ngay_dang DESC
     LIMIT 5
 ");
-$popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$popular = $popularStmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-/* ====================== USER ====================== */
-$user = null;
+// ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
+$user = null; // Mặc định là khách
 $tier = "Member";
 
 if (isset($_SESSION['user_id'])) {
@@ -50,10 +86,15 @@ if (isset($_SESSION['user_id'])) {
         LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
         WHERE kh.id_kh = :id
     ");
-    $stmt->execute(['id' => $id_kh]);
+    $stmt->bindParam(':id', $id_kh);
+    $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
+        function tinhDiem($so_diem)
+        {
+            return floor($so_diem / 10000);
+        }
         function xacDinhCapDo($so_diem)
         {
             if ($so_diem >= 10000)
@@ -66,17 +107,18 @@ if (isset($_SESSION['user_id'])) {
                 return 'Bạc';
             return 'Member';
         }
-        $tier = xacDinhCapDo($user['so_diem'] ?? 0);
+        $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
+        $tier = xacDinhCapDo($so_diem);
     }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
-    <title>Tin mới nhất | News</title>
+    <title><?= $title ?> | Rankings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/category.css">
@@ -99,7 +141,9 @@ if (isset($_SESSION['user_id'])) {
         <div class="breadcrumb">
             <a href="../view/index.php">Home</a>
             <span class="breadcrumb-sep">›</span>
-            <span>News</span>
+            <span>Rankings</span>
+            <span class="breadcrumb-sep">›</span>
+            <b><?= $title ?></b>
         </div>
 
         <div class="main-content">
@@ -108,11 +152,11 @@ if (isset($_SESSION['user_id'])) {
             <div class="left-column">
 
                 <h2 class="cat-title">
-                    CATEGORY:
-                    <span>TIN MỚI NHẤT</span>
+                    RANKING:
+                    <span><?= $title ?></span>
                 </h2>
 
-                <!-- LIST BÀI VIẾT -->
+                <!-- LIST RANKING -->
                 <?php foreach ($posts as $p): ?>
                     <div class="article-item">
 
@@ -126,11 +170,32 @@ if (isset($_SESSION['user_id'])) {
                                     <?= htmlspecialchars($p['tieu_de']) ?>
                                 </a>
                             </h3>
-
                             <p class="meta">
                                 by <?= htmlspecialchars($p['ho_ten']) ?> •
                                 <?= date("F d, Y", strtotime($p['ngay_dang'])) ?>
+
+                                <?php if ($type == 'likes'): ?>
+                                    <button class="btn-icon like-btn" data-id="<?= $p['ma_bai_viet'] ?>">
+                                        <i class="fa-solid fa-heart"></i>
+                                        <?= $p['score'] ?>
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($type == 'weekview'): ?>
+                                    <button class="btn-icon view-btn">
+                                        <i class="fa-solid fa-eye"></i>
+                                        <?= $p['score'] ?>
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($type == 'comments'): ?>
+                                    <button class="btn-icon cmt-btn">
+                                        <i class="fa-solid fa-comment"></i>
+                                        <?= $p['score'] ?>
+                                    </button>
+                                <?php endif; ?>
                             </p>
+
 
                             <p class="excerpt">
                                 <?= htmlspecialchars(mb_substr(strip_tags($p['noi_dung']), 0, 150)) ?>...
@@ -141,27 +206,26 @@ if (isset($_SESSION['user_id'])) {
                     <hr class="divider">
                 <?php endforeach; ?>
 
-                <!-- PAGINATION STYLE LIKE DEMO -->
-                <div class="pagination-minimal">
 
+                <!-- PHÂN TRANG -->
+                <div class="pagination-minimal">
                     <?php if ($page > 1): ?>
-                        <a class="pag-btn" href="?page=<?= $page - 1 ?>">
-                            ‹ NEWER POSTS
+                        <a class="pag-btn" href="?type=<?= $type ?>&page=<?= $page - 1 ?>">
+                            ‹ NEWER
                         </a>
                     <?php else: ?>
-                        <span class="pag-btn disabled">‹ NEWER POSTS</span>
+                        <span class="pag-btn disabled">‹ NEWER</span>
                     <?php endif; ?>
 
                     <span class="separator">/</span>
 
                     <?php if ($page < $totalPages): ?>
-                        <a class="pag-btn" href="?page=<?= $page + 1 ?>">
-                            OLDER POSTS ›
+                        <a class="pag-btn" href="?type=<?= $type ?>&page=<?= $page + 1 ?>">
+                            OLDER ›
                         </a>
                     <?php else: ?>
-                        <span class="pag-btn disabled">OLDER POSTS ›</span>
+                        <span class="pag-btn disabled">OLDER ›</span>
                     <?php endif; ?>
-
                 </div>
 
             </div>

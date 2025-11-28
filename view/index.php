@@ -376,7 +376,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         <?php endforeach; ?>
         </section>
-
+                    
         <section class="interviews">
             <h2>INTERVIEWS</h2>
             <?php foreach ($interviews as $i): ?>

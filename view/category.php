@@ -107,16 +107,16 @@ $page_title = $category['ten_chuyen_muc'] . " | Tin tức Sức khỏe";
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($page_title) ?></title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/category.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/popup.css">
-    <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
-
     <script src="../resources/js/anime.min.js"></script>
-    <script src="../js/fireworks.js" defer></script>
+    <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
+    <script src="../js/fireworks.js" async defer></script>
     <script src="../js/menu.js" defer></script>
+    <script src="../js/popup.js"></script>
 </head>
 
 <body>

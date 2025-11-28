@@ -37,16 +37,26 @@
                     <li><a href="./category.php?id=6"><i class="fa-solid fa-virus-covid"></i> Các bệnh</a></li>
                 </ul>
             </li>
-
             <!-- XẾP HẠNG -->
             <li class="dropdowns">
                 <a href="#"><i class="fa-solid fa-ranking-star"></i> Xếp hạng ▾</a>
                 <ul class="dropdown-nav">
-                    <li><a href="#"><i class="fa-solid fa-fire-flame-curved"></i> Hôm nay</a></li>
-                    <li><a href="#"><i class="fa-solid fa-chart-line"></i> Tuần này</a></li>
-                    <li><a href="#"><i class="fa-solid fa-trophy"></i> Tháng này</a></li>
+
+                    <li><a href="./ranking.php?type=likes">
+                            <i class="fa-solid fa-thumbs-up"></i> Nhiều lượt like nhất
+                        </a></li>
+
+                    <li><a href="./ranking.php?type=weekview">
+                            <i class="fa-solid fa-rocket"></i> Xem nhiều 7 ngày gần nhất
+                        </a></li>
+
+                    <li><a href="./ranking.php?type=comments">
+                            <i class="fa-solid fa-comments"></i> Bài có nhiều bình luận
+                        </a></li>
+
                 </ul>
             </li>
+
 
             <li class="dropdowns">
                 <a href="#"><i class="fa-solid fa-circle-info"></i> Thông tin ▾</a>

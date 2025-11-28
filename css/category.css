@@ -214,6 +214,38 @@
     text-decoration: none;
     transition: 0.25s;
 }
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    color: #555;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-icon i {
+    font-size: 14px;
+}
+
+.btn-icon.like-btn i {
+    color: #e63946;
+}
+
+.btn-icon.cmt-btn i {
+    color: #0077cc;
+}
+
+.btn-icon.view-btn i {
+    color: #555;
+}
+
+.btn-icon:hover {
+    opacity: 0.7;
+}
 
 .pag-btn:hover {
     color: #111;
