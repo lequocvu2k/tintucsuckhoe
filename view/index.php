@@ -304,10 +304,12 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <!-- Bottom Section -->
         <div class="bottom-section">
+            
             <section class="latest">
+       
                 <h2>LATEST POSTS</h2>
 
-                <div id="latest-grid" class="latest-grid"></div>
+                <div id="latest-grid" class="latest-grid"> </div>
 
                 <div class="pagination-minimal">
                     <a id="btnPrev" class="pag-btn">‹ NEWER POSTS</a>
@@ -315,6 +317,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <a id="btnNext" class="pag-btn">OLDER POSTS ›</a>
                 </div>
             </section>
+
 
             <aside class="popular">
                 <section class="latest">

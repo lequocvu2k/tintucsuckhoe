@@ -91,51 +91,96 @@ if (nameContainer && dropdown) {
 }
 let currentPage = 1;
 
-function loadLatest(page = 1) {
-  fetch(`../controller/api_latest.php?page=${page}`)
-    .then((res) => res.json())
-    .then((data) => {
-      currentPage = data.page;
-
-      const grid = document.getElementById("latest-grid");
-      grid.innerHTML = "";
-
-      data.posts.forEach((p) => {
-        grid.innerHTML += `
-                <div class="latest-item">
-                    <a href="./post.php?slug=${encodeURIComponent(
-                      p.duong_dan
-                    )}">
-                        <img src="/php/${p.anh_bv}" alt="">
-                        <p class="post-title">${p.tieu_de}</p>
-                        <div class="author-date">
-                             <span>By <b>${p.tac_gia ?? "Unknown"}</b></span>
-                            <span>${new Date(p.ngay_dang).toDateString()}</span>
-                        </div>
-                    </a>
-                </div>`;
-      });
-
-      // Disable buttons if needed
-      document.getElementById("btnPrev").style.opacity = page > 1 ? "1" : "0.3";
-      document.getElementById("btnNext").style.opacity =
-        page < data.totalPages ? "1" : "0.3";
-
-      // Save total pages
-      window.latestTotalPages = data.totalPages;
-    });
+/* Xóa tag HTML khỏi nội dung */
+function cleanHTML(html) {
+    return html.replace(/<[^>]*>?/gm, "");
 }
 
-// Nút chuyển trang
+/* Rút gọn mô tả */
+function excerpt(text, limit = 150) {
+    return text.length > limit ? text.substring(0, limit) + "..." : text;
+}
+
+function loadLatest(page = 1) {
+
+    fetch(`../controller/api_latest.php?page=${page}`)
+        .then(res => res.json())
+        .then(data => {
+
+            const grid = document.getElementById("latest-grid");
+            grid.innerHTML = "";
+
+            data.posts.forEach(p => {
+
+                let contentText = cleanHTML(p.noi_dung ?? "");
+                let shortDesc = excerpt(contentText, 130);
+
+                grid.innerHTML += `
+                <div class="latest-card">
+
+                    <a href="./post.php?slug=${encodeURIComponent(p.duong_dan)}">
+                        <img src="/php/${p.anh_bv}" class="latest-thumb">
+                    </a>
+
+                    <div class="latest-info">
+
+                        <div class="latest-cat">
+                            ${p.category ?? "News"}
+                        </div>
+
+                        <a href="./post.php?slug=${encodeURIComponent(p.duong_dan)}">
+                            <h3 class="latest-title">${p.tieu_de}</h3>
+                        </a>
+
+                        <div class="latest-meta">
+                            By <b>${p.tac_gia ?? "Unknown"}</b> • 
+                            ${new Date(p.ngay_dang).toDateString()}
+                        </div>
+
+                        <p class="latest-excerpt">${shortDesc}</p>
+
+                        <div class="latest-share">
+                            <i class="fa-brands fa-facebook"></i>
+                            <i class="fa-brands fa-x-twitter"></i>
+                            <i class="fa-brands fa-instagram"></i>
+                            <i class="fa-solid fa-link"></i>
+                        </div>
+
+                    </div>
+                </div>
+                `;
+            });
+
+            // cập nhật trang hiện tại
+            currentPage = data.page;
+            window.latestTotalPages = data.totalPages;
+
+            // Bật / tắt nút phân trang
+            document.getElementById("btnPrev").style.opacity =
+                currentPage > 1 ? "1" : "0.3";
+
+            document.getElementById("btnNext").style.opacity =
+                currentPage < data.totalPages ? "1" : "0.3";
+        });
+}
+
+
+// ============================
+// Nút phân trang
+// ============================
+
 document.getElementById("btnPrev").addEventListener("click", () => {
-  if (currentPage > 1) loadLatest(currentPage - 1);
-});
-document.getElementById("btnNext").addEventListener("click", () => {
-  if (currentPage < window.latestTotalPages) loadLatest(currentPage + 1);
+    if (currentPage > 1) loadLatest(currentPage - 1);
 });
 
-// Load lần đầu
+document.getElementById("btnNext").addEventListener("click", () => {
+    if (currentPage < window.latestTotalPages) loadLatest(currentPage + 1);
+});
+
+
+// Load khi vào trang
 loadLatest();
+
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     document
