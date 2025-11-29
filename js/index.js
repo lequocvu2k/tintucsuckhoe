@@ -210,8 +210,7 @@ document.addEventListener("click", function (e) {
   if (e.target.closest(".latest-share i")) {
     let icon = e.target;
     let postUrl = icon.dataset.url;
-    let fullUrl =
-      window.location.origin + "/view/" + postUrl.replace("./", "");
+    let fullUrl = window.location.origin + "/view/" + postUrl.replace("./", "");
 
     // FACEBOOK
     if (icon.classList.contains("fa-facebook")) {
@@ -246,3 +245,142 @@ document.addEventListener("click", function (e) {
     }
   }
 });
+// mở popup
+document.querySelector(".btn-status").addEventListener("click", () => {
+  document.getElementById("statusPopup").classList.add("active");
+});
+
+// đóng popup
+document.getElementById("cancelStatus").addEventListener("click", () => {
+  document.getElementById("statusPopup").classList.remove("active");
+});
+
+// đếm ký tự
+document.getElementById("statusInput").addEventListener("input", function () {
+  document.getElementById("charCount").innerText = `${this.value.length}/50`;
+});
+
+// gửi trạng thái
+document.getElementById("shareStatus").addEventListener("click", () => {
+  let text = document.getElementById("statusInput").value.trim();
+  if (text.length === 0) {
+    alert("Bạn chưa nhập gì!");
+    return;
+  }
+
+  fetch("../controller/add_status.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "noi_dung=" + encodeURIComponent(text),
+  })
+    .then((res) => res.text())
+    .then((result) => {
+      if (result === "ok") {
+        document.getElementById("statusPopup").classList.remove("active");
+        document.getElementById("statusInput").value = "";
+        loadStatus(); // ⬅️ Hiện lại danh sách trạng thái
+      } else {
+        alert("Lỗi đăng trạng thái!");
+      }
+    });
+});
+
+function loadStatus() {
+  fetch("../controller/get_status.php")
+    .then((res) => res.json())
+    .then((list) => {
+      const wrap = document.getElementById("statusList");
+      wrap.innerHTML = "";
+
+      list.forEach((st) => {
+        // Avatar đã được backend trả đúng: ../uploads/avatars/xxx.png
+        let avatar = st.avatar_url;
+
+        // Frame đã được backend trả đúng: ../frames/xxx.gif
+        let frame = st.avatar_frame_url;
+
+        wrap.innerHTML += `
+    <div class="status-item">
+
+        <div class="status-top">
+            <div class="avatar-container1">
+                <img src="${avatar}" class="status-avatar">
+                ${frame ? `<img src="${frame}" class="status-frame">` : ""}
+            </div>
+        </div>
+<br>
+        <div class="status-info">
+            <b>${st.ho_ten}</b>
+            <div class="status-text">${st.noi_dung}</div>
+            <div class="status-time">${new Date(
+              st.ngay_dang
+            ).toLocaleString()}</div>
+            
+<div class="status-remaining" id="remain-${st.id}">
+    ...
+</div>
+        </div>
+
+        <div class="status-like ${st.liked ? "liked" : ""}" data-id="${st.id}">
+            <i class="fa-solid fa-heart"></i>
+            <span>${st.total_like}</span>
+        </div>
+
+    </div>
+`;
+        startCountdown(st.id, st.ngay_dang); // ⬅ THÊM DÒNG NÀY
+      });
+
+      attachLikeEvents();
+    });
+}
+loadStatus();
+// xử lý click nút tim
+function attachLikeEvents() {
+  document.querySelectorAll(".status-like").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      let id_status = this.dataset.id;
+
+      fetch("../controller/status_like.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "id_status=" + id_status,
+      })
+        .then((res) => res.text())
+        .then((res) => {
+          loadStatus(); // reload để cập nhật số like
+        });
+    });
+  });
+}
+
+loadStatus();
+function startCountdown(id, startTime) {
+  const box = document.getElementById("remain-" + id);
+  if (!box) return;
+
+  function update() {
+    const now = new Date();
+    const start = new Date(startTime);
+    const expire = start.getTime() + 24 * 60 * 60 * 1000; // 24h
+
+    const diff = expire - now;
+
+    if (diff <= 0) {
+      box.innerHTML = "<span class='expired'>Đã hết hạn</span>";
+      return;
+    }
+
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    // Hiển thị đẹp
+    if (h > 0) box.innerHTML = `⏳ Còn ${h}h ${m}m`;
+    else if (m > 0) box.innerHTML = `⏳ Còn ${m} phút`;
+    else box.innerHTML = `⏳ Còn ${s} giây`;
+  }
+
+  update();
+  setInterval(update, 1000);
+}

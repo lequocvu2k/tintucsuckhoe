@@ -268,6 +268,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <?php include '../partials/header.php'; ?>
     <?php include '../partials/login.php'; ?>
+    <?php include '../partials/status.php'; ?>
     <main class="container">
         <div class="top-grid">
             <!-- LEFT: Editor's Picks -->
@@ -527,7 +528,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 showSlide(index - 1);
             });
         });
-
+      
     </script>
     <?php include '../partials/footer.php'; ?>
 

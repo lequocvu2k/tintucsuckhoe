@@ -354,7 +354,7 @@ label[for="showSignup"]:active {
 }
 .frame-overlay {
   position: absolute;
-  top: -1px; /* bằng border của avatar */
+  top: -5px; /* bằng border của avatar */
   left: -2px; /* bằng border của avatar */
   width: 106px; /* avatar 120px + border 3px * 2 */
   height: 110px;
