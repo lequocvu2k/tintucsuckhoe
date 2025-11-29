@@ -149,7 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Xử lý ảnh
         $anh_bv = null;
         if (isset($_FILES['anh_bv']) && $_FILES['anh_bv']['error'] === 0) {
-            $dir = "uploads/baiviet/";
+            $dir = "../php/uploads/baiviet/";
+
             if (!is_dir($dir))
                 mkdir($dir, 0777, true);
             $fileName = time() . "_" . basename($_FILES["anh_bv"]["name"]);
@@ -203,7 +204,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Xử lý ảnh mới (nếu có)
         $anh_bv = $_POST['anh_cu'] ?? null;
         if (isset($_FILES['anh_bv']) && $_FILES['anh_bv']['error'] === 0) {
-            $dir = "uploads/baiviet/";
+            $dir = "../php/uploads/baiviet/";
+
             if (!is_dir($dir))
                 mkdir($dir, 0777, true);
             $fileName = time() . "_" . basename($_FILES["anh_bv"]["name"]);
@@ -341,7 +343,7 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="form-group">
                     <label>Ảnh bài viết</label>
                     <?php if (!empty($editPost['anh_bv'])): ?>
-                        <img src="<?= htmlspecialchars($editPost['anh_bv']) ?>" class="thumb"><br>
+                        <img src="/php/<?= htmlspecialchars($editPost['anh_bv']) ?>" class="thumb"><br>
                         <input type="hidden" name="anh_cu" value="<?= htmlspecialchars($editPost['anh_bv']) ?>">
                     <?php endif; ?>
                     <input type="file" name="anh_bv" accept="image/*">
@@ -381,7 +383,6 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <option value="">-- Chọn danh mục --</option>
                         <option value="LATEST POSTS" <?= (isset($editPost['danh_muc']) && $editPost['danh_muc'] == 'LATEST POSTS') ? 'selected' : '' ?>>LATEST POSTS</option>
                         <option value="POPULAR POSTS" <?= (isset($editPost['danh_muc']) && $editPost['danh_muc'] == 'POPULAR POSTS') ? 'selected' : '' ?>>POPULAR POSTS</option>
-                        <option value="RANKINGS" <?= (isset($editPost['danh_muc']) && $editPost['danh_muc'] == 'RANKINGS') ? 'selected' : '' ?>>RANKINGS</option>
                         <option value="EDITOR'S PICKS" <?= (isset($editPost['danh_muc']) && $editPost['danh_muc'] == "EDITOR'S PICKS") ? 'selected' : '' ?>>EDITOR'S PICKS</option>
                         <option value="INTERVIEWS" <?= (isset($editPost['danh_muc']) && $editPost['danh_muc'] == 'INTERVIEWS') ? 'selected' : '' ?>>INTERVIEWS</option>
                         <option value="RECOMMENDATIONS" <?= (isset($editPost['danh_muc']) && $editPost['danh_muc'] == 'RECOMMENDATIONS') ? 'selected' : '' ?>>RECOMMENDATIONS</option>

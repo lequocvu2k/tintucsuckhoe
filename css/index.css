@@ -749,6 +749,79 @@ footer {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+}.meta b {
+    font-weight: 900;
+}
+
+.rankings .post-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.rankings .post-item:last-child {
+  border-bottom: none;
+}
+
+.rankings .post-item img {
+  width: 140px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.rankings .post-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rankings .rank-tag {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ff4b5c;           /* màu đỏ giống hình mẫu */
+  margin-bottom: 4px;
+}
+
+.rankings .post-body h3 {
+  font-size: 18px;
+  margin: 0 0 6px;
+}
+
+.rankings .meta {
+  font-size: 13px;
+  color: #777;
+  margin: 0;
+}
+
+/* Hàng không có dữ liệu */
+.rankings .post-item.empty {
+  align-items: center;
+}
+
+.rankings .post-item.empty .meta {
+  font-style: italic;
+  color: #aaa;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .rankings .post-item {
+    flex-direction: row;
+  }
+
+  .rankings .post-item img {
+    width: 110px;
+    height: 72px;
+  }
+
+  .rankings .post-body h3 {
+    font-size: 16px;
+  }
 }
 
 /* SOCIAL ICONS */
@@ -767,6 +840,102 @@ footer {
 .latest-share i:hover {
     color: #000;
 }
+
+.interviews h2 {
+    background: #e74c3c;
+    color: #fff;
+    padding: 8px 14px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+.interview-item .title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #222;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.interview-item .title:hover {
+    color: #e74c3c; /* Đổi sang đỏ */
+    text-decoration: none; /* ⚡ Không gạch chân */
+}
+a {
+    text-decoration: none !important;
+}
+.post-link,
+.post-item a,
+.latest a,
+.highlights a,
+.editors a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.post-link:hover,
+.post-item a:hover,
+.latest a:hover,
+.highlights a:hover,
+.editors a:hover {
+    color: #e74c3c;
+    text-decoration: none;
+}
+
+/* ITEM WRAPPER */
+.interview-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* IMAGE */
+.interview-item .thumb img {
+    width: 170px;
+    height: 95px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+}
+
+/* RIGHT SIDE CONTENT */
+.interview-item .info {
+    flex: 1;
+}
+
+.interview-item .tags {
+    margin-bottom: 4px;
+}
+
+.interview-item .tags .tag {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* TITLE */
+.interview-item .title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #222;
+    text-decoration: none;
+}
+
+.interview-item .title:hover {
+    text-decoration: underline;
+}
+
+/* META */
+.interview-item .meta {
+    font-size: 13px;
+    color: #777;
+    margin-top: 4px;
+}
+
 
 /* Remove underline for links */
 .latest-card a {

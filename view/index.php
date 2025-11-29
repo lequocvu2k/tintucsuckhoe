@@ -182,15 +182,50 @@ $stmt = $pdo->query("
 ");
 $popular = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Rankings (3 bài thuộc danh mục RANKINGS)
+/* ====================== RANKINGS ====================== */
+
+/* --- TOP LIKE --- */
 $stmt = $pdo->query("
-    SELECT * FROM baiviet
-    WHERE trang_thai = 'published' 
-      AND danh_muc = 'RANKINGS'
-    ORDER BY ngay_dang DESC
-    LIMIT 3
+    SELECT b.*, COUNT(l.id_like) AS total_likes
+    FROM baiviet b
+    LEFT JOIN likes l ON b.ma_bai_viet = l.ma_bai_viet
+    WHERE b.trang_thai = 'published'
+    GROUP BY b.ma_bai_viet
+    ORDER BY total_likes DESC
+    LIMIT 1
 ");
-$rankings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$topLike = $stmt->fetch(PDO::FETCH_ASSOC);
+
+/* --- TOP COMMENT --- */
+$stmt = $pdo->query("
+    SELECT b.*, COUNT(c.id_binhluan) AS total_cmt
+    FROM baiviet b
+    LEFT JOIN binhluan c ON b.ma_bai_viet = c.ma_bai_viet
+    WHERE b.trang_thai = 'published'
+    GROUP BY b.ma_bai_viet
+    HAVING total_cmt > 0
+    ORDER BY total_cmt DESC
+    LIMIT 1
+");
+$topComment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+/* --- TOP VIEW --- */
+$stmt = $pdo->query("
+    SELECT *
+    FROM baiviet
+    WHERE trang_thai = 'published'
+    ORDER BY luot_xem DESC
+    LIMIT 1
+");
+$topView = $stmt->fetch(PDO::FETCH_ASSOC);
+
+/* Gộp lại */
+$rankings = [
+    "Top Like" => $topLike ?: null,
+    "Top Comment" => $topComment ?: null,
+    "Top View" => $topView ?: null
+];
+
 
 // Interviews (3 bài thuộc danh mục INTERVIEWS)
 $stmt = $pdo->query("
@@ -304,9 +339,9 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <!-- Bottom Section -->
         <div class="bottom-section">
-            
+
             <section class="latest">
-       
+
                 <h2>LATEST POSTS</h2>
 
                 <div id="latest-grid" class="latest-grid"> </div>
@@ -361,58 +396,101 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <!-- Rankings -->
             <section class="rankings">
                 <h2>RANKINGS</h2>
-                <?php foreach ($rankings as $r): ?>
+
+                <?php foreach ($rankings as $label => $item): ?>
+                    <div class="post-item<?= $item ? '' : ' empty' ?>">
+                        <?php if ($item): ?>
+                            <?php
+                            // Lấy tên tác giả
+                            $stmtAuthor = $pdo->prepare("SELECT ho_ten FROM khachhang WHERE id_kh = ? LIMIT 1");
+                            $stmtAuthor->execute([$item['id_kh']]);
+                            $authorName = $stmtAuthor->fetchColumn() ?: "Unknown Author";
+                            ?>
+
+                            <!-- ẢNH THUMB TRÁI -->
+                            <a href="./post.php?slug=<?= urlencode($item['duong_dan']) ?>" class="thumb-link">
+                                <img src="/php/<?= htmlspecialchars($item['anh_bv']) ?>" alt="">
+                            </a>
+
+                            <!-- NỘI DUNG PHẢI -->
+                            <div class="post-body">
+                                <a href="./post.php?slug=<?= urlencode($item['duong_dan']) ?>" class="rank-tag">
+                                    Rankings • <?= htmlspecialchars($label) ?>
+                                </a>
+                                <a href="./post.php?slug=<?= urlencode($item['duong_dan']) ?>" class="post-title-link">
+                                    <h3><?= htmlspecialchars($item['tieu_de']) ?></h3>
+                                </a>
+                                <p class="meta">
+                                    by <b><?= htmlspecialchars($authorName) ?></b> |
+
+                                    <?= date("F d, Y", strtotime($item['ngay_dang'])) ?>
+                                </p>
+                            </div>
+
+                        <?php else: ?>
+                            <!-- CARD KHI CHƯA CÓ DỮ LIỆU -->
+                            <div class="post-body">
+                                <p class="rank-tag">Rankings • <?= htmlspecialchars($label) ?></p>
+                                <p class="meta">Chưa có dữ liệu</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </section>
+            <section class="interviews">
+                <h2>INTERVIEWS</h2>
+
+                <?php foreach ($interviews as $i): ?>
+
+                    <?php
+                    // Lấy tên tác giả
+                    $stmtAuthor = $pdo->prepare("SELECT ho_ten FROM khachhang WHERE id_kh = ? LIMIT 1");
+                    $stmtAuthor->execute([$i['id_kh']]);
+                    $authorName = $stmtAuthor->fetchColumn() ?: "Unknown";
+                    ?>
+
+                    <div class="interview-item">
+                        <a href="./post.php?slug=<?= urlencode($i['duong_dan']) ?>" class="thumb">
+                            <img src="/php/<?= htmlspecialchars($i['anh_bv']) ?>" alt="">
+                        </a>
+
+                        <div class="info">
+                            <div class="tags">
+                                <span class="tag">Interview</span>
+                            </div>
+
+                            <a href="./post.php?slug=<?= urlencode($i['duong_dan']) ?>" class="title">
+                                <?= htmlspecialchars($i['tieu_de']) ?>
+                            </a>
+
+                            <p class="meta">
+                                by <b><?= htmlspecialchars($authorName) ?></b> |
+                                <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
+                            </p>
+                        </div>
+                    </div>
+
+                <?php endforeach; ?>
+            </section>
+
+            <!-- Recommendations -->
+            <section class="recommendations">
+                <h2>RECOMMENDATIONS</h2>
+                <?php foreach ($recommendations as $rec): ?>
                     <div class="post-item">
-                        <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
+                        <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link" class="title">
                             <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
                             <div class="post-info">
                                 <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
                             </div>
                         </a>
-                        <p class="meta">by <?= htmlspecialchars($r['tac_gia']) ?> |
-                            <?= date("F d, Y", strtotime($r['ngay_dang'])) ?>
+                        </h3>
+                        <p class="meta">by <?= htmlspecialchars($rec['tac_gia']) ?> |
+                            <?= date("F d, Y", strtotime($rec['ngay_dang'])) ?>
                         </p>
                     </div>
             </div>
         <?php endforeach; ?>
-        </section>
-                    
-        <section class="interviews">
-            <h2>INTERVIEWS</h2>
-            <?php foreach ($interviews as $i): ?>
-                <div class="post-item">
-                    <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
-                        <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
-                        <div class="post-info">
-                            <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
-                        </div>
-                    </a>
-                    </h3>
-                    <p class="meta">by <?= htmlspecialchars($i['tac_gia']) ?> |
-                        <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
-                    </p>
-                </div>
-                </div>
-            <?php endforeach; ?>
-        </section>
-        <!-- Recommendations -->
-        <section class="recommendations">
-            <h2>RECOMMENDATIONS</h2>
-            <?php foreach ($recommendations as $rec): ?>
-                <div class="post-item">
-                    <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link">
-                        <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
-                        <div class="post-info">
-                            <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
-                        </div>
-                    </a>
-                    </h3>
-                    <p class="meta">by <?= htmlspecialchars($rec['tac_gia']) ?> |
-                        <?= date("F d, Y", strtotime($rec['ngay_dang'])) ?>
-                    </p>
-                </div>
-                </div>
-            <?php endforeach; ?>
         </section>
         </div>
     </main>
