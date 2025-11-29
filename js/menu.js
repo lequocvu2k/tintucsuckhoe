@@ -133,3 +133,20 @@ searchInput.addEventListener("keypress", function (e) {
     window.location.href = "../view/search.php?q=" + encodeURIComponent(keyword);
   }
 });
+// Hiện nút khi kéo xuống
+window.addEventListener("scroll", function () {
+    const btn = document.getElementById("backToTop");
+    if (window.scrollY > 300) {
+        btn.classList.add("show");
+    } else {
+        btn.classList.remove("show");
+    }
+});
+
+// Cuộn lên đầu trang
+document.getElementById("backToTop").addEventListener("click", function () {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});

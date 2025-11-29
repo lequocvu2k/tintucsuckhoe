@@ -1,4 +1,9 @@
 <canvas class="fireworks"></canvas>
+<!-- Nút cuộn lên đầu trang -->
+<div id="backToTop">
+    <img src="../img/toTop.Cuiv4RfP.svg" alt="Back to Top">
+</div>
+
 <!-- ✅ HEADER -->
 <header class="site-header">
     <!-- LOGO -->

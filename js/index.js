@@ -93,32 +93,31 @@ let currentPage = 1;
 
 /* Xóa tag HTML khỏi nội dung */
 function cleanHTML(html) {
-    return html.replace(/<[^>]*>?/gm, "");
+  return html.replace(/<[^>]*>?/gm, "");
 }
 
 /* Rút gọn mô tả */
 function excerpt(text, limit = 150) {
-    return text.length > limit ? text.substring(0, limit) + "..." : text;
+  return text.length > limit ? text.substring(0, limit) + "..." : text;
 }
 
 function loadLatest(page = 1) {
+  fetch(`../controller/api_latest.php?page=${page}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const grid = document.getElementById("latest-grid");
+      grid.innerHTML = "";
 
-    fetch(`../controller/api_latest.php?page=${page}`)
-        .then(res => res.json())
-        .then(data => {
+      data.posts.forEach((p) => {
+        let contentText = cleanHTML(p.noi_dung ?? "");
+        let shortDesc = excerpt(contentText, 130);
 
-            const grid = document.getElementById("latest-grid");
-            grid.innerHTML = "";
-
-            data.posts.forEach(p => {
-
-                let contentText = cleanHTML(p.noi_dung ?? "");
-                let shortDesc = excerpt(contentText, 130);
-
-                grid.innerHTML += `
+        grid.innerHTML += `
                 <div class="latest-card">
 
-                    <a href="./post.php?slug=${encodeURIComponent(p.duong_dan)}">
+                    <a href="./post.php?slug=${encodeURIComponent(
+                      p.duong_dan
+                    )}">
                         <img src="/php/${p.anh_bv}" class="latest-thumb">
                     </a>
 
@@ -128,7 +127,9 @@ function loadLatest(page = 1) {
                             ${p.category ?? "News"}
                         </div>
 
-                        <a href="./post.php?slug=${encodeURIComponent(p.duong_dan)}">
+                        <a href="./post.php?slug=${encodeURIComponent(
+                          p.duong_dan
+                        )}">
                             <h3 class="latest-title">${p.tieu_de}</h3>
                         </a>
 
@@ -139,44 +140,49 @@ function loadLatest(page = 1) {
 
                         <p class="latest-excerpt">${shortDesc}</p>
 
-                        <div class="latest-share">
-                            <i class="fa-brands fa-facebook"></i>
-                            <i class="fa-brands fa-x-twitter"></i>
-                            <i class="fa-brands fa-instagram"></i>
-                            <i class="fa-solid fa-link"></i>
-                        </div>
-
+                         <div class="latest-share">
+            <i class="fa-brands fa-facebook" data-url="./post.php?slug=${encodeURIComponent(
+              p.duong_dan
+            )}"></i>
+            <i class="fa-brands fa-x-twitter" data-url="./post.php?slug=${encodeURIComponent(
+              p.duong_dan
+            )}"></i>
+            <i class="fa-brands fa-instagram" data-url="./post.php?slug=${encodeURIComponent(
+              p.duong_dan
+            )}"></i>
+            <i class="fa-solid fa-link" data-url="./post.php?slug=${encodeURIComponent(
+              p.duong_dan
+            )}"></i>
+        </div>
                     </div>
                 </div>
                 `;
-            });
+      });
 
-            // cập nhật trang hiện tại
-            currentPage = data.page;
-            window.latestTotalPages = data.totalPages;
+      // cập nhật trang hiện tại
+      currentPage = data.page;
+      window.latestTotalPages = data.totalPages;
 
-            // Bật / tắt nút phân trang
-            document.getElementById("btnPrev").style.opacity =
-                currentPage > 1 ? "1" : "0.3";
+      // Bật / tắt nút phân trang
+      document.getElementById("btnPrev").style.opacity =
+        currentPage > 1 ? "1" : "0.3";
 
-            document.getElementById("btnNext").style.opacity =
-                currentPage < data.totalPages ? "1" : "0.3";
-        });
+      document.getElementById("btnNext").style.opacity =
+        currentPage < data.totalPages ? "1" : "0.3";
+    });
 }
-
 
 // ============================
 // Nút phân trang
 // ============================
 
 document.getElementById("btnPrev").addEventListener("click", () => {
-    if (currentPage > 1) loadLatest(currentPage - 1);
+  if (currentPage > 1) loadLatest(currentPage - 1);
 });
 
 document.getElementById("btnNext").addEventListener("click", () => {
-    if (currentPage < window.latestTotalPages) loadLatest(currentPage + 1);
+  if (currentPage < window.latestTotalPages) loadLatest(currentPage + 1);
 });
-
 
 // Load khi vào trang
 loadLatest();
@@ -199,4 +205,44 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     activeTab.style.opacity = 1;
     activeTab.style.transform = "translateY(0)";
   });
+});
+document.addEventListener("click", function (e) {
+  if (e.target.closest(".latest-share i")) {
+    let icon = e.target;
+    let postUrl = icon.dataset.url;
+    let fullUrl =
+      window.location.origin + "/view/" + postUrl.replace("./", "");
+
+    // FACEBOOK
+    if (icon.classList.contains("fa-facebook")) {
+      window.open(
+        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          fullUrl
+        )}`,
+        "_blank"
+      );
+    }
+
+    // TWITTER (X)
+    if (icon.classList.contains("fa-x-twitter")) {
+      window.open(
+        `https://twitter.com/share?url=${encodeURIComponent(fullUrl)}`,
+        "_blank"
+      );
+    }
+
+    // INSTAGRAM (không có API share trực tiếp)
+    if (icon.classList.contains("fa-instagram")) {
+      alert(
+        "Instagram không hỗ trợ chia sẻ trực tiếp. Hãy dùng nút Copy Link!"
+      );
+    }
+
+    // COPY LINK
+    if (icon.classList.contains("fa-link")) {
+      navigator.clipboard.writeText(fullUrl);
+      icon.style.color = "#ff0055";
+      alert("📋 Đã sao chép liên kết!");
+    }
+  }
 });

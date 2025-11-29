@@ -473,25 +473,34 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endforeach; ?>
             </section>
 
-            <!-- Recommendations -->
             <section class="recommendations">
                 <h2>RECOMMENDATIONS</h2>
+
                 <?php foreach ($recommendations as $rec): ?>
+
+                    <?php
+                    $stmtAuthor = $pdo->prepare("SELECT ho_ten FROM khachhang WHERE id_kh=? LIMIT 1");
+                    $stmtAuthor->execute([$rec['id_kh']]);
+                    $authorName = $stmtAuthor->fetchColumn() ?: "Unknown";
+                    ?>
+
                     <div class="post-item">
-                        <a href="./post.php?slug=<?= urlencode($r['duong_dan']) ?>" class="post-link" class="title">
-                            <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
+                        <a href="./post.php?slug=<?= urlencode($rec['duong_dan']) ?>" class="post-link">
+                            <img src="/php/<?= htmlspecialchars($rec['anh_bv']) ?>" alt="">
                             <div class="post-info">
-                                <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
+                                <h3><?= htmlspecialchars($rec['tieu_de']) ?></h3>
                             </div>
                         </a>
-                        </h3>
-                        <p class="meta">by <?= htmlspecialchars($rec['tac_gia']) ?> |
+
+                        <p class="meta">
+                            by <b><?= htmlspecialchars($authorName) ?></b> |
                             <?= date("F d, Y", strtotime($rec['ngay_dang'])) ?>
                         </p>
                     </div>
-            </div>
-        <?php endforeach; ?>
-        </section>
+
+                <?php endforeach; ?>
+            </section>
+
         </div>
     </main>
     <script src="../js/index.js"></script>
