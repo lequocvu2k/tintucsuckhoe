@@ -3,9 +3,10 @@
         Up trạng thái <i class="fa-solid fa-comment-dots"></i>
     </a>
 
-    <a href="#" class="btn-chat">
+    <a href="../view/chat_messages.php" class="btn-chat">
         Phòng chat <i class="fa-solid fa-comments"></i>
     </a>
+
 </div>
 
 <!-- Danh sách trạng thái -->
@@ -17,8 +18,7 @@
 
         <h2>Đăng trạng thái mới</h2>
 
-        <input type="text" id="statusInput" maxlength="50"
-               placeholder="Bạn đang nghĩ gì..." class="status-input">
+        <input type="text" id="statusInput" maxlength="50" placeholder="Bạn đang nghĩ gì..." class="status-input">
 
         <div class="avatar-wrapper">
             <div class="avatar-container">
