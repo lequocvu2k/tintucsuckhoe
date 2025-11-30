@@ -208,39 +208,39 @@ footer {
 /* Reset chung cho 2 label */
 .login-link,
 .signup-link {
-    display: inline-block;
-    padding: 6px 14px;
-    border: 2px solid #2f8f46;
-    border-radius: 6px;
-    color: #2f8f46;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.25s ease;
+  display: inline-block;
+  padding: 6px 14px;
+  border: 2px solid #2f8f46;
+  border-radius: 6px;
+  color: #2f8f46;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.25s ease;
 }
 
 /* Hover animation */
 .login-link:hover,
 .signup-link:hover {
-    background: #2f8f46;
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(47, 143, 70, 0.4);
-    transform: translateY(-1px);
+  background: #2f8f46;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(47, 143, 70, 0.4);
+  transform: translateY(-1px);
 }
 
 /* Khi click */
 .login-link:active,
 .signup-link:active {
-    transform: scale(0.96);
+  transform: scale(0.96);
 }
 .signup-link {
-    border-color: #d67735;
-    color: #d67735;
+  border-color: #d67735;
+  color: #d67735;
 }
 
 .signup-link:hover {
-    background: #d67735;
-    box-shadow: 0 2px 6px rgba(214, 119, 53, 0.4);
+  background: #d67735;
+  box-shadow: 0 2px 6px rgba(214, 119, 53, 0.4);
 }
 
 /* Danh sách Bài phổ biến */
@@ -254,6 +254,70 @@ footer {
   height: 100px;
   border-radius: 50%; /* Đảm bảo hình ảnh có dạng tròn */
   object-fit: cover; /* Cắt hình ảnh nếu cần thiết để vừa với khung */
+}
+.like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e74c3c;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.like-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.user-info {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.user-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 25px; /* 🔥 khoảng cách giữa avatar và text */
+  margin-top: 20px;
+}
+
+.avatar-container {
+  width: 90px;
+  height: 90px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.frame-overlay {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 105px;
+  height: 105px;
+  pointer-events: none;
+}
+
+.user-text {
+  max-width: 600px;
+}
+
+.author-name strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.author-bio {
+  margin-top: 2px;
+  color: #444;
+  line-height: 1.6;
 }
 
 .popular-item {
@@ -321,12 +385,10 @@ footer {
   object-fit: cover;
 }
 
-.author-name {
+.author-name strong {
   font-size: 18px;
   font-weight: bold;
-  position: relative;
-  top: 50px;
-  left: 130px;
+  margin-bottom: 4px;
 }
 
 /* Thông tin bài viết */
@@ -849,18 +911,18 @@ footer {
   color: #066a49;
 }
 .post-tags {
-    margin-top: 15px;
-    font-size: 14px;
+  margin-top: 15px;
+  font-size: 14px;
 }
 
 .tag-item {
-    display: inline-block;
-    background: #066a49;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 12px;
-    margin: 3px;
-    font-size: 13px;
+  display: inline-block;
+  background: #066a49;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin: 3px;
+  font-size: 13px;
 }
 
 .save-btn i {

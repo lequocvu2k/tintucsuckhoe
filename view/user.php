@@ -717,6 +717,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <button type="submit" name="update_info" class="save-btn">Lưu thay đổi</button>
                     </form>
+                    <!-- FORM NHẬP BIO -->
+                    <form action="../controller/update_bio.php" method="POST" class="bio-form">
+                        <h3>Mô tả tác giả (Bio)</h3>
+
+                        <textarea id="bioEditor" name="bio" rows="5">
+            <?= ($user['bio'] ?? '') ?>
+        </textarea>
+
+                        <button type="submit" class="save-btn">Lưu Bio</button>
+                    </form>
+
+                    <!-- CKEditor CDN -->
+                    <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+
+                    <script>
+                        ClassicEditor
+                            .create(document.querySelector('#bioEditor'), {
+                                ckfinder: {
+                                    uploadUrl: '../controller/upload_image.php'
+                                }
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            });
+                    </script>
+
+
                 </div>
             <?php elseif ($view === 'history'): ?>
                 <div class="tab-content <?= ($view === 'history') ? 'active' : '' ?>" id="history">
