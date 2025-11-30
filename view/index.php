@@ -94,6 +94,32 @@ if ($user_id) {
         die("Lỗi kết nối cơ sở dữ liệu: " . $e->getMessage());
     }
 }
+// ====== XỬ LÝ ACTION NÚT ======
+$action = $_GET['action'] ?? null;
+
+if ($action === "chat") {
+    if (!isset($_SESSION['user_id'])) {
+        $_SESSION['error'] = "⚠️ Bạn phải đăng nhập để vào phòng chat!";
+        header("Location: index.php");
+        exit;
+    }
+    header("Location: ./chat_messages.php");
+    exit;
+}
+
+if ($action === "status") {
+    if (!isset($_SESSION['user_id'])) {
+        // ❌ Chưa đăng nhập → chỉ báo lỗi, KHÔNG mở popup
+        $_SESSION['error'] = "⚠️ Bạn phải đăng nhập để đăng trạng thái!";
+        header("Location: index.php");
+        exit;
+    }
+
+    // ✔ Đã đăng nhập → mở popup
+    $_SESSION['open_status_popup'] = true;
+    header("Location: index.php");
+    exit;
+}
 
 function tinhDiem($so_diem)
 {
@@ -269,6 +295,13 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php include '../partials/header.php'; ?>
     <?php include '../partials/login.php'; ?>
     <?php include '../partials/status.php'; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="php-alert">
+            <?= $_SESSION['error'] ?>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
     <main class="container">
         <div class="top-grid">
             <!-- LEFT: Editor's Picks -->
@@ -528,7 +561,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 showSlide(index - 1);
             });
         });
-      
+
     </script>
     <?php include '../partials/footer.php'; ?>
 

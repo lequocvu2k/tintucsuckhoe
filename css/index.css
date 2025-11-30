@@ -1081,6 +1081,16 @@ a {
     font-weight: 600;
     text-shadow: 0 0 4px rgba(0,0,0,0.4);
 }
+.php-alert {
+    background: #ffe3e3;
+    color: #b10000;
+    padding: 12px 15px;
+    margin: 15px auto;
+    width: 90%;
+    border-left: 4px solid red;
+    font-size: 16px;
+    border-radius: 6px;
+}
 
 .status-remaining .expired {
     color: #ff6b6b;
