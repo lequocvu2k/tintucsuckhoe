@@ -1,3 +1,8 @@
+<?php
+date_default_timezone_set("Asia/Ho_Chi_Minh");
+$pdo->exec("SET time_zone = '+07:00'");
+
+?>
 <canvas class="fireworks"></canvas>
 <!-- Nút cuộn lên đầu trang -->
 <div id="backToTop">
@@ -188,15 +193,34 @@
                                         <a href="javascript:void(0)" class="dropdown-btn"><i class="fas fa-cogs"></i> Quản
                                             lý</a>
                                         <ul class="dropdown-content">
-                                            <li><a href="./quanlybv.php"><i class="fas fa-pencil-alt"></i> Quản lý bài
-                                                    viết</a></li>
+                                            <li>
+                                                <a href="./quanlybv.php">
+                                                    <i class="fas fa-pencil-alt"></i> Quản lý bài viết
+                                                </a>
+                                            </li>
+
                                             <?php if ($_SESSION['user_role'] === 'QuanTri'): ?>
-                                                <li><a href="./quanlyyeucau.php"><i class="fas fa-list"></i> Quản lý yêu cầu</a>
+                                                <li>
+                                                    <a href="./quanlyyeucau.php">
+                                                        <i class="fas fa-list"></i> Quản lý yêu cầu
+                                                    </a>
                                                 </li>
-                                                <li><a href="./hethongduyetbai.php"><i class="fas fa-check-circle"></i> Duyệt
-                                                        bài viết</a></li>
+
+                                                <li>
+                                                    <a href="./hethongduyetbai.php">
+                                                        <i class="fas fa-check-circle"></i> Duyệt bài viết
+                                                    </a>
+                                                </li>
+
+                                                <!-- ⭐ Thêm mục quản lý người dùng -->
+                                                <li>
+                                                    <a href="./quanlynguoidung.php">
+                                                        <i class="fas fa-users"></i> Quản lý người dùng
+                                                    </a>
+                                                </li>
                                             <?php endif; ?>
                                         </ul>
+
                                     </li>
                                 <?php endif; ?>
 

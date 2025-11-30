@@ -393,113 +393,128 @@ $ma_dm = $post['ma_chuyen_muc'];
                     </div>
                 </section>
             </div>
-                <br>
-                <div class="comment-section">
-                    <h3>THAM GIA BÌNH LUẬN</h3>
+            <br>
+            <div class="comment-section">
+                <h3>THAM GIA BÌNH LUẬN</h3>
 
-                    <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if (isset($_SESSION['user_id'])): ?>
+
+                    <?php if ($user['is_banned'] == 1): ?>
+                        <div class="login-prompt" style="color:red; font-weight:bold;">
+                            ⛔ Tài khoản của bạn đã bị BAN — không thể bình luận.
+                        </div>
+
+                    <?php elseif ($user['is_muted'] == 1): ?>
+                        <div class="login-prompt" style="color:red; font-weight:bold;">
+                            ⛔ Bạn đang bị cấm CHAT — không thể bình luận.
+                        </div>
+
+                    <?php else: ?>
                         <form class="comment-form" action="../controller/comment.php?slug=<?= htmlspecialchars($slug) ?>"
                             method="POST">
                             <textarea name="comment_text" placeholder="Leave a comment..." required></textarea>
                             <button type="submit" class="submit-btn">Gửi bình luận</button>
                         </form>
-                    <?php else: ?>
-                        <div class="login-prompt">
-                            <p>Please login or register to comment.</p>
-                            <label for="showLogin" class="login-link">Sign in</label> |
-                            <label for="showSignup" class="signup-link">Sign up</label>
-                        </div>
                     <?php endif; ?>
 
-                    <!-- Dropdown sắp xếp -->
-                    <div class="sort-comments">
-                        <label for="sort">Sắp xếp bình luận: </label>
-                        <select name="sort" id="sort"
-                            onchange="window.location.href = 'post.php?slug=<?= urlencode($slug) ?>&sort=' + this.value;">
-                            <option value="newest" <?= ($_GET['sort'] ?? '') === 'newest' ? 'selected' : '' ?>>Mới nhất
-                            </option>
-                            <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : '' ?>>Cũ nhất
-                            </option>
-                            <option value="name_asc" <?= ($_GET['sort'] ?? '') === 'name_asc' ? 'selected' : '' ?>>Tên (A →
-                                Z)
-                            </option>
-                            <option value="name_desc" <?= ($_GET['sort'] ?? '') === 'name_desc' ? 'selected' : '' ?>>Tên (Z
-                                →
-                                A)</option>
-                        </select>
+                <?php else: ?>
+                    <div class="login-prompt">
+                        <p>Please login or register to comment.</p>
+                        <label for="showLogin" class="login-link">Sign in</label> |
+                        <label for="showSignup" class="signup-link">Sign up</label>
                     </div>
+                <?php endif; ?>
 
-                    <!-- Hiển thị bình luận -->
-                    <div id="comments-container">
-                        <?php
-                        if ($comments):
-                            foreach ($comments as $comment):
-                                ?>
-                                <div class="comment" id="comment-<?= $comment['id_binhluan'] ?>">
-                                    <!-- Hiển thị avatar và frame -->
-                                    <div class="avatar-container">
-                                        <!-- Hiển thị avatar -->
-                                        <img src="<?= $author_avatar ?>" alt="Avatar" class="avatar">
 
-                                        <!-- Hiển thị frame nếu có -->
-                                        <?php
-                                        $frame = '';
-                                        if (!empty($author_frame)) {
-                                            $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
-                                            foreach ($possibleExtensions as $ext) {
-                                                $path = "../frames/" . htmlspecialchars($author_frame) . "." . $ext;
-                                                if (file_exists($path)) {
-                                                    $frame = $path;
-                                                    break;
-                                                }
+                <!-- Dropdown sắp xếp -->
+                <div class="sort-comments">
+                    <label for="sort">Sắp xếp bình luận: </label>
+                    <select name="sort" id="sort"
+                        onchange="window.location.href = 'post.php?slug=<?= urlencode($slug) ?>&sort=' + this.value;">
+                        <option value="newest" <?= ($_GET['sort'] ?? '') === 'newest' ? 'selected' : '' ?>>Mới nhất
+                        </option>
+                        <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : '' ?>>Cũ nhất
+                        </option>
+                        <option value="name_asc" <?= ($_GET['sort'] ?? '') === 'name_asc' ? 'selected' : '' ?>>Tên (A →
+                            Z)
+                        </option>
+                        <option value="name_desc" <?= ($_GET['sort'] ?? '') === 'name_desc' ? 'selected' : '' ?>>Tên (Z
+                            →
+                            A)</option>
+                    </select>
+                </div>
+
+                <!-- Hiển thị bình luận -->
+                <div id="comments-container">
+                    <?php
+                    if ($comments):
+                        foreach ($comments as $comment):
+                            ?>
+                            <div class="comment" id="comment-<?= $comment['id_binhluan'] ?>">
+                                <!-- Hiển thị avatar và frame -->
+                                <div class="avatar-container">
+                                    <!-- Hiển thị avatar -->
+                                    <img src="<?= $author_avatar ?>" alt="Avatar" class="avatar">
+
+                                    <!-- Hiển thị frame nếu có -->
+                                    <?php
+                                    $frame = '';
+                                    if (!empty($author_frame)) {
+                                        $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
+                                        foreach ($possibleExtensions as $ext) {
+                                            $path = "../frames/" . htmlspecialchars($author_frame) . "." . $ext;
+                                            if (file_exists($path)) {
+                                                $frame = $path;
+                                                break;
                                             }
                                         }
+                                    }
 
-                                        if (!empty($frame)): ?>
-                                            <img src="<?= $frame ?>" alt="Frame" class="frame-overlay">
-                                        <?php endif; ?>
-                                    </div>
-
-
-                                    <div class="comment-text" id="comment-text-<?= $comment['id_binhluan'] ?>">
-                                        <p><strong><?= htmlspecialchars($comment['ho_ten']) ?></strong>
-                                        <div class="user-email">
-                                            <?php if ($user['email'] == 'baka@gmail.com'): ?>
-                                                <span class="role-badge1">ADMIN</span>
-                                            <?php else: ?>
-                                            <?php endif; ?>
-
-                                            <!-- Ẩn VIP tier nếu là admin -->
-                                            <?php if ($user['email'] != 'baka@gmail.com'): ?>
-                                                <p>
-                                                    <b class="vip-tier1 <?= strtolower(str_replace(' ', '-', $tier)) ?>">
-                                                        <?= htmlspecialchars($tier) ?>
-                                                    </b>
-                                                </p>
-                                            <?php endif; ?>
-                                        </div>
-                                        <span
-                                            class="comment-time"><?= date("F d, Y H:i", strtotime($comment['ngay_binhluan'])) ?></span>
-                                        </p>
-                                        <p><?= nl2br(htmlspecialchars($comment['noi_dung'])) ?></p>
-
-                                        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $comment['id_kh']): ?>
-                                            <a href="javascript:void(0);" class="edit-comment"
-                                                onclick="editComment(<?= $comment['id_binhluan'] ?>)">Sửa</a>
-                                            <a href="javascript:void(0);" class="delete-comment"
-                                                onclick="deleteComment(<?= $comment['id_binhluan'] ?>, '<?= urlencode($slug) ?>')">Xóa</a>
-                                        <?php endif; ?>
-                                    </div>
-                                    <br>
+                                    if (!empty($frame)): ?>
+                                        <img src="<?= $frame ?>" alt="Frame" class="frame-overlay">
+                                    <?php endif; ?>
                                 </div>
-                                <?php
-                            endforeach;
-                        else:
-                            echo "<p>Chưa có bình luận nào.</p>";
-                        endif;
-                        ?>
-                    </div>
+
+
+                                <div class="comment-text" id="comment-text-<?= $comment['id_binhluan'] ?>">
+                                    <p><strong><?= htmlspecialchars($comment['ho_ten']) ?></strong>
+                                    <div class="user-email">
+                                        <?php if ($user['email'] == 'baka@gmail.com'): ?>
+                                            <span class="role-badge1">ADMIN</span>
+                                        <?php else: ?>
+                                        <?php endif; ?>
+
+                                        <!-- Ẩn VIP tier nếu là admin -->
+                                        <?php if ($user['email'] != 'baka@gmail.com'): ?>
+                                            <p>
+                                                <b class="vip-tier1 <?= strtolower(str_replace(' ', '-', $tier)) ?>">
+                                                    <?= htmlspecialchars($tier) ?>
+                                                </b>
+                                            </p>
+                                        <?php endif; ?>
+                                    </div>
+                                    <span
+                                        class="comment-time"><?= date("F d, Y H:i", strtotime($comment['ngay_binhluan'])) ?></span>
+                                    </p>
+                                    <p><?= nl2br(htmlspecialchars($comment['noi_dung'])) ?></p>
+
+                                    <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $comment['id_kh']): ?>
+                                        <a href="javascript:void(0);" class="edit-comment"
+                                            onclick="editComment(<?= $comment['id_binhluan'] ?>)">Sửa</a>
+                                        <a href="javascript:void(0);" class="delete-comment"
+                                            onclick="deleteComment(<?= $comment['id_binhluan'] ?>, '<?= urlencode($slug) ?>')">Xóa</a>
+                                    <?php endif; ?>
+                                </div>
+                                <br>
+                            </div>
+                            <?php
+                        endforeach;
+                    else:
+                        echo "<p>Chưa có bình luận nào.</p>";
+                    endif;
+                    ?>
                 </div>
+            </div>
 
         </article>
 

@@ -16,6 +16,7 @@ $sql = "
         (SELECT COUNT(*) FROM status_like WHERE id_status = s.id AND id_kh = ?) AS liked
     FROM status s
     JOIN khachhang kh ON kh.id_kh = s.id_kh
+   WHERE s.ngay_dang >= NOW() - INTERVAL 24 HOUR   -- ⭐ CHỈ LẤY TRONG 24H
     ORDER BY s.ngay_dang DESC
 ";
 

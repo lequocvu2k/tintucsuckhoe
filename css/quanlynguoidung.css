@@ -1,0 +1,278 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background: #f4f6f9;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px auto;
+  width: fit-content; /* Chỉ rộng bằng nội dung */
+  max-width: 100%;
+}
+.mute-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.mute-menu .mute-options {
+  display: none;
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 5px;
+  z-index: 10;
+  border-radius: 5px;
+}
+
+.mute-menu:hover .mute-options {
+  display: block;
+}
+/* Không gạch chân toàn bộ thẻ a trong bảng */
+table a {
+  text-decoration: none !important;
+}
+
+/* Nút chính */
+.mute-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.mute-menu .btn.mute {
+  background: #c57b00;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.mute-menu .btn.mute:hover {
+  background: #e59b00;
+}
+
+/* Menu dropdown */
+.mute-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 4px;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 99999; /* Đè lên avatar, table, mọi thứ */
+}
+
+/* Item trong menu */
+.mute-options a {
+  display: block;
+  padding: 8px 12px;
+  color: #333;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.mute-options a:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+/* Hover hiện menu */
+.mute-menu:hover .mute-options {
+  display: block;
+}
+
+.mute-options a {
+  display: block;
+  padding: 6px;
+  cursor: pointer;
+  color: #333;
+}
+
+.mute-options a:hover {
+  background: #eee;
+}
+
+/* Hộp thông báo */
+.alert-box {
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #28a745;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999999;
+  opacity: 0;
+  animation: alertFade 3s ease forwards;
+}
+
+/* Hiệu ứng fade-in rồi fade-out */
+@keyframes alertFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+}
+.no-result-row {
+  background: #fff !important;
+}
+
+.no-result {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #d9534f;
+}
+
+.search-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  width: 260px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.search-btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 6px;
+  background: #066a49;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.search-btn:hover {
+  background: #05563b;
+  transform: scale(1.05);
+}
+.search-box form,
+.search-form {
+  display: inline-flex !important;
+  width: auto !important;
+}
+
+.search-input {
+  width: 260px !important; /* Khóa độ rộng cố định */
+  max-width: 260px !important;
+}
+
+table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+th {
+  background: #066a49;
+  color: white;
+}
+
+.btn {
+  padding: 6px 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 2px;
+  display: inline-block;
+}
+
+.ban {
+  background: #e74c3c;
+}
+
+.unban {
+  background: #27ae60;
+}
+
+.mute {
+  background: #f39c12;
+}
+
+.unmute {
+  background: #3498db;
+}
+
+.role-btn {
+  background: #8e44ad;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;
+}
+
+.badge-admin {
+  background: #c0392b;
+}
+
+.badge-nv {
+  background: #2980b9;
+}
+
+.badge-khach {
+  background: #7f8c8d;
+}
+
+.status {
+  font-weight: bold;
+}
+
+.banned {
+  color: red;
+}
+
+.muted {
+  color: #f39c12;
+}

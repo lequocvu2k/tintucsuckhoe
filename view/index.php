@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../php/db.php'; // file bạn đã có
+
 // Lấy thông tin user
 $user_id = $_SESSION['user_id'] ?? null; // Đảm bảo user_id đã được lưu trong session
 // --- Lấy thông tin tác giả ---
@@ -294,6 +295,24 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <?php include '../partials/header.php'; ?>
     <?php include '../partials/login.php'; ?>
+    <?php if (isset($_SESSION['ban_message'])): ?>
+        <div style="
+        margin:20px auto;
+        width:90%;
+        background:#ffe5e5;
+        padding:15px;
+        border-left:6px solid red;
+        color:#b30000;
+        text-align:center;
+        font-size:18px;
+        font-weight:bold;
+        border-radius:8px;
+    ">
+            <?= $_SESSION['ban_message']; ?>
+        </div>
+        <?php unset($_SESSION['ban_message']); ?>
+    <?php endif; ?>
+
     <?php include '../partials/status.php'; ?>
     <?php if (isset($_SESSION['error'])): ?>
         <div class="php-alert">
