@@ -127,6 +127,7 @@ $pending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/hethongduyetbai.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <?php include '../partials/logo.php'; ?>
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>

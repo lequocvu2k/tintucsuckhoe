@@ -1091,6 +1091,39 @@ a {
   pointer-events: none;
   cursor: not-allowed;
 }
+/* Tạo lớp màu đỏ nhạt dưới hình */
+.slide-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 30%; /* tăng giảm tùy bạn */
+  background: linear-gradient(to top, rgba(255, 0, 0, 0.45), transparent);
+  pointer-events: none;
+
+  /* THÊM DÒNG NÀY ↓ */
+  z-index: 1;
+}
+.slide-item .overlay {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 12px;
+
+    /* THÊM DÒNG NÀY ↓ */
+    z-index: 2;
+}
+
+.slide-item .overlay h3 {
+    color: #fff; /* trắng rõ */
+}
 
 .status-remaining .expired {
   color: #ff6b6b;

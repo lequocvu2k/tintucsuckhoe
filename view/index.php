@@ -313,6 +313,7 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Tin tức sức khỏe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include '../partials/logo.php'; ?>
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/index.css">
     <link rel="stylesheet" href="../css/menu.css">

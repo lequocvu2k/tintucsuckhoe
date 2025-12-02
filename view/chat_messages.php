@@ -75,6 +75,7 @@ if (!empty($user['avatar_url'])) {
     <link rel="stylesheet" href="../css/popup.css">
     <link rel="stylesheet" href="../css/chat_messages.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <?php include '../partials/logo.php'; ?>
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>

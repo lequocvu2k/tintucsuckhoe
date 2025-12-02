@@ -2,7 +2,15 @@
 session_start();
 require_once '../php/db.php';
 
-// Kiểm tra đăng nhập
+/* ======================
+   FIX TIMEZONE CHUẨN
+====================== */
+date_default_timezone_set("Asia/Ho_Chi_Minh");
+$pdo->exec("SET time_zone = '+07:00'");
+
+/* ======================
+   1. KIỂM TRA ĐĂNG NHẬP
+====================== */
 if (!isset($_SESSION['user_id'])) {
     echo "Vui lòng đăng nhập để bình luận.";
     exit;
@@ -10,46 +18,52 @@ if (!isset($_SESSION['user_id'])) {
 
 $id_kh = $_SESSION['user_id'];
 
-// Lấy thông tin user
+/* ======================
+   2. HÀM LẤY USER
+====================== */
 function getUser($pdo, $id_kh)
 {
-    $stmt = $pdo->prepare("SELECT is_banned, is_muted, muted_until FROM khachhang WHERE id_kh = ?");
+    $stmt = $pdo->prepare("
+        SELECT is_banned, is_muted, muted_until 
+        FROM khachhang 
+        WHERE id_kh = ?
+    ");
     $stmt->execute([$id_kh]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 $user = getUser($pdo, $id_kh);
 
-// ======================
-// 1. CHẶN USER BỊ BAN
-// ======================
+/* ======================
+   3. CHẶN USER BỊ BAN
+====================== */
 if ($user['is_banned'] == 1) {
     echo "⛔ Tài khoản của bạn đã bị BAN — không thể bình luận.";
     exit;
 }
 
-// ======================
-// 2. AUTO UNMUTE
-// ======================
-if ($user['is_muted'] == 1 && $user['muted_until'] !== null) {
+/* ======================
+   4. AUTO UNMUTE
+====================== */
+if ($user['is_muted'] == 1 && !empty($user['muted_until'])) {
 
     if (strtotime($user['muted_until']) <= time()) {
 
-        // Cập nhật DB
+        // Gỡ mute
         $pdo->prepare("
             UPDATE khachhang
             SET is_muted = 0, muted_until = NULL
             WHERE id_kh = ?
         ")->execute([$id_kh]);
 
-        // Reload lại user để cập nhật trạng thái mới
+        // Reload user
         $user = getUser($pdo, $id_kh);
     }
 }
 
-// ======================
-// 3. CHẶN USER ĐANG BỊ MUTE (SAU KHI AUTO-UNMUTE)
-// ======================
+/* ======================
+   5. CHẶN USER ĐANG BỊ MUTE
+====================== */
 if ($user['is_muted'] == 1) {
 
     if (!empty($user['muted_until'])) {
@@ -58,9 +72,9 @@ if ($user['is_muted'] == 1) {
         if ($remaining < 0)
             $remaining = 0;
 
-        $minutes = floor($remaining / 60);
-        $hours = floor($remaining / 3600);
         $days = floor($remaining / 86400);
+        $hours = floor(($remaining % 86400) / 3600);
+        $minutes = floor(($remaining % 3600) / 60);
 
         if ($days > 0)
             echo "⛔ Bạn đang bị cấm chat. Còn $days ngày nữa.";
@@ -75,21 +89,24 @@ if ($user['is_muted'] == 1) {
 
     exit;
 }
-// ======================
-//  SPAM PROTECT: Chờ 30s mỗi lần bình luận
-// ======================
 
-$cooldown = 30; // thời gian chờ 30 giây
+/* ======================
+   6. SPAM PROTECT – 30 GIÂY
+====================== */
+
+$cooldown = 30;
 
 $stmt_last = $pdo->prepare("SELECT last_comment_at FROM khachhang WHERE id_kh = ?");
 $stmt_last->execute([$id_kh]);
 $last = $stmt_last->fetchColumn();
 
-if ($last !== null) {
+if (!empty($last)) {
+
     $last_time = strtotime($last);
     $now = time();
 
     if (($now - $last_time) < $cooldown) {
+
         $remaining = $cooldown - ($now - $last_time);
 
         echo "⏳ Vui lòng chờ thêm $remaining giây để bình luận tiếp.";
@@ -97,24 +114,32 @@ if ($last !== null) {
     }
 }
 
-// ======================
-// 4. Lấy slug bài viết
-// ======================
+/* ======================
+   7. LẤY SLUG BÀI VIẾT
+====================== */
 $slug = $_GET['slug'] ?? '';
 if (empty($slug)) {
     echo "Bài viết không tồn tại.";
     exit;
 }
 
-// Nội dung bình luận
+/* ======================
+   8. NỘI DUNG BÌNH LUẬN
+====================== */
 $comment_text = trim($_POST['comment_text']);
 if (empty($comment_text)) {
     echo "Bình luận không được để trống.";
     exit;
 }
 
-// Lấy ID bài viết
-$stmt_post = $pdo->prepare("SELECT ma_bai_viet FROM baiviet WHERE duong_dan = ? AND trang_thai = 'published'");
+/* ======================
+   9. LẤY ID BÀI VIẾT
+====================== */
+$stmt_post = $pdo->prepare("
+    SELECT ma_bai_viet 
+    FROM baiviet 
+    WHERE duong_dan = ? AND trang_thai = 'published'
+");
 $stmt_post->execute([$slug]);
 $post = $stmt_post->fetch(PDO::FETCH_ASSOC);
 
@@ -125,25 +150,40 @@ if (!$post) {
 
 $post_id = $post['ma_bai_viet'];
 
-// ======================
-// 5. Lưu bình luận
-// ======================
-$stmt = $pdo->prepare("INSERT INTO binhluan (ma_bai_viet, id_kh, noi_dung, ngay_binhluan) 
-                       VALUES (?, ?, ?, NOW())");
-$stmt->execute([$post_id, $id_kh, $comment_text]);
-$pdo->prepare("UPDATE khachhang SET last_comment_at = NOW() WHERE id_kh = ?")
-    ->execute([$id_kh]);
+/* ======================
+   10. LƯU BÌNH LUẬN
+====================== */
+$pdo->prepare("
+    INSERT INTO binhluan (ma_bai_viet, id_kh, noi_dung, ngay_binhluan)
+    VALUES (?, ?, ?, NOW())
+")->execute([$post_id, $id_kh, $comment_text]);
 
-// +10 điểm
-$pdo->prepare("UPDATE khachhang SET so_diem = so_diem + 10 WHERE id_kh = ?")
-    ->execute([$id_kh]);
+/* ======================
+   11. CẬP NHẬT last_comment_at (KHÔNG CONVERT_TZ NỮA)
+====================== */
+$pdo->prepare("
+    UPDATE khachhang 
+    SET last_comment_at = NOW()
+    WHERE id_kh = ?
+")->execute([$id_kh]);
+
+/* ======================
+   12. CỘNG ĐIỂM
+====================== */
+$pdo->prepare("
+    UPDATE khachhang 
+    SET so_diem = so_diem + 10 
+    WHERE id_kh = ?
+")->execute([$id_kh]);
 
 $pdo->prepare("
     INSERT INTO diemdoc (id_kh, ma_bai_viet, diem_cong, loai_giao_dich, ngay_them)
     VALUES (?, ?, 10, 'binh_luan', NOW())
 ")->execute([$id_kh, $post_id]);
 
-// Redirect lại bài viết
+/* ======================
+   13. QUAY LẠI BÀI VIẾT
+====================== */
 header("Location: ../view/post.php?slug=" . urlencode($slug));
 exit;
 ?>

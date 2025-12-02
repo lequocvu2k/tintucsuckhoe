@@ -162,6 +162,7 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/quanlynguoidung.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <?php include '../partials/logo.php'; ?>
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>

@@ -153,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject_request'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <?php include '../partials/logo.php'; ?>
     <link rel="stylesheet" href="../css/quanlyyeucau.css">
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">

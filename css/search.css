@@ -1,0 +1,210 @@
+/* ==============================
+   GENERAL
+============================== */
+body {
+  background: #f8f8f8;
+  font-family: "Roboto", sans-serif;
+}
+
+.container {
+  width: 95%;
+  max-width: 1250px;
+  margin: 30px auto;
+  display: flex;
+  gap: 30px;
+}
+
+/* ==============================
+   LEFT CONTENT
+============================== */
+.search-left {
+  width: 70%;
+}
+
+.search-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+.search-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px 0;
+}
+
+.search-img img {
+  width: 180px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.search-info {
+  flex: 1;
+}
+
+.search-heading {
+  font-size: 18px;
+  font-weight: bold;
+  color: #111;
+  text-decoration: none;
+}
+
+.search-heading:hover {
+  color: #ff0033;
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0 8px;
+}
+
+.post-meta b {
+  color: #222;
+}
+
+.search-desc {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.4;
+}
+
+/* ==============================
+   POPULAR POSTS SIDEBAR
+============================== */
+
+.search-right {
+      width: 320px !important;  
+    background: #fff;
+    padding: 0 0 20px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+.search-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #e60023; /* 🔴 Màu đỏ đẹp */
+    margin: 20px 0 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.search-title span {
+    color: #000; /* chữ bên trong nếu muốn khác màu */
+}
+.search-pagination {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.search-pagination a {
+    color: #777;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.search-pagination a:hover {
+    color: #000;
+}
+
+.search-pagination .divider {
+    color: #aaa;
+    font-size: 13px;
+}
+.search-pagination {
+    justify-content: center;
+}
+
+.search-right h2 {
+    background: #e4001c;
+    color: #fff;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0;
+    border-radius: 6px 6px 0 0;
+}
+
+.search-right ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 15px;
+}
+
+.search-right li {
+    display: flex;
+    gap: 15px;
+    padding: 18px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.search-right li:last-child {
+    border-bottom: none;
+}
+
+.search-right li a {
+    display: flex;
+    gap: 15px;
+    text-decoration: none;
+    color: #111;
+}
+
+.search-right img {
+    width: 110px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.search-right .post-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 6px;
+}
+
+.search-right .post-title:hover {
+    color: #ff0033;
+}
+
+.search-right .author-date {
+    font-size: 13px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.search-right .author-date b {
+    color: #0077cc;
+    font-weight: 600;
+}
+
+/* ==============================
+   MOBILE RESPONSIVE
+============================== */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .search-left,
+  .search-right {
+    width: 100%;
+  }
+
+  .search-item {
+    flex-direction: column;
+  }
+
+  .search-img img {
+    width: 100%;
+    height: 180px;
+  }
+}

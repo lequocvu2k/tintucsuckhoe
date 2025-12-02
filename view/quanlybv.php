@@ -303,6 +303,7 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../css/quanlybv.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/popup.css">
+    <?php include '../partials/logo.php'; ?>
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>

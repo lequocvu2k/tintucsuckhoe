@@ -3,6 +3,7 @@ date_default_timezone_set("Asia/Ho_Chi_Minh");
 $pdo->exec("SET time_zone = '+07:00'");
 
 ?>
+
 <canvas class="fireworks"></canvas>
 <!-- Nút cuộn lên đầu trang -->
 <div id="backToTop">

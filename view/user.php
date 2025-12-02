@@ -302,6 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../css/fw.css">
     <link rel="stylesheet" href="../css/user.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <?php include '../partials/logo.php'; ?>
     <script src="../resources/js/anime.min.js"></script>
     <link rel="stylesheet" href="../resources/css/fontawesome/css/all.min.css">
     <script src="../js/fireworks.js" async defer></script>
@@ -722,8 +723,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3>Mô tả tác giả (Bio)</h3>
 
                         <textarea id="bioEditor" name="bio" rows="5">
-            <?= ($user['bio'] ?? '') ?>
-        </textarea>
+                    <?= ($user['bio'] ?? '') ?>
+                </textarea>
 
                         <button type="submit" class="save-btn">Lưu Bio</button>
                     </form>

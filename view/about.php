@@ -57,6 +57,7 @@ try {
     <title>Giới thiệu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/fw.css">
+    <?php include '../partials/logo.php'; ?>
     <link rel="stylesheet" href="../css/about.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/popup.css">
