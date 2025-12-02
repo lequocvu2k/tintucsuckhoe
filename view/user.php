@@ -289,6 +289,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: user.php?view=settings");
         exit;
     }
+    if (isset($_POST['delete_history_id'])) {
+        $slug = $_POST['delete_history_id'];
+
+        // Lấy ID bài từ slug
+        $stmt = $pdo->prepare("SELECT ma_bai_viet FROM baiviet WHERE duong_dan = ?");
+        $stmt->execute([$slug]);
+        $ma_bai = $stmt->fetchColumn();
+
+        if ($ma_bai) {
+            $stmt = $pdo->prepare("DELETE FROM diemdoc WHERE id_kh = ? AND ma_bai_viet = ?");
+            $stmt->execute([$id_kh, $ma_bai]);
+        }
+
+        $_SESSION['success'] = "Đã xóa một mục lịch sử!";
+        header("Location: user.php?view=history");
+        exit;
+    }
+    if (isset($_POST['delete_all_history'])) {
+        $stmt = $pdo->prepare("DELETE FROM diemdoc WHERE id_kh = ?");
+        $stmt->execute([$id_kh]);
+
+        $_SESSION['success'] = "🗑️ Đã xóa toàn bộ lịch sử đọc!";
+        header("Location: user.php?view=history");
+        exit;
+    }
 
 }
 ?>
@@ -723,8 +748,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3>Mô tả tác giả (Bio)</h3>
 
                         <textarea id="bioEditor" name="bio" rows="5">
-                    <?= ($user['bio'] ?? '') ?>
-                </textarea>
+                                    <?= ($user['bio'] ?? '') ?>
+                                </textarea>
 
                         <button type="submit" class="save-btn">Lưu Bio</button>
                     </form>
@@ -769,6 +794,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ?>
 
                     <?php if ($history): ?>
+                        <form method="POST" class="delete-all-form">
+                            <button type="submit" name="delete_all_history" class="delete-all-btn">
+                                🗑️ Xóa toàn bộ lịch sử đọc
+                            </button>
+                        </form>
+
                         <div class="history-grid">
                             <?php foreach ($history as $item): ?>
                                 <div class="history-card">
@@ -791,6 +822,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 <i class="fa-regular fa-clock"></i>
                                                 <?= date("d/m/Y H:i", strtotime($item['ngay_them'])) ?>
                                             </p>
+                                            <!-- 🔥 Nút xóa từng bài -->
+                                            <form method="POST" class="delete-single-form">
+                                                <input type="hidden" name="delete_history_id"
+                                                    value="<?= htmlspecialchars($item['duong_dan']) ?>">
+                                                <button type="submit" class="delete-history-btn">
+                                                    <i class="fa-solid fa-trash"></i> Xóa
+                                                </button>
+                                            </form>
                                         </div>
                                     </a>
                                 </div>
