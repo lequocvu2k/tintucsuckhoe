@@ -75,6 +75,27 @@ if ($user['is_muted'] == 1) {
 
     exit;
 }
+// ======================
+//  SPAM PROTECT: Chờ 30s mỗi lần bình luận
+// ======================
+
+$cooldown = 30; // thời gian chờ 30 giây
+
+$stmt_last = $pdo->prepare("SELECT last_comment_at FROM khachhang WHERE id_kh = ?");
+$stmt_last->execute([$id_kh]);
+$last = $stmt_last->fetchColumn();
+
+if ($last !== null) {
+    $last_time = strtotime($last);
+    $now = time();
+
+    if (($now - $last_time) < $cooldown) {
+        $remaining = $cooldown - ($now - $last_time);
+
+        echo "⏳ Vui lòng chờ thêm $remaining giây để bình luận tiếp.";
+        exit;
+    }
+}
 
 // ======================
 // 4. Lấy slug bài viết
@@ -110,6 +131,8 @@ $post_id = $post['ma_bai_viet'];
 $stmt = $pdo->prepare("INSERT INTO binhluan (ma_bai_viet, id_kh, noi_dung, ngay_binhluan) 
                        VALUES (?, ?, ?, NOW())");
 $stmt->execute([$post_id, $id_kh, $comment_text]);
+$pdo->prepare("UPDATE khachhang SET last_comment_at = NOW() WHERE id_kh = ?")
+    ->execute([$id_kh]);
 
 // +10 điểm
 $pdo->prepare("UPDATE khachhang SET so_diem = so_diem + 10 WHERE id_kh = ?")

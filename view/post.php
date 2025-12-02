@@ -2,6 +2,35 @@
 session_start();
 require_once '../php/db.php';
 
+function formatDateVN($dateString)
+{
+    if (!$dateString)
+        return "";
+
+    $ts = strtotime($dateString);
+
+    $map = [
+        "January" => "Tháng 1",
+        "February" => "Tháng 2",
+        "March" => "Tháng 3",
+        "April" => "Tháng 4",
+        "May" => "Tháng 5",
+        "June" => "Tháng 6",
+        "July" => "Tháng 7",
+        "August" => "Tháng 8",
+        "September" => "Tháng 9",
+        "October" => "Tháng 10",
+        "November" => "Tháng 11",
+        "December" => "Tháng 12"
+    ];
+
+    $thang_en = date("F", $ts);
+    $thang_vi = $map[$thang_en];
+
+    return date("d ", $ts) . $thang_vi . date(", Y", $ts);
+}
+
+
 // --- Lấy slug --- 
 $slug = $_GET['slug'] ?? '';
 if (empty($slug)) {
@@ -343,7 +372,8 @@ $ma_dm = $post['ma_chuyen_muc'];
             <!-- Thông tin bài viết -->
             <div class="post-meta">
                 <span>By <?= $author_name ?></span> •
-                <span><?= date("F d, Y", strtotime($post['ngay_dang'])) ?></span>
+                <span><?= date("d/m/Y", strtotime($post['ngay_dang'])) ?></span>
+
             </div>
 
             <?php if (!empty($post['anh_bv'])): ?>
@@ -436,14 +466,38 @@ $ma_dm = $post['ma_chuyen_muc'];
                                 <a href="post.php?slug=<?= urlencode($r['duong_dan']) ?>">
                                     <img src="/php/<?= htmlspecialchars($r['anh_bv']) ?>" alt="">
                                     <h3><?= htmlspecialchars($r['tieu_de']) ?></h3>
-                                    <p><?= date("F d, Y", strtotime($r['ngay_dang'])) ?></p>
+
+                                    <!-- ⭐ NGÀY TIẾNG VIỆT -->
+                                    <p><?= formatDateVN($r['ngay_dang']) ?></p>
                                 </a>
                             </div>
+
                         <?php endforeach; ?>
                     </div>
                 </section>
             </div>
             <br>
+            <?php
+            // =========================
+//  CHECK COMMENT COOLDOWN (30 seconds)
+// =========================
+            $commentCooldown = 30; // thời gian chờ 30 giây
+            $can_comment = true;
+            $remaining_comment_sec = 0;
+
+            $stmt_last = $pdo->prepare("SELECT last_comment_at FROM khachhang WHERE id_kh = ?");
+            $stmt_last->execute([$_SESSION['user_id']]);
+            $last_comment_at = $stmt_last->fetchColumn();
+
+            if ($last_comment_at) {
+                $elapsed = time() - strtotime($last_comment_at);
+                if ($elapsed < $commentCooldown) {
+                    $can_comment = false;
+                    $remaining_comment_sec = $commentCooldown - $elapsed;
+                }
+            }
+            ?>
+
             <div class="comment-section">
                 <h3>THAM GIA BÌNH LUẬN</h3>
 
@@ -519,11 +573,40 @@ $ma_dm = $post['ma_chuyen_muc'];
 
                     <?php else: ?>
 
-                        <form class="comment-form" action="../controller/comment.php?slug=<?= htmlspecialchars($slug) ?>"
-                            method="POST">
-                            <textarea name="comment_text" placeholder="Leave a comment..." required></textarea>
-                            <button type="submit" class="submit-btn">Gửi bình luận</button>
-                        </form>
+                        <?php if ($can_comment): ?>
+
+                            <form class="comment-form" action="../controller/comment.php?slug=<?= htmlspecialchars($slug) ?>"
+                                method="POST">
+                                <textarea name="comment_text" placeholder="Leave a comment..." required></textarea>
+                                <button type="submit" class="submit-btn">Gửi bình luận</button>
+                            </form>
+
+                        <?php else: ?>
+
+                            <div class="mute-warning" id="commentCooldownBox" style="margin-top:15px;">
+                                <i class="fa-solid fa-clock"></i>
+                                <span>Bạn đang bình luận quá nhanh. Vui lòng chờ <b id="commentCD"><?= $remaining_comment_sec ?></b>
+                                    giây...</span>
+                            </div>
+
+                            <script>
+                                let cSec = <?= $remaining_comment_sec ?>;
+                                const cdBox = document.getElementById("commentCD");
+
+                                const timer = setInterval(() => {
+                                    cSec--;
+                                    if (cSec <= 0) {
+                                        cdBox.innerText = 0;
+                                        clearInterval(timer);
+                                        location.reload(); // tự reload để hiện form bình luận
+                                    } else {
+                                        cdBox.innerText = cSec;
+                                    }
+                                }, 1000);
+                            </script>
+
+                        <?php endif; ?>
+
                     <?php endif; ?>
 
                 <?php else: ?>
@@ -589,7 +672,7 @@ $ma_dm = $post['ma_chuyen_muc'];
                                     <p><strong><?= htmlspecialchars($comment['ho_ten']) ?></strong>
                                     <div class="user-email">
                                         <?php if ($user['email'] == 'baka@gmail.com'): ?>
-                                            <span class="role-badge1">ADMIN</span>
+
                                         <?php else: ?>
                                         <?php endif; ?>
 
@@ -602,8 +685,10 @@ $ma_dm = $post['ma_chuyen_muc'];
                                             </p>
                                         <?php endif; ?>
                                     </div>
-                                    <span
-                                        class="comment-time"><?= date("F d, Y H:i", strtotime($comment['ngay_binhluan'])) ?></span>
+                                    <span class="comment-time">
+                                        <?= date("d/m/Y H:i", strtotime($comment['ngay_binhluan'])) ?>
+                                    </span>
+
                                     </p>
                                     <p><?= nl2br(htmlspecialchars($comment['noi_dung'])) ?></p>
 
@@ -633,20 +718,26 @@ $ma_dm = $post['ma_chuyen_muc'];
             <ul class="popular-list">
                 <?php foreach ($popular as $p): ?>
                     <li class="popular-item">
+
                         <!-- Bọc ảnh trong thẻ <a> -->
                         <a href="post.php?slug=<?= urlencode($p['duong_dan']) ?>">
                             <img src="/php/<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
                         </a>
+
                         <div class="info">
-                            <!-- Tiêu đề vẫn là một liên kết -->
+                            <!-- Tiêu đề vẫn là 1 liên kết -->
                             <a href="post.php?slug=<?= urlencode($p['duong_dan']) ?>">
                                 <?= htmlspecialchars($p['tieu_de']) ?>
                             </a>
-                            <p class="date"><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></p>
+
+                            <!-- ⭐ NGÀY DẠNG TIẾNG VIỆT -->
+                            <p class="date"><?= formatDateVN($p['ngay_dang']) ?></p>
                         </div>
+
                     </li>
                 <?php endforeach; ?>
             </ul>
+
 
             <div class="ads">
 

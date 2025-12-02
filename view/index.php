@@ -2,6 +2,37 @@
 session_start();
 require_once '../php/db.php'; // file bạn đã có
 
+function formatDateVN($dateString)
+{
+    if (!$dateString)
+        return "";
+
+    $ts = strtotime($dateString);
+
+    // Mapping tháng tiếng Anh → Việt
+    $map = [
+        "January" => "Tháng 1",
+        "February" => "Tháng 2",
+        "March" => "Tháng 3",
+        "April" => "Tháng 4",
+        "May" => "Tháng 5",
+        "June" => "Tháng 6",
+        "July" => "Tháng 7",
+        "August" => "Tháng 8",
+        "September" => "Tháng 9",
+        "October" => "Tháng 10",
+        "November" => "Tháng 11",
+        "December" => "Tháng 12"
+    ];
+
+    $thang_en = date("F", $ts);
+    $thang_vi = $map[$thang_en];
+
+    // Trả về dạng: 04 Tháng 12, 2025
+    return date("d ", $ts) . $thang_vi . date(", Y", $ts);
+}
+
+
 // Lấy thông tin user
 $user_id = $_SESSION['user_id'] ?? null; // Đảm bảo user_id đã được lưu trong session
 // --- Lấy thông tin tác giả ---
@@ -349,7 +380,8 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 <div class="author-date">
                                     <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
-                                    <span><?= date("F d, Y", strtotime($e['ngay_dang'])) ?></span>
+                                    <span><?= formatDateVN($e['ngay_dang']) ?></span>
+
                                 </div>
                             </div>
                         </a>
@@ -433,7 +465,8 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                         <p class="author-date">
                                             <span>By <b><?= htmlspecialchars($postAuthor) ?></b></span> •
-                                            <span><?= date("F d, Y", strtotime($p['ngay_dang'])) ?></span>
+                                            <?= formatDateVN($p['ngay_dang']) ?>
+
                                         </p>
                                     </div>
                                 </a>
@@ -476,7 +509,8 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <p class="meta">
                                     by <b><?= htmlspecialchars($authorName) ?></b> |
 
-                                    <?= date("F d, Y", strtotime($item['ngay_dang'])) ?>
+                                    <?= formatDateVN($item['ngay_dang']) ?>
+
                                 </p>
                             </div>
 
@@ -518,7 +552,8 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                             <p class="meta">
                                 by <b><?= htmlspecialchars($authorName) ?></b> |
-                                <?= date("F d, Y", strtotime($i['ngay_dang'])) ?>
+                                <?= formatDateVN($i['ngay_dang']) ?>
+
                             </p>
                         </div>
                     </div>
@@ -547,7 +582,8 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                         <p class="meta">
                             by <b><?= htmlspecialchars($authorName) ?></b> |
-                            <?= date("F d, Y", strtotime($rec['ngay_dang'])) ?>
+                            <?= formatDateVN($rec['ngay_dang']) ?>
+
                         </p>
                     </div>
 
