@@ -91,62 +91,26 @@ $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
-$user = null;
-$tier = "Member";
+include '../partials/menu.php';
+// 🔥🔥🔥 ĐÚNG VỊ TRÍ AUTO-UNMUTE 🔥🔥🔥
+if ($user['is_muted'] == 1 && !empty($user['muted_until'])) {
 
-if (isset($_SESSION['user_id'])) {
-    $id_kh = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("
-        SELECT kh.*, tk.ngay_tao
-        FROM khachhang kh
-        LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
-        WHERE kh.id_kh = :id
-    ");
-    $stmt->bindParam(':id', $id_kh);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (strtotime($user['muted_until']) <= time()) {
 
-    if ($user) {
-        function tinhDiem($so_diem)
-        {
-            return floor($so_diem / 10000);
-        }
-        function xacDinhCapDo($so_diem)
-        {
-            if ($so_diem >= 10000)
-                return 'Siêu Kim Cương';
-            if ($so_diem >= 5000)
-                return 'Kim Cương';
-            if ($so_diem >= 1000)
-                return 'Vàng';
-            if ($so_diem >= 500)
-                return 'Bạc';
-            return 'Member';
-        }
-        $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
-        $tier = xacDinhCapDo($so_diem);
-    }
-
-    // 🔥🔥🔥 ĐÚNG VỊ TRÍ AUTO-UNMUTE 🔥🔥🔥
-    if ($user['is_muted'] == 1 && !empty($user['muted_until'])) {
-
-        if (strtotime($user['muted_until']) <= time()) {
-
-            $pdo->prepare("
+        $pdo->prepare("
                 UPDATE khachhang
                 SET is_muted = 0, muted_until = NULL
                 WHERE id_kh = ?
             ")->execute([$user['id_kh']]);
 
-            // update biến user ngay lập tức
-            $user['is_muted'] = 0;
-            $user['muted_until'] = null;
+        // update biến user ngay lập tức
+        $user['is_muted'] = 0;
+        $user['muted_until'] = null;
 
-            echo "<script>
+        echo "<script>
                 alert('🎉 Bạn đã được gỡ cấm chat!');
                 location.reload();
             </script>";
-        }
     }
 }
 

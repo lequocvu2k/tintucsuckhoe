@@ -1,43 +1,7 @@
 <?php
 session_start();
 require_once '../php/db.php';
-// ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
-$user = null; // Mặc định là khách
-$tier = "Member";
-
-if (isset($_SESSION['user_id'])) {
-    $id_kh = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("
-        SELECT kh.*, tk.ngay_tao
-        FROM khachhang kh
-        LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
-        WHERE kh.id_kh = :id
-    ");
-    $stmt->bindParam(':id', $id_kh);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user) {
-        function tinhDiem($so_diem)
-        {
-            return floor($so_diem / 10000);
-        }
-        function xacDinhCapDo($so_diem)
-        {
-            if ($so_diem >= 10000)
-                return 'Siêu Kim Cương';
-            if ($so_diem >= 5000)
-                return 'Kim Cương';
-            if ($so_diem >= 1000)
-                return 'Vàng';
-            if ($so_diem >= 500)
-                return 'Bạc';
-            return 'Member';
-        }
-        $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
-        $tier = xacDinhCapDo($so_diem);
-    }
-}
+include '../partials/menu.php';
 // Lấy danh sách chuyên gia (chỉ những ai is_chuyen_gia = 1)
 $stmt = $pdo->prepare("
     SELECT id_kh, ho_ten, avatar_url, chuyen_mon, mo_ta_chuyen_gia

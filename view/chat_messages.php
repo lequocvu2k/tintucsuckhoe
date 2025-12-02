@@ -35,26 +35,7 @@ $stmt->bindParam(':id', $user_id);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($user) {
-    function tinhDiem($so_diem)
-    {
-        return floor($so_diem / 10000);
-    }
-    function xacDinhCapDo($so_diem)
-    {
-        if ($so_diem >= 10000)
-            return 'Siêu Kim Cương';
-        if ($so_diem >= 5000)
-            return 'Kim Cương';
-        if ($so_diem >= 1000)
-            return 'Vàng';
-        if ($so_diem >= 500)
-            return 'Bạc';
-        return 'Member';
-    }
-    $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
-    $tier = xacDinhCapDo($so_diem);
-}
+include '../partials/menu.php';
 
 // Avatar
 if (!empty($user['avatar_url'])) {

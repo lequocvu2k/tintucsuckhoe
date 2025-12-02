@@ -80,42 +80,7 @@ $stmt->execute();
 
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
-/* ===========================
-      LẤY THÔNG TIN NGƯỜI DÙNG
-=========================== */
-$user = null;
-$tier = "Member";
-
-if (isset($_SESSION['user_id'])) {
-
-    $stmtUser = $pdo->prepare("
-        SELECT kh.*, tk.ngay_tao
-        FROM khachhang kh
-        LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
-        WHERE kh.id_kh = ?
-    ");
-    $stmtUser->execute([$_SESSION['user_id']]);
-    $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
-
-    if ($user) {
-
-        function xacDinhCapDo($so_diem)
-        {
-            if ($so_diem >= 10000)
-                return 'Siêu Kim Cương';
-            if ($so_diem >= 5000)
-                return 'Kim Cương';
-            if ($so_diem >= 1000)
-                return 'Vàng';
-            if ($so_diem >= 500)
-                return 'Bạc';
-            return 'Member';
-        }
-
-        $tier = xacDinhCapDo($user['so_diem'] ?? 0);
-    }
-}
+include '../partials/menu.php';
 ?>
 
 

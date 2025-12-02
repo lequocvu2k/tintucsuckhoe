@@ -54,45 +54,7 @@ if ($id_chuyen_gia <= 0) {
     echo "<h2 style='color:red;text-align:center;margin-top:50px;'>⚠️ Chuyên gia không hợp lệ!</h2>";
     exit;
 }
-
-/* ====================== LẤY THÔNG TIN NGƯỜI DÙNG ĐĂNG NHẬP ====================== */
-$user = null;
-$tier = "Member";
-
-$id_kh = $_SESSION['user_id'] ?? null; // người dùng đăng nhập
-
-if ($id_kh) {
-    $stmt = $pdo->prepare("
-        SELECT kh.*, tk.ngay_tao
-        FROM khachhang kh
-        LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
-        WHERE kh.id_kh = :id
-    ");
-    $stmt->execute([':id' => $id_kh]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user) {
-        function tinhDiem($so_diem)
-        {
-            return floor($so_diem / 10000);
-        }
-        function xacDinhCapDo($so_diem)
-        {
-            if ($so_diem >= 10000)
-                return 'Siêu Kim Cương';
-            if ($so_diem >= 5000)
-                return 'Kim Cương';
-            if ($so_diem >= 1000)
-                return 'Vàng';
-            if ($so_diem >= 500)
-                return 'Bạc';
-            return 'Member';
-        }
-        $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
-        $tier = xacDinhCapDo($so_diem);
-    }
-}
-
+include '../partials/menu.php';
 /* ====================== LẤY THÔNG TIN CHUYÊN GIA ====================== */
 $stmt = $pdo->prepare("
     SELECT ho_ten, avatar_url, chuyen_mon, mo_ta_chuyen_gia, is_chuyen_gia
