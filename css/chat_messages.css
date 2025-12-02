@@ -272,6 +272,38 @@ body {
   background: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
 }
+.reply-btn {
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: #007bff;
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+.reply-btn:hover {
+    text-decoration: underline;
+}
+
+.reply-box {
+    background: #eef4ff;
+    padding: 8px 12px;
+    border-left: 4px solid #4a7bd4;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cancel-reply {
+    border: none;
+    background: none;
+    color: red;
+    font-size: 12px;
+    cursor: pointer;
+}
 
 .chat-input:focus {
   border-color: #ff6a88;

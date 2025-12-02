@@ -3,9 +3,12 @@
 // id user hiện tại (để phân biệt tin của mình)
 const CURRENT_USER_ID = parseInt(document.body.dataset.userId || "0", 10);
 
+// id tin nhắn đang được trả lời
+let replyToId = null;
+
 /** Escape HTML để tránh XSS */
 function escapeHtml(str) {
-  return str
+  return String(str || "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -19,6 +22,10 @@ const chatForm = document.getElementById("chatForm");
 const btnSend = document.getElementById("btnSend");
 const editNotice = document.getElementById("editNotice");
 const cancelEdit = document.getElementById("cancelEdit");
+const replyBox = document.getElementById("replyBox");
+const replyText = document.getElementById("replyText");
+const cancelReply = document.getElementById("cancelReply");
+
 let editingMessageId = null; // ID tin nhắn đang sửa (null = gửi mới)
 
 /** ===========================
@@ -68,16 +75,33 @@ function loadMessages(scrollToBottom = false) {
         wrapper.appendChild(avatar);
         wrapper.appendChild(bubble);
 
-        // ---------- NÚT SỬA / XÓA ----------
-        if (own) {
-          const actions = document.createElement("div");
-          actions.className = "msg-actions";
+        // ---------- NÚT HÀNH ĐỘNG ----------
+        const actions = document.createElement("div");
+        actions.className = "msg-actions";
 
-          actions.innerHTML = `
-              <button class="edit-msg"><i class="fa-solid fa-pen"></i></button>
-              <button class="delete-msg"><i class="fa-solid fa-trash"></i></button>
+        // Tin của NGƯỜI KHÁC -> chỉ có Reply
+        if (!own) {
+          actions.innerHTML += `
+            <button class="reply-msg" title="Trả lời">
+              <i class="fa-solid fa-reply"></i>
+            </button>
           `;
+        }
 
+        // Tin của MÌNH -> Sửa + Xoá
+        if (own) {
+          actions.innerHTML += `
+            <button class="edit-msg" title="Sửa">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="delete-msg" title="Xóa">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          `;
+        }
+
+        // Chỉ append nếu có ít nhất 1 nút
+        if (actions.innerHTML.trim() !== "") {
           wrapper.appendChild(actions);
         }
 
@@ -101,9 +125,7 @@ chatForm.addEventListener("submit", function (e) {
   const text = chatInput.value.trim();
   if (!text) return;
 
-  /** ------------------------
-   *  CHẾ ĐỘ SỬA TIN NHẮN
-   * ------------------------ */
+  // ----- CHẾ ĐỘ SỬA TIN NHẮN -----
   if (editingMessageId !== null) {
     fetch("../controller/edit_message.php", {
       method: "POST",
@@ -115,10 +137,8 @@ chatForm.addEventListener("submit", function (e) {
         if (data.status === "success") {
           chatInput.value = "";
           editingMessageId = null;
-
-          // Trả nút về trạng thái Gửi
           btnSend.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Gửi`;
-
+          editNotice.style.display = "none";
           loadMessages(true);
         }
       });
@@ -126,11 +146,10 @@ chatForm.addEventListener("submit", function (e) {
     return;
   }
 
-  /** ------------------------
-   *  CHẾ ĐỘ GỬI TIN NHẮN MỚI
-   * ------------------------ */
+  // ----- CHẾ ĐỘ GỬI TIN NHẮN MỚI -----
   const params = new URLSearchParams();
   params.append("message", text);
+  params.append("reply_to", replyToId ? replyToId : ""); // CHỈ 1 biến reply_to
 
   fetch("../controller/chat_send.php", {
     method: "POST",
@@ -141,6 +160,9 @@ chatForm.addEventListener("submit", function (e) {
     .then((res) => {
       if (res.trim() === "ok") {
         chatInput.value = "";
+        // reset trạng thái trả lời
+        replyToId = null;
+        if (replyBox) replyBox.style.display = "none";
         loadMessages(true);
       }
     })
@@ -181,23 +203,57 @@ document.addEventListener("click", function (e) {
     chatInput.value = oldText;
     chatInput.focus();
 
-    // đổi nút thành Sửa
     btnSend.innerHTML = `<i class="fa-solid fa-pen"></i> Sửa`;
-
-    // hiện thông báo “Đang sửa...”
     editNotice.style.display = "flex";
 
     chatBody.scrollTop = chatBody.scrollHeight;
   }
 });
-cancelEdit.addEventListener("click", function () {
-  editingMessageId = null; // thoát chế độ sửa
-  chatInput.value = ""; // xóa nội dung đang sửa
-  btnSend.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Gửi`; // đổi nút về Gửi
-  editNotice.style.display = "none"; // ẩn thông báo
+
+if (cancelEdit) {
+  cancelEdit.addEventListener("click", function (e) {
+    e.preventDefault();
+    editingMessageId = null;
+    chatInput.value = "";
+    btnSend.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Gửi`;
+    editNotice.style.display = "none";
+  });
+}
+
+/** ===========================
+ *  TRẢ LỜI TIN NHẮN
+ * =========================== */
+document.addEventListener("click", function (e) {
+  if (e.target.closest(".reply-msg")) {
+    let msg = e.target.closest(".message-item");
+    replyToId = msg.dataset.id;
+
+    let author = msg.querySelector(".msg-name").innerText;
+    let content = msg.querySelector(".msg-text").innerText.substring(0, 40);
+
+    // Hiện hộp reply phía trên
+    if (replyBox && replyText) {
+      replyBox.style.display = "flex";
+      replyText.innerHTML =
+        `Trả lời <b>${escapeHtml(author)}</b>: "` +
+        escapeHtml(content) +
+        '..."';
+    }
+
+    // ⭐⭐ Thêm @Tên vào textarea ⭐⭐
+    chatInput.value = `@${author}: `;
+    chatInput.focus();
+  }
 });
+
+if (cancelReply) {
+  cancelReply.addEventListener("click", function (e) {
+    e.preventDefault();
+    replyToId = null;
+    if (replyBox) replyBox.style.display = "none";
+  });
+}
 
 // =================== AUTO LOAD ===================
 loadMessages(true);
 setInterval(loadMessages, 3000);
-

@@ -114,9 +114,23 @@ $pdo->exec("SET time_zone = '+07:00'");
                 <div class="avatar-container">
                     <?php
                     // 🖼 Avatar
-                    $avatar = (!empty($user['avatar_url']) && file_exists($_SERVER['DOCUMENT_ROOT'] . $user['avatar_url']))
-                        ? htmlspecialchars($user['avatar_url'])
+                    $avatar_path = $user['avatar_url'];
+
+                    // Nếu avatar có dạng ../ thì bỏ đi
+                    if (strpos($avatar_path, '../') === 0) {
+                        $avatar_path = substr($avatar_path, 2);
+                    }
+
+                    // Tạo đường dẫn tuyệt đối để kiểm tra file
+                    $real_path = $_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($avatar_path, '/');
+
+                    // Gán link show lên web
+                    $avatar_url_for_web = '/' . ltrim($avatar_path, '/');
+
+                    $avatar = file_exists($real_path)
+                        ? $avatar_url_for_web
                         : '/img/avt.jpg';
+
 
                     // 🎨 Frame (nằm ngoài thư mục php)
                     $frame = '';

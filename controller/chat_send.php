@@ -9,12 +9,18 @@ if (!isset($_SESSION['user_id'])) {
 
 $id_kh = (int) $_SESSION['user_id'];
 $message = trim($_POST['message'] ?? '');
+$reply_to = isset($_POST['reply_to']) ? (int) $_POST['reply_to'] : null;
 
 if ($message === '') {
     exit('empty');
 }
 
-$stmt = $pdo->prepare("INSERT INTO chat_messages(id_kh, message, created_at) VALUES(?, ?, NOW())");
-$stmt->execute([$id_kh, $message]);
+// Gửi tin nhắn
+$stmt = $pdo->prepare("
+    INSERT INTO chat_messages(id_kh, message, reply_to, created_at)
+    VALUES(?, ?, ?, NOW())
+");
+
+$stmt->execute([$id_kh, $message, $reply_to]);
 
 echo 'ok';

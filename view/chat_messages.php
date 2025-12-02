@@ -118,6 +118,14 @@ if (!empty($user['avatar_url'])) {
                     <button id="cancelEdit" class="cancel-edit">Hủy</button>
                 </div>
 
+                <!-- ⭐ KHUNG TRẢ LỜI TIN NHẮN (THÊM VÀO Ở ĐÂY) ⭐ -->
+                <div id="replyBox" class="reply-box" style="display:none;">
+                    <span id="replyText"></span>
+                    <button id="cancelReply" type="button" class="cancel-reply">Hủy</button>
+                </div>
+                <!-- ⭐ HẾT ⭐ -->
+
+
                 <button type="submit" id="btnSend" class="btn-send">
                     <i class="fa-solid fa-paper-plane"></i> Gửi
                 </button>
