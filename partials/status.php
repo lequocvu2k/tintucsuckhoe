@@ -1,6 +1,21 @@
 <div class="action-buttons">
+    <?php
+    $can_post = true;
 
-    <a href="index.php?action=status" class="btn-status">
+    $check = $pdo->prepare("
+    SELECT id FROM status 
+    WHERE id_kh = ? 
+      AND ngay_dang >= NOW() - INTERVAL 24 HOUR
+    LIMIT 1
+");
+    $check->execute([$_SESSION['user_id'] ?? 0]);
+
+    if ($check->rowCount() > 0) {
+        $can_post = false;
+    }
+    ?>
+
+    <a href="<?= $can_post ? 'index.php?action=status' : '#' ?>" class="btn-status <?= $can_post ? '' : 'disabled' ?>">
         Up trạng thái <i class="fa-solid fa-comment-dots"></i>
     </a>
 

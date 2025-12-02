@@ -280,6 +280,50 @@ footer {
   gap: 25px; /* 🔥 khoảng cách giữa avatar và text */
   margin-top: 20px;
 }
+/* ===========================
+   𝐌𝐔𝐓𝐄 𝐖𝐀𝐑𝐍𝐈𝐍𝐆 (Đẹp – chuyên nghiệp)
+   =========================== */
+.mute-warning {
+    background: linear-gradient(135deg, #ff1f3d, #b30023);
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+    animation: fadeIn 0.5s ease;
+}
+
+/* Icon rung nhẹ */
+.mute-warning i {
+    font-size: 22px;
+    animation: shake 1s infinite linear;
+}
+
+/* Hiệu ứng xuất hiện */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hiệu ứng rung cảnh báo */
+@keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(6deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-6deg); }
+    100% { transform: rotate(0deg); }
+}
 
 .avatar-container {
   width: 90px;

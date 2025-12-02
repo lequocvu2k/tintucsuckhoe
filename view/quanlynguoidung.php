@@ -91,7 +91,7 @@ $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
-$user = null; // Mặc định là khách
+$user = null;
 $tier = "Member";
 
 if (isset($_SESSION['user_id'])) {
@@ -126,7 +126,30 @@ if (isset($_SESSION['user_id'])) {
         $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
         $tier = xacDinhCapDo($so_diem);
     }
+
+    // 🔥🔥🔥 ĐÚNG VỊ TRÍ AUTO-UNMUTE 🔥🔥🔥
+    if ($user['is_muted'] == 1 && !empty($user['muted_until'])) {
+
+        if (strtotime($user['muted_until']) <= time()) {
+
+            $pdo->prepare("
+                UPDATE khachhang
+                SET is_muted = 0, muted_until = NULL
+                WHERE id_kh = ?
+            ")->execute([$user['id_kh']]);
+
+            // update biến user ngay lập tức
+            $user['is_muted'] = 0;
+            $user['muted_until'] = null;
+
+            echo "<script>
+                alert('🎉 Bạn đã được gỡ cấm chat!');
+                location.reload();
+            </script>";
+        }
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -188,38 +211,36 @@ if (isset($_SESSION['user_id'])) {
 
             <?php
             // ============================================
-            // Tính thời gian còn lại khi user bị mute
-            // ============================================
-        
+// Tính thời gian còn lại khi user bị mute
+// ============================================
             $muteRemaining = "";
 
             if ($u['is_muted'] == 1) {
 
-                // Nếu muted_until có giá trị → Mute theo thời gian
+                // Nếu có thời gian muted_until → mute tạm thời
                 if (!empty($u['muted_until'])) {
 
                     date_default_timezone_set("Asia/Ho_Chi_Minh");
 
-                    // Đồng bộ timezone MySQL ↔ PHP
-                    $pdo->exec("SET time_zone = '+07:00'");
-
+                    // Lấy mốc thời gian
                     $now = time();
                     $end = strtotime($u['muted_until']);
 
-
-                    $end = strtotime($u['muted_until']);
-
-                    // Nếu đã hết hạn → tự unmute
+                    // Nếu đã hết hạn → tự động unmute
                     if ($end <= $now) {
-                        $pdo->prepare("UPDATE khachhang SET is_muted = 0, muted_until = NULL WHERE id_kh = ?")
+                        $pdo->prepare("UPDATE khachhang 
+                           SET is_muted = 0, muted_until = NULL 
+                           WHERE id_kh = ?")
                             ->execute([$u['id_kh']]);
 
                         $u['is_muted'] = 0;
                         $u['muted_until'] = null;
 
                     } else {
-                        // Tính thời gian còn lại
+
+                        // 🟢 Tính thời gian còn lại đúng
                         $diff = $end - $now;
+
                         $days = floor($diff / 86400);
                         $hours = floor(($diff % 86400) / 3600);
                         $mins = floor(($diff % 3600) / 60);
@@ -229,6 +250,7 @@ if (isset($_SESSION['user_id'])) {
                         } elseif ($hours > 0) {
                             $muteRemaining = "(Còn $hours giờ $mins phút)";
                         } else {
+                            // 🟢 Trường hợp mute 5 phút → CHỈ HIỆN PHÚT
                             $muteRemaining = "(Còn $mins phút)";
                         }
                     }
@@ -239,6 +261,7 @@ if (isset($_SESSION['user_id'])) {
                 }
             }
             ?>
+
 
             <tr>
                 <td><?= $u['id_kh'] ?></td>

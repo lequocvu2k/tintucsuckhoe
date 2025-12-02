@@ -9,26 +9,74 @@ if (empty($slug)) {
 }
 
 // ====================== LẤY THÔNG TIN NGƯỜI DÙNG ======================
-$user = null; // Mặc định là khách
+$user = null;
 $tier = "Member";
 
 if (isset($_SESSION['user_id'])) {
     $id_kh = $_SESSION['user_id'];
+
     $stmt = $pdo->prepare("
         SELECT kh.*, tk.ngay_tao
         FROM khachhang kh
         LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
-        WHERE kh.id_kh = :id
+        WHERE kh.id_kh = ?
     ");
-    $stmt->bindParam(':id', $id_kh);
-    $stmt->execute();
+    $stmt->execute([$id_kh]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        function tinhDiem($so_diem)
-        {
-            return floor($so_diem / 10000);
+
+        /* ============================
+           AUTO UNMUTE KHI HẾT THỜI GIAN
+        ============================ */
+        /* ============================
+    AUTO UNMUTE KHI HẾT THỜI GIAN
+ ============================ */
+
+        /* ============================
+    AUTO UNMUTE KHI HẾT THỜI GIAN
+ ============================ */
+
+        if ($user['is_muted'] == 1 && !empty($user['muted_until'])) {
+
+            $now = time();
+            $end = strtotime($user['muted_until']);
+
+            if ($end <= $now) {
+
+                // Gỡ mute trong DB
+                $pdo->prepare("
+            UPDATE khachhang 
+            SET is_muted = 0, muted_until = NULL 
+            WHERE id_kh = ?
+        ")->execute([$user['id_kh']]);
+
+                // ⭐ Reload thông tin user từ DB
+                $stmtReload = $pdo->prepare("
+            SELECT kh.*, tk.ngay_tao
+            FROM khachhang kh
+            LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
+            WHERE kh.id_kh = ?
+        ");
+                $stmtReload->execute([$id_kh]);
+                $user = $stmtReload->fetch(PDO::FETCH_ASSOC);
+
+                // ⭐ Xóa countdown + thông báo
+                echo "<script>
+            document.addEventListener('DOMContentLoaded', () => {
+                let box = document.getElementById('muteBox');
+                if (box) {
+                    box.innerHTML = '<b style=\"color:#28a745\">🎉 Bạn đã được gỡ cấm chat!</b>';
+                    box.style.background = '#e6ffe6';
+                }
+            });
+        </script>";
+            }
         }
+
+        /* ============================
+           TÍNH TIER NGƯỜI DÙNG
+        ============================ */
         function xacDinhCapDo($so_diem)
         {
             if ($so_diem >= 10000)
@@ -41,10 +89,12 @@ if (isset($_SESSION['user_id'])) {
                 return 'Bạc';
             return 'Member';
         }
+
         $so_diem = is_numeric($user['so_diem']) ? $user['so_diem'] : 0;
         $tier = xacDinhCapDo($so_diem);
     }
 }
+
 
 // --- Lấy bài viết theo slug ---
 $stmt = $pdo->prepare("SELECT * FROM baiviet WHERE duong_dan = ? AND trang_thai = 'published'");
@@ -405,11 +455,70 @@ $ma_dm = $post['ma_chuyen_muc'];
                         </div>
 
                     <?php elseif ($user['is_muted'] == 1): ?>
-                        <div class="login-prompt" style="color:red; font-weight:bold;">
-                            ⛔ Bạn đang bị cấm CHAT — không thể bình luận.
+
+                        <?php
+                        // ===============================
+                        // Tính thời gian còn lại (có giây)
+                        // ===============================
+                
+                        $muteMessage = "Bạn đang bị cấm CHAT — không thể bình luận.";
+
+                        if (!empty($user['muted_until'])) {
+
+                            date_default_timezone_set("Asia/Ho_Chi_Minh");
+
+                            $now = time();
+                            $end = strtotime($user['muted_until']);
+
+                            if ($end > $now) {
+
+                                $diff = $end - $now;
+
+                                $days = floor($diff / 86400);
+                                $hours = floor(($diff % 86400) / 3600);
+                                $mins = floor(($diff % 3600) / 60);
+                                $secs = $diff % 60;   // ⭐ GIÂY CÒN LẠI
+                
+                                if ($days > 0) {
+                                    $muteMessage = "Bạn đang bị cấm CHAT — còn $days ngày $hours giờ $mins phút $secs giây nữa.";
+                                } elseif ($hours > 0) {
+                                    $muteMessage = "Bạn đang bị cấm CHAT — còn $hours giờ $mins phút $secs giây nữa.";
+                                } elseif ($mins > 0) {
+                                    $muteMessage = "Bạn đang bị cấm CHAT — còn $mins phút $secs giây nữa.";
+                                } else {
+                                    // Dưới 1 phút chỉ còn giây
+                                    $muteMessage = "Bạn đang bị cấm CHAT — còn $secs giây nữa.";
+                                }
+                            }
+
+                        } else {
+                            $muteMessage = "Bạn đang bị cấm CHAT vĩnh viễn — không thể bình luận.";
+                        }
+                        ?>
+
+                        <?php
+                        $remainingSeconds = 0;
+
+                        if ($user['is_muted'] == 1 && !empty($user['muted_until'])) {
+                            $remainingSeconds = strtotime($user['muted_until']) - time();
+                            if ($remainingSeconds < 0)
+                                $remainingSeconds = 0;
+                        }
+                        ?>
+
+                        <div class="mute-warning" id="muteBox">
+                            <i class="fa-solid fa-ban"></i>
+                            <span id="muteText"><?= $muteMessage ?></span>
                         </div>
 
+                        <script>
+                            window.MUTE_REMAINING = <?= $remainingSeconds ?>;
+                            window.USER_ID = <?= $user['id_kh'] ?>;
+                        </script>
+
+
                     <?php else: ?>
+
                         <form class="comment-form" action="../controller/comment.php?slug=<?= htmlspecialchars($slug) ?>"
                             method="POST">
                             <textarea name="comment_text" placeholder="Leave a comment..." required></textarea>
@@ -547,6 +656,65 @@ $ma_dm = $post['ma_chuyen_muc'];
             </div>
         </aside>
     </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            if (typeof window.MUTE_REMAINING === "undefined") return;
+            let sec = window.MUTE_REMAINING;
+
+            const muteBox = document.getElementById("muteBox");
+            const muteText = document.getElementById("muteText");
+
+            if (!muteBox) return;
+
+            function updateText() {
+                if (sec <= 0) {
+                    muteText.innerHTML = "⏳ Đang kiểm tra…";
+                    unmuteNow();
+                    return;
+                }
+
+                let d = Math.floor(sec / 86400);
+                let h = Math.floor((sec % 86400) / 3600);
+                let m = Math.floor((sec % 3600) / 60);
+                let s = sec % 60;
+
+                if (d > 0)
+                    muteText.innerHTML = `Bạn đang bị cấm CHAT — còn ${d} ngày ${h} giờ ${m} phút ${s} giây`;
+                else if (h > 0)
+                    muteText.innerHTML = `Bạn đang bị cấm CHAT — còn ${h} giờ ${m} phút ${s} giây`;
+                else if (m > 0)
+                    muteText.innerHTML = `Bạn đang bị cấm CHAT — còn ${m} phút ${s} giây`;
+                else
+                    muteText.innerHTML = `Bạn đang bị cấm CHAT — còn ${s} giây`;
+
+                sec--;
+            }
+
+            function unmuteNow() {
+                fetch("../controller/unmute.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "id_kh=" + window.USER_ID
+                })
+                    .then(res => res.text())
+                    .then(result => {
+                        if (result === "UNMUTED") {
+                            muteText.innerHTML = "🎉 Bạn đã được gỡ cấm chat!";
+                            setTimeout(() => {
+                                muteBox.style.display = "none";
+                                location.reload();
+                            }, 1500);
+                        }
+                    });
+            }
+
+            updateText();
+            setInterval(updateText, 1000);
+
+        });
+    </script>
+
     <?php include '../partials/footer.php'; ?>
 
 </body>

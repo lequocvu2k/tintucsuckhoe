@@ -209,11 +209,11 @@ $page_title = $category['ten_chuyen_muc'] . " | Tin tức Sức khỏe";
 
                 <ul class="popular-list">
                     <?php
-                    $i = 1;
+             
                     foreach ($popular as $p):
                         ?>
                         <li class="popular-item">
-                            <span class="rank"><?= $i++ ?></span>
+
 
                             <a href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>" class="pop-thumb">
                                 <img src="/php/<?= htmlspecialchars($p['anh_bv']) ?>" alt="">

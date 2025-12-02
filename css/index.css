@@ -1017,7 +1017,6 @@ a {
   margin-top: 20px;
 }
 
-
 /* Mỗi trạng thái */
 .status-item {
   background: transparent; /* Xóa nền trắng */
@@ -1031,149 +1030,147 @@ a {
 }
 /* Khung cha chứa avatar + frame */
 .avatar-container1 {
-    position: relative;
-    width: 55px;
-    height: 55px;
-    margin-right: 12px;
+  position: relative;
+  width: 55px;
+  height: 55px;
+  margin-right: 12px;
 }
 /* ===========================
    🎬 TÊN USER – RÕ, ĐẬM
    =========================== */
 .status-info b {
-    font-family: "Poppins", "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 19px;
-    letter-spacing: -0.2px;
+  font-family: "Poppins", "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.2px;
 
-    color: #ffffff;            /* ⚡ màu trắng rõ */
-    text-shadow: 
-        0 0 3px rgba(0, 0, 0, 0.55),
-        0 0 6px rgba(0, 0, 0, 0.35); /* ⚡ shadow nhẹ giữ độ nổi */
+  color: #ffffff; /* ⚡ màu trắng rõ */
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.55), 0 0 6px rgba(0, 0, 0, 0.35); /* ⚡ shadow nhẹ giữ độ nổi */
 
-    transition: 0.25s ease;
+  transition: 0.25s ease;
 }
 
 .status-item:hover .status-info b {
-    transform: translateY(-1px);
-    text-shadow:
-        0 0 6px rgba(255, 200, 150, 0.6),
-        0 0 12px rgba(255, 160, 100, 0.45);
+  transform: translateY(-1px);
+  text-shadow: 0 0 6px rgba(255, 200, 150, 0.6),
+    0 0 12px rgba(255, 160, 100, 0.45);
 }
 
 /* ===========================
    ✨ NỘI DUNG – TRẮNG RÕ
    =========================== */
 .status-text {
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    color: black;           /* ⚡ trắng sáng, dễ nhìn */
-    letter-spacing: -0.1px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  color: black; /* ⚡ trắng sáng, dễ nhìn */
+  letter-spacing: -0.1px;
 
-    text-shadow:
-        0 0 2px rgba(0,0,0,0.55);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.55);
 
-    margin-top: -1px;
+  margin-top: -1px;
 }
 .status-remaining {
-    margin-top: 3px;
-    font-size: 13px;
-    color: green;
-    font-weight: 600;
-    text-shadow: 0 0 4px rgba(0,0,0,0.4);
+  margin-top: 3px;
+  font-size: 13px;
+  color: green;
+  font-weight: 600;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 }
 .php-alert {
-    background: #ffe3e3;
-    color: #b10000;
-    padding: 12px 15px;
-    margin: 15px auto;
-    width: 90%;
-    border-left: 4px solid red;
-    font-size: 16px;
-    border-radius: 6px;
+  background: #ffe3e3;
+  color: #b10000;
+  padding: 12px 15px;
+  margin: 15px auto;
+  width: 90%;
+  border-left: 4px solid red;
+  font-size: 16px;
+  border-radius: 6px;
+}
+.btn-status.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .status-remaining .expired {
-    color: #ff6b6b;
-    font-weight: bold;
+  color: #ff6b6b;
+  font-weight: bold;
 }
 
 /* ===========================
    🕒 THỜI GIAN – XÁM RÕ
    =========================== */
 .status-time {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    color: #dddddd;           /* ⚡ sáng hơn để không mờ */
-    letter-spacing: 0.4px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #dddddd; /* ⚡ sáng hơn để không mờ */
+  letter-spacing: 0.4px;
 
-    opacity: 1;               /* ⚡ bỏ mờ */
-    text-shadow:
-        0 0 2px rgba(0,0,0,0.6);
+  opacity: 1; /* ⚡ bỏ mờ */
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 
-    margin-top: 3px;
+  margin-top: 3px;
 }
 
 /* ===========================
    ❤️ LIKE – RÕ + SẮC
    =========================== */
 .status-like {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #ffffff; 
-    cursor: pointer;
-    transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .status-like.liked i {
-    color: #ff4d6d;
-    text-shadow:
-        0 0 6px rgba(255, 77, 109, 0.9),
-        0 0 12px rgba(255, 60, 90, 0.5);
-    transform: scale(1.12);
+  color: #ff4d6d;
+  text-shadow: 0 0 6px rgba(255, 77, 109, 0.9), 0 0 12px rgba(255, 60, 90, 0.5);
+  transform: scale(1.12);
 }
 
 /* Avatar */
 .status-avatar {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    object-fit: cover;
-    position: relative;
-    z-index: 2;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
 }
 
 /* Frame overlay */
 .status-frame {
-    position: absolute;
-    top: -6px;
-    left: -6px;
-    width: 68px;
-    height: 68px;
-    pointer-events: none;
-    z-index: 3;
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 68px;
+  height: 68px;
+  pointer-events: none;
+  z-index: 3;
 }
 
 /* Bên trái chứa avatar + info */
 .status-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 /* Nút like */
 .status-like {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #444;
-    transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #444;
+  transition: 0.2s ease;
 }
 
 .status-like.liked i {
-    color: #ff3366;
-    transform: scale(1.2);
+  color: #ff3366;
+  transform: scale(1.2);
 }
 
 /* Avatar */

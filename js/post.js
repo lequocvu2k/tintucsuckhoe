@@ -109,3 +109,47 @@ function likePost(id) {
       }
     });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  let box = document.getElementById("muteBox");
+  let text = document.getElementById("muteText");
+
+  if (!box || window.muteRemaining === undefined) return;
+
+  let time = window.muteRemaining;
+
+  function updateCountdown() {
+    if (time <= 0) {
+      text.innerHTML = "Bạn đã được gỡ cấm chat! Hãy tải lại trang.";
+      box.style.background = "#28a745";
+      box.style.color = "#fff";
+      return;
+    }
+
+    let days = Math.floor(time / 86400);
+    let hours = Math.floor((time % 86400) / 3600);
+    let mins = Math.floor((time % 3600) / 60);
+    let secs = time % 60;
+
+    let msg = "Bạn đang bị cấm CHAT — còn ";
+
+    if (days > 0) {
+      msg += `${days} ngày ${hours} giờ ${mins} phút ${secs} giây`;
+    } else if (hours > 0) {
+      msg += `${hours} giờ ${mins} phút ${secs} giây`;
+    } else if (mins > 0) {
+      msg += `${mins} phút ${secs} giây`;
+    } else {
+      msg += `${secs} giây`;
+    }
+
+    msg += " nữa.";
+
+    text.innerHTML = msg;
+    time--;
+  }
+
+  updateCountdown();
+
+  setInterval(updateCountdown, 1000);
+});

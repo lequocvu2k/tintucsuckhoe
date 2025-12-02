@@ -335,6 +335,23 @@ function loadStatus() {
     });
 }
 loadStatus();
+fetch("../controller/status_add.php", {
+  method: "POST",
+  body: formData,
+})
+  .then((res) => res.text())
+  .then((result) => {
+    if (result === "ONLY_ONE_PER_DAY") {
+      alert("❌ Bạn chỉ được đăng 1 trạng thái trong 24 giờ!");
+      return;
+    }
+
+    if (result === "SUCCESS") {
+      alert("✔ Đăng thành công!");
+      location.reload();
+    }
+  });
+
 // xử lý click nút tim
 function attachLikeEvents() {
   document.querySelectorAll(".status-like").forEach((btn) => {
