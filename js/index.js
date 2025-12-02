@@ -135,7 +135,8 @@ function loadLatest(page = 1) {
 
                         <div class="latest-meta">
                             By <b>${p.tac_gia ?? "Unknown"}</b> • 
-                            ${new Date(p.ngay_dang).toDateString()}
+                          ${formatDateVN(p.ngay_dang)}
+
                         </div>
 
                         <p class="latest-excerpt">${shortDesc}</p>
@@ -170,6 +171,13 @@ function loadLatest(page = 1) {
       document.getElementById("btnNext").style.opacity =
         currentPage < data.totalPages ? "1" : "0.3";
     });
+}
+function formatDateVN(dateStr) {
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
 }
 
 // ============================
