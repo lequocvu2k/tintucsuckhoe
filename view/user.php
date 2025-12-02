@@ -338,6 +338,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <?php include '../partials/header.php'; ?>
     <div class="notification">
+
         <?php
         if (isset($_SESSION['success'])) {
             echo '<p class="success-msg">' . $_SESSION['success'] . '</p>';
@@ -347,6 +348,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo '<p class="error-msg">' . $_SESSION['error'] . '</p>';
             unset($_SESSION['error']);
         }
+        // Tải lại dữ liệu user mới nhất sau khi các hành động POST đã cập nhật DB
+        $stmt = $pdo->prepare("
+    SELECT kh.*, tk.ngay_tao
+    FROM khachhang kh
+    LEFT JOIN taotaikhoan tk ON kh.id_kh = tk.id_kh
+    WHERE kh.id_kh = :id
+");
+        $stmt->bindParam(':id', $id_kh);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
         ?>
     </div>
 
@@ -454,7 +466,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     WHERE id_kh = ?
 ");
                 $stmt_diem->execute([$user['id_kh']]);
-                $tong_diem_con_lai = (int) $stmt_diem->fetchColumn();
+                // LẤY TỔNG ĐIỂM THẬT SỰ TỪ BẢNG khachhang
+                $tong_diem_con_lai = isset($user['so_diem']) ? (int) $user['so_diem'] : 0;
+
+
                 ?>
 
                 <i class="fas fa-gem"></i>
@@ -482,7 +497,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ");
                         $stmt_diem->execute([$user['id_kh']]);
                         $diem_result = $stmt_diem->fetch(PDO::FETCH_ASSOC);
-                        $tong_diem_doc = (int) $diem_result['tong_diem_doc'];
+                        // DÙNG ĐIỂM THẬT TỪ BẢNG KHACHHANG (tính luôn điểm nhiệm vụ)
+                        $tong_diem_doc = isset($user['so_diem']) ? (int) $user['so_diem'] : 0;
+
 
                         ?>
 
@@ -493,6 +510,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form method="POST">
                             <label for="add_xp">Nhập số XP muốn đổi:</label>
                             <input type="number" id="add_xp" name="add_xp" min="1" max="<?= $tong_diem_doc ?>" required>
+
 
                             <p class="note">💡 1 điểm đọc bài = 1 XP</p>
                             <button type="submit" name="doixp" class="confirm-btn">Xác nhận đổi</button>
@@ -748,8 +766,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3>Mô tả tác giả (Bio)</h3>
 
                         <textarea id="bioEditor" name="bio" rows="5">
-                                    <?= ($user['bio'] ?? '') ?>
-                                </textarea>
+                                                        <?= ($user['bio'] ?? '') ?>
+                                                    </textarea>
 
                         <button type="submit" class="save-btn">Lưu Bio</button>
                     </form>

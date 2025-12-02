@@ -9,6 +9,22 @@ $pdo->exec("SET time_zone = '+07:00'");
 <div id="backToTop">
     <img src="../img/toTop.Cuiv4RfP.svg" alt="Back to Top">
 </div>
+<!-- Nút nhiệm vụ dưới góc trái -->
+<button class="mission-btn" id="openMission">
+    <i class="fa-solid fa-list-check"></i>
+</button>
+
+<!-- POPUP nhiệm vụ -->
+<div class="mission-popup" id="missionBox">
+    <div class="mission-content">
+        <span class="close-mission" id="closeMission">&times;</span>
+        <h2>Nhiệm vụ của bạn</h2>
+
+        <div id="mission-body">
+            Đang tải nhiệm vụ...
+        </div>
+    </div>
+</div>
 
 <!-- ✅ HEADER -->
 <header class="site-header">

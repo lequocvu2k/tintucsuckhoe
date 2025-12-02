@@ -130,23 +130,38 @@ searchInput.addEventListener("input", function () {
 searchInput.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const keyword = searchInput.value.trim();
-    window.location.href = "../view/search.php?q=" + encodeURIComponent(keyword);
+    window.location.href =
+      "../view/search.php?q=" + encodeURIComponent(keyword);
   }
 });
 // Hiện nút khi kéo xuống
 window.addEventListener("scroll", function () {
-    const btn = document.getElementById("backToTop");
-    if (window.scrollY > 300) {
-        btn.classList.add("show");
-    } else {
-        btn.classList.remove("show");
-    }
+  const btn = document.getElementById("backToTop");
+  if (window.scrollY > 300) {
+    btn.classList.add("show");
+  } else {
+    btn.classList.remove("show");
+  }
 });
 
 // Cuộn lên đầu trang
 document.getElementById("backToTop").addEventListener("click", function () {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+});
+
+document.getElementById("openMission").addEventListener("click", () => {
+  document.getElementById("missionBox").style.display = "flex";
+
+  fetch("../controller/api_missions.php")
+    .then((res) => res.text())
+    .then((html) => {
+      document.getElementById("mission-body").innerHTML = html;
     });
+});
+
+document.getElementById("closeMission").addEventListener("click", () => {
+  document.getElementById("missionBox").style.display = "none";
 });

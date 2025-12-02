@@ -22,32 +22,129 @@ canvas.fireworks {
   -ms-user-select: none; /* Đảm bảo hoạt động trên IE/Edge */
 }
 #backToTop {
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    width: 150px;      /* chỉnh theo size ảnh */
-    height: 150px;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, transform 0.25s ease;
-    z-index: 9999;
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 150px; /* chỉnh theo size ảnh */
+  height: 150px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, transform 0.25s ease;
+  z-index: 9999;
 }
 
 #backToTop img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none; /* ảnh không bị chọn khi click */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none; /* ảnh không bị chọn khi click */
 }
 
 /* Khi nút hiện */
 #backToTop.show {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Hover nhẹ */
 #backToTop:hover {
-    transform: translateY(-6px) scale(1.05);
+  transform: translateY(-6px) scale(1.05);
+}
+/* --- Nút nhiệm vụ góc trái --- */
+.mission-btn {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  background: #ff2d75;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 17px;
+  z-index: 9999;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: 0.2s;
+}
+.mission-btn:hover {
+  background: #ff1477;
+  transform: scale(1.05);
+}
+
+/* --- Popup nhiệm vụ --- */
+.mission-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+}
+
+.mission-content {
+  background: #111827;
+  width: 750px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 25px;
+  border-radius: 15px;
+  color: #fff;
+  position: relative;
+  animation: zoomIn 0.3s ease;
+}
+
+.close-mission {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Card nhiệm vụ */
+.mission-item {
+  background: #1f2937;
+  border-left: 5px solid #ff4fa3;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+.mission-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.mission-reward {
+  margin-top: 5px;
+  color: #ff79c6;
+}
+
+.mission-btn-do {
+  margin-top: 10px;
+  background: #ff2d75;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+}
+.mission-btn-do:hover {
+  background: #ff1477;
 }
