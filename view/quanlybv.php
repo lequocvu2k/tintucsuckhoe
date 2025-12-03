@@ -317,9 +317,14 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Mã tác giả -->
                 <div class="form-group">
                     <label>Mã tác giả</label>
-                    <input type="number" name="ma_tac_gia"
-                        value="<?= htmlspecialchars($editPost['ma_tac_gia'] ?? '') ?>">
+
+                    <!-- Input hiển thị (không chỉnh được) -->
+                    <input type="text" value="<?= $editPost['ma_tac_gia'] ?? $user_id ?>" readonly>
+
+                    <!-- Input thật để gửi lên server -->
+                    <input type="hidden" name="ma_tac_gia" value="<?= $editPost['ma_tac_gia'] ?? $user_id ?>">
                 </div>
+
 
                 <!-- Mã chuyên mục -->
                 <div class="form-group">

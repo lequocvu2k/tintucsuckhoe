@@ -124,31 +124,31 @@
             <div class="header-user">
                 <div class="avatar-container">
                     <?php
-                    // 🖼 Avatar
-                    $avatar_path = $user['avatar_url'];
+                    // ===================== AVATAR =====================
+                
+                    // Nếu avatar_url RỖNG → dùng avatar mặc định
+                    if (empty($user['avatar_url'])) {
+                        $avatar = "/img/avt.jpg";
+                    } else {
+                        // Chuẩn hóa đường dẫn để không bị ../
+                        $avatar_path = ltrim(str_replace("../", "", $user['avatar_url']), "/");
 
-                    // Nếu avatar có dạng ../ thì bỏ đi
-                    if (strpos($avatar_path, '../') === 0) {
-                        $avatar_path = substr($avatar_path, 2);
+                        // Đường dẫn tuyệt đối trên ổ đĩa
+                        $real_path = $_SERVER['DOCUMENT_ROOT'] . "/" . $avatar_path;
+
+                        // Nếu file tồn tại → dùng ảnh user
+                        // Không tồn tại → dùng ảnh mặc định
+                        $avatar = file_exists($real_path)
+                            ? "/" . $avatar_path
+                            : "/img/avt.jpg";
                     }
 
-                    // Tạo đường dẫn tuyệt đối để kiểm tra file
-                    $real_path = $_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($avatar_path, '/');
-
-                    // Gán link show lên web
-                    $avatar_url_for_web = '/' . ltrim($avatar_path, '/');
-
-                    $avatar = file_exists($real_path)
-                        ? $avatar_url_for_web
-                        : '/img/avt.jpg';
-
-
-                    // 🎨 Frame (nằm ngoài thư mục php)
+                    // ===================== FRAME =====================
                     $frame = '';
                     if (!empty($user['avatar_frame'])) {
                         $possibleExtensions = ['png', 'gif', 'jpg', 'jpeg'];
                         foreach ($possibleExtensions as $ext) {
-                            $relativePath = '/frames/' . htmlspecialchars($user['avatar_frame']) . '.' . $ext;
+                            $relativePath = "/frames/" . $user['avatar_frame'] . "." . $ext;
                             if (file_exists($_SERVER['DOCUMENT_ROOT'] . $relativePath)) {
                                 $frame = $relativePath;
                                 break;
@@ -156,12 +156,13 @@
                         }
                     }
 
-                    // ✔ Hiển thị ảnh
-                    echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
+                    // ===================== HIỂN THỊ =====================
+                    echo '<img src="' . $avatar . '" class="avatar">';
                     if ($frame) {
-                        echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
+                        echo '<img src="' . $frame . '" class="frame-overlay">';
                     }
                     ?>
+
 
                 </div>
 
@@ -212,6 +213,11 @@
                                 <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'NhanVien' || $_SESSION['user_role'] === 'QuanTri')): ?>
                                     <li><a href="./expert_profile.php"><i class="fa-solid fa-user-doctor"></i> Hồ sơ Chuyên
                                             gia</a></li>
+                                    <li>
+                                        <a href="./thongke.php">
+                                            <i class="fa-solid fa-chart-column"></i> Thống kê bài viết
+                                        </a>
+                                    </li>
                                 <?php endif; ?>
                                 <?php if (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'QuanTri' || $_SESSION['user_role'] === 'NhanVien')): ?>
                                     <li class="dropdown">
@@ -228,11 +234,6 @@
                                                 <li>
                                                     <a href="./quanlyyeucau.php">
                                                         <i class="fas fa-list"></i> Quản lý yêu cầu
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="./thongke.php">
-                                                        <i class="fa-solid fa-chart-column"></i> Thống kê bài viết
                                                     </a>
                                                 </li>
 

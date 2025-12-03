@@ -2,6 +2,7 @@
 session_start();
 require_once '../php/db.php';
 /* ========== API Load + Sort Câu Hỏi ========== */
+/* ========== API Load + Sort Câu Hỏi ========== */
 if (isset($_GET['api_questions']) && isset($_GET['id'])) {
     $id = (int) $_GET['id'];
     $offset = (int) ($_GET['offset'] ?? 0);
@@ -23,28 +24,34 @@ if (isset($_GET['api_questions']) && isset($_GET['id'])) {
     }
 
     $stmtQ = $pdo->prepare("
-    SELECT 
-        h.*, h.cau_tra_loi, h.ngay_tra_loi,
+        SELECT 
+            h.id AS id_hoi,
+            h.id_nguoi_hoi,
+            h.id_chuyen_gia,
+            h.cau_hoi,
+            h.cau_tra_loi,
+            h.diem_thuong,
+            h.ngay_hoi,
+            h.ngay_tra_loi,
+            h.danh_gia,
 
-        -- Người hỏi
-        kh.ho_ten, kh.avatar_url, kh.avatar_frame,
+            kh.ho_ten AS nguoi_hoi_ten,
+            kh.avatar_url AS nguoi_hoi_avatar,
+            kh.avatar_frame AS nguoi_hoi_frame,
 
-        -- Chuyên gia trả lời
-        cg.ho_ten AS expert_name,
-        cg.avatar_url AS expert_avatar,
-        cg.avatar_frame AS expert_frame
+            cg.ho_ten AS expert_name,
+            cg.avatar_url AS expert_avatar,
+            cg.avatar_frame AS expert_frame
 
-    FROM hoi_dap h
-    JOIN khachhang kh ON h.id_nguoi_hoi = kh.id_kh   -- người đặt câu hỏi
-    JOIN khachhang cg ON h.id_chuyen_gia = cg.id_kh  -- chuyên gia
-
-    WHERE h.id_chuyen_gia = ?
-    $order
-    LIMIT 5 OFFSET $offset
-");
+        FROM hoi_dap h
+        JOIN khachhang kh ON h.id_nguoi_hoi = kh.id_kh
+        JOIN khachhang cg ON h.id_chuyen_gia = cg.id_kh
+        WHERE h.id_chuyen_gia = ?
+        $order
+        LIMIT 5 OFFSET $offset
+    ");
 
     $stmtQ->execute([$id]);
-
     echo json_encode($stmtQ->fetchAll(PDO::FETCH_ASSOC));
     exit;
 }
@@ -102,7 +109,8 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
 
 </head>
 
-<body data-id="<?= $id_chuyen_gia ?>">
+<body data-id="<?= $id_chuyen_gia ?>" data-current="<?= $_SESSION['user_id'] ?? 0 ?>">
+
     <?php include '../partials/header.php'; ?>
     <?php include '../partials/login.php'; ?>
     <div class="expert-detail-wrapper">
@@ -188,6 +196,8 @@ $posts = $stmtPost->fetchAll(PDO::FETCH_ASSOC);
 
             <div id="questionContainer"></div>
             <button class="load-more" id="loadMore" data-offset="0">🔽 Xem thêm</button>
+            <button class="collapse-btn" id="collapseBtn" style="display:none;">🔼 Thu gọn</button>
+
         </div>
 
     </div>
