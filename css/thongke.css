@@ -1,0 +1,162 @@
+body {
+  background: #f5f7fa;
+  font-family: Segoe UI;
+}
+
+h2.page-title {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 28px;
+}
+
+.stats-box {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 25px auto;
+  max-width: 1100px;
+}
+
+.box {
+  width: 240px;
+  padding: 20px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: 0.25s;
+}
+
+.box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.box h3 {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.box span {
+  font-size: 30px;
+  font-weight: bold;
+  color: #2b7cff;
+}
+
+.table-container {
+  max-width: 1100px;
+  margin: 30px auto;
+}
+
+.section-title i {
+  margin-right: 8px;
+  color: #2b7cff;
+}
+
+.box h3 i {
+  margin-right: 6px;
+}
+
+.box:nth-child(1) i {
+  color: #007bff;
+} /* Tổng bài viết */
+.box:nth-child(2) i {
+  color: #28a745;
+} /* Đã đăng */
+.box:nth-child(3) i {
+  color: #dc3545;
+} /* Từ chối */
+.box:nth-child(4) i {
+  color: #ff5733;
+} /* Lượt xem */
+.stat-section {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #2b2b2b;
+}
+
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-top: 15px;
+}
+
+.card-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 15px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: 0.25s;
+}
+.card-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.card-thumb {
+  width: 85px;
+  height: 65px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.card-content h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.card-content .meta {
+  margin-top: 6px;
+  color: #666;
+  font-size: 14px;
+}
+
+.meta i {
+  margin-right: 5px;
+}
+.avatar-wrapper {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-frame {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 80px;
+    height: 80px;
+    pointer-events: none;
+}
+.card-item {
+    text-decoration: none;
+    color: inherit;
+}
+.card-item:hover {
+    transform: translateY(-3px);
+    transition: 0.2s;
+}
+
+.section-title {
+  text-align: left;
+  margin-top: 30px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}

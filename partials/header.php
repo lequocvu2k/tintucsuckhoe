@@ -1,9 +1,3 @@
-<?php
-date_default_timezone_set("Asia/Ho_Chi_Minh");
-$pdo->exec("SET time_zone = '+07:00'");
-
-?>
-
 <canvas class="fireworks"></canvas>
 <!-- Nút cuộn lên đầu trang -->
 <div id="backToTop">
@@ -234,6 +228,11 @@ $pdo->exec("SET time_zone = '+07:00'");
                                                 <li>
                                                     <a href="./quanlyyeucau.php">
                                                         <i class="fas fa-list"></i> Quản lý yêu cầu
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="./thongke.php">
+                                                        <i class="fa-solid fa-chart-column"></i> Thống kê bài viết
                                                     </a>
                                                 </li>
 
