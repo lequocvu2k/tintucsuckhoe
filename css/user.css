@@ -93,7 +93,7 @@ body {
   display: inline;
 }
 
-.frame-overlay {
+.frame-overlay1 {
   position: absolute;
   top: -7px; /* bằng border của avatar */
   left: -9px; /* bằng border của avatar */
@@ -650,10 +650,31 @@ button[type="submit"]:hover {
   z-index: 1000; /* thấp hơn nút, để nút không bị che */
 }
 
-/* Nếu modal đang bị che chính bởi overlay (background tối),
-   thêm dòng này để fix toàn bộ modal luôn nằm trên nhưng không che phần khác */
+/* Giới hạn modal chiếm vùng riêng, không ảnh hưởng layout */
+.modal-content {
+  position: relative;
+  z-index: 10000;
+}
+
+/* Khi modal mở, khóa nền, giảm opacity và chặn interaction */
+body.modal-open {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body.modal-open .modal-content {
+  pointer-events: auto;
+}
 .modal {
-  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fix menu tabs bị nổi lên trên modal */
+.profile-tabs {
+  position: relative;
+  z-index: 500;
 }
 
 /* Popup */
@@ -1362,26 +1383,28 @@ form button {
   background: linear-gradient(135deg, #0cb77a, #066a49);
   transform: translateY(-2px);
 }
-.delete-btn, .delete-all-btn {
-    padding: 6px 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    background: #ff4d4d;
-    color: white;
-    transition: 0.3s;
+.delete-btn,
+.delete-all-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  background: #ff4d4d;
+  color: white;
+  transition: 0.3s;
 }
 
-.delete-btn:hover, .delete-all-btn:hover {
-    background: #d93636;
-    transform: scale(1.05);
+.delete-btn:hover,
+.delete-all-btn:hover {
+  background: #d93636;
+  transform: scale(1.05);
 }
 
 .notification-header-actions {
-    text-align: right;
-    margin-bottom: 10px;
+  text-align: right;
+  margin-bottom: 10px;
 }
 
 /* animation */

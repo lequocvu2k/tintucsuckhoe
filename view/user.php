@@ -410,7 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo '<div class="avatar-container">';
                     echo '<img src="' . $avatar . '" alt="Avatar" class="avatar">';
                     if ($frame) {
-                        echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay">';
+                        echo '<img src="' . $frame . '" alt="Frame" class="frame-overlay1">';
                     }
                     echo '</div>';
                     ?>

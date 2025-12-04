@@ -35,11 +35,13 @@ function toggleHistory() {
   }
 }
 function openEmployeeModal() {
-  document.getElementById("employeeModal").style.display = "block";
+    document.getElementById("employeeModal").style.display = "block";
+    document.body.classList.add("modal-open");
 }
 
 function closeEmployeeModal() {
-  document.getElementById("employeeModal").style.display = "none";
+    document.getElementById("employeeModal").style.display = "none";
+    document.body.classList.remove("modal-open");
 }
 
 // Đóng modal nếu người dùng nhấp ra ngoài modal
