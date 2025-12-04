@@ -102,6 +102,13 @@ body {
   pointer-events: none;
   object-fit: cover;
 }
+.user-name {
+  font-size: 24px;
+  font-weight: 900;
+  text-align: center;
+  margin-top: 12px;
+  transition: 0.3s;
+}
 
 .level-bar {
   margin: 12px 0;
@@ -1229,26 +1236,6 @@ form button {
   font-weight: bold;
 }
 
-/* Màu sắc cho từng cấp độ */
-.level-10 {
-  color: #ffd700; /* Vàng cho cấp 10 trở lên */
-}
-
-.level-20 {
-  color: #ff6347; /* Cam cho cấp 20 trở lên */
-}
-
-.level-30 {
-  color: #32cd32; /* Xanh lá cây cho cấp 30 trở lên */
-}
-
-.level-40 {
-  color: #00bfff; /* Xanh dương cho cấp 40 trở lên */
-}
-
-.level-1 {
-  color: #8c8c8c; /* Màu xám cho cấp thấp */
-}
 /* ====================== BÀI VIẾT ĐÃ LƯU ====================== */
 
 .saved-grid {

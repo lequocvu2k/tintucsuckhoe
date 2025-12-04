@@ -1,3 +1,14 @@
+<?php
+if (isset($_SESSION['user_id'])) {
+    require_once '../php/db.php';
+    $stmt = $pdo->prepare("SELECT * FROM khachhang WHERE id_kh = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    include __DIR__ . '/rank.php'; // 🔥 load màu rank
+}
+?>
+
 <canvas class="fireworks"></canvas>
 <!-- Nút cuộn lên đầu trang -->
 <div id="backToTop">
@@ -163,12 +174,14 @@
                     }
                     ?>
 
-
                 </div>
 
                 <div class="account-info">
                     <div class="name-container">
-                        <p class="name"><?= htmlspecialchars($user['ho_ten']) ?></p>
+                        <p class="name <?= $nameClass ?>">
+                            <?= htmlspecialchars($user['ho_ten']) ?>
+                        </p>
+
                         <div class="user-email">
                             <?php if ($user['email'] == 'baka@gmail.com'): ?>
                                 <span class="role-badge">ADMIN</span>

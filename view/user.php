@@ -112,7 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doixp'])) {
     $tong_diem_doc = (int) $stmt_diem->fetchColumn();
 
     // 🔸 Kiểm tra hợp lệ
-    if ($addXP > 0 && $addXP <= $tong_diem_doc) {
+    if ($addXP > 0 && $addXP <= $so_diem) {
+
 
         // 1️⃣ Ghi lại giao dịch đổi XP (trừ điểm đọc bài)
         $stmt_insert = $pdo->prepare("
@@ -425,27 +426,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             onchange="this.form.submit()">
                     </form>
                 </div>
+                <div class="user-name 
+<?php
+$xp = isset($user['xp']) ? (int) $user['xp'] : 0;
+$level = floor($xp / 100);
 
-                <div class="user-name <?php
-                // Tính cấp độ và gán lớp màu sắc
-                $level = floor($xp / 100); // Mỗi 100 XP = 1 cấp
-                
-                // Xác định màu sắc dựa trên cấp độ
-                if ($level >= 40) {
-                    echo 'level-40';
-                } elseif ($level >= 30) {
-                    echo 'level-30';
-                } elseif ($level >= 20) {
-                    echo 'level-20';
-                } elseif ($level >= 10) {
-                    echo 'level-1';
-                } else {
-                    echo 'level-1'; // Màu cho các cấp thấp hơn
-                }
-                ?>">
+// Xác định màu theo LEVEL
+if ($level >= 100) {
+    echo 'rank-mythic';
+} elseif ($level >= 60) {
+    echo 'rank-diamond';
+} elseif ($level >= 40) {
+    echo 'rank-gold';
+} elseif ($level >= 20) {
+    echo 'rank-silver';
+} elseif ($level >= 10) {
+    echo 'rank-bronze';
+} else {
+    echo 'rank-normal';
+}
+?>">
+
                     <?= htmlspecialchars($user['ho_ten']) ?>
                 </div>
-
+<br>
                 <div class="user-email">
                     <?php if ($user['email'] == 'baka@gmail.com'): ?>
                         <span class="role-badge">ADMIN</span>
@@ -508,15 +512,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3>Đổi điểm sang XP</h3>
 
                         <?php
-                        // Lấy tổng điểm đọc bài thực tế
-                        // Kiểm tra và lấy tổng điểm đọc bài từ bảng diemdoc
-                        $stmt_diem = $pdo->prepare("
-    SELECT COALESCE(SUM(diem_cong), 0) AS tong_diem_doc
-    FROM diemdoc
-    WHERE id_kh = ? AND loai_giao_dich = 'xem_bai'
-");
-                        $stmt_diem->execute([$user['id_kh']]);
-                        $diem_result = $stmt_diem->fetch(PDO::FETCH_ASSOC);
+
                         // DÙNG ĐIỂM THẬT TỪ BẢNG KHACHHANG (tính luôn điểm nhiệm vụ)
                         $tong_diem_doc = isset($user['so_diem']) ? (int) $user['so_diem'] : 0;
 
@@ -786,8 +782,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3>Mô tả tác giả (Bio)</h3>
 
                         <textarea id="bioEditor" name="bio" rows="5">
-                                                                                        <?= ($user['bio'] ?? '') ?>
-                                                                                    </textarea>
+                                                                                                                <?= ($user['bio'] ?? '') ?>
+                                                                                                            </textarea>
 
                         <button type="submit" class="save-btn">Lưu Bio</button>
                     </form>
