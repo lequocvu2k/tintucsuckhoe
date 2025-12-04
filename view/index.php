@@ -574,22 +574,28 @@ $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     ?>
 
                     <div class="post-item">
+
+                        <!-- Ảnh + nội dung chung -->
                         <a href="./post.php?slug=<?= urlencode($rec['duong_dan']) ?>" class="post-link">
                             <img src="/php/<?= htmlspecialchars($rec['anh_bv']) ?>" alt="">
+
+                            <!-- 👉 Đưa meta vào trong giống Ranking -->
                             <div class="post-info">
+                                <div class="tags">
+                                    <span class="tag">RECOMMENDATIONS</span>
+                                </div>
+
                                 <h3><?= htmlspecialchars($rec['tieu_de']) ?></h3>
+                                <p class="meta">
+                                    by <b><?= htmlspecialchars($authorName) ?></b> | <?= formatDateVN($rec['ngay_dang']) ?>
+                                </p>
                             </div>
                         </a>
-
-                        <p class="meta">
-                            by <b><?= htmlspecialchars($authorName) ?></b> |
-                            <?= formatDateVN($rec['ngay_dang']) ?>
-
-                        </p>
                     </div>
 
                 <?php endforeach; ?>
             </section>
+
 
         </div>
     </main>

@@ -314,8 +314,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: user.php?view=history");
         exit;
     }
+    // 🗑 Xóa từng thông báo
+    if (isset($_POST['delete_notification_id'])) {
+        $id_del = intval($_POST['delete_notification_id']);
+        $pdo->prepare("DELETE FROM thongbao WHERE id = ? AND id_kh = ?")
+            ->execute([$id_del, $user['id_kh']]);
+
+        $_SESSION['success'] = "🗑 Đã xóa thông báo!";
+        header("Location: user.php?view=notifications");
+        exit;
+    }
+    // 🗑 Xóa tất cả thông báo
+    if (isset($_POST['delete_all_notifications'])) {
+        $pdo->prepare("DELETE FROM thongbao WHERE id_kh = ?")
+            ->execute([$user['id_kh']]);
+
+        $_SESSION['success'] = "🔥 Tất cả thông báo đã được xóa!";
+        header("Location: user.php?view=notifications");
+        exit;
+    }
 
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -766,8 +786,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3>Mô tả tác giả (Bio)</h3>
 
                         <textarea id="bioEditor" name="bio" rows="5">
-                                                        <?= ($user['bio'] ?? '') ?>
-                                                    </textarea>
+                                                                                        <?= ($user['bio'] ?? '') ?>
+                                                                                    </textarea>
 
                         <button type="submit" class="save-btn">Lưu Bio</button>
                     </form>
@@ -904,12 +924,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Lấy thông báo + câu trả lời
                     $stmt = $pdo->prepare("
-  SELECT t.noi_dung, t.created_at, t.da_doc,
-       h.id, h.cau_hoi, h.cau_tra_loi, h.danh_gia
+SELECT 
+    t.id AS notif_id,  -- thêm alias
+    t.noi_dung, 
+    t.created_at, 
+    t.da_doc,
+    h.id AS question_id,
+    h.cau_hoi,
+    h.cau_tra_loi,
+    h.danh_gia
 FROM thongbao t
 LEFT JOIN hoi_dap h ON t.id_hoi_dap = h.id
 WHERE t.id_kh = ?
 ORDER BY t.created_at DESC
+
 
     ");
                     $stmt->execute([$user['id_kh']]);
@@ -917,9 +945,19 @@ ORDER BY t.created_at DESC
                     ?>
 
                     <?php if ($notifications): ?>
+                        <div class="notification-header-actions">
+                            <form method="POST" style="display:inline;">
+                                <button name="delete_all_notifications" class="delete-all-btn">
+                                    🗑 Xóa tất cả thông báo
+                                </button>
+                            </form>
+                        </div>
                         <ul class="notification-list">
                             <?php foreach ($notifications as $n): ?>
                                 <li class="notification-item <?= $n['da_doc'] ? 'read' : 'unread' ?>">
+                                    <p class="notify-text">
+                                        📌 <?= nl2br($n['noi_dung']) ?>
+                                    </p>
 
                                     <!-- ❓ CÙNG HIỂN THỊ CÂU HỎI -->
                                     <?php if (!empty($n['cau_hoi'])): ?>
@@ -940,6 +978,12 @@ ORDER BY t.created_at DESC
                                     <span class="time">
                                         🕒 <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
                                     </span>
+                                    <!-- 🔹 Nút xóa từng thông báo -->
+                                    <form method="POST" style="margin-top:5px;">
+                                        <input type="hidden" name="delete_notification_id" value="<?= $n['notif_id'] ?>">
+
+                                        <button class="delete-btn">Xóa</button>
+                                    </form>
 
                                     <!-- ⭐ HIỆN NÚT ĐÁNH GIÁ -->
                                     <?php if (!empty($n['cau_tra_loi']) && $n['danh_gia'] === null): ?>

@@ -370,6 +370,120 @@ footer {
   height: 105px;
   pointer-events: none;
 }
+/* ===== COMMENT SECTION ===== */
+.comment-section {
+    margin-top: 40px;
+    padding: 20px;
+    border-top: 2px solid #eee;
+}
+
+.comment-section h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #111;
+}
+
+/* Login prompt */
+.login-prompt {
+    background: #fff4e6;
+    border-left: 4px solid #ff9900;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    color: #444;
+}
+
+.login-prompt .login-link,
+.login-prompt .signup-link {
+    color: #e84738;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-prompt .login-link:hover,
+.login-prompt .signup-link:hover {
+    text-decoration: underline;
+}
+
+/* ===== COMMENT FORM ===== */
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    transition: .25s ease;
+}
+
+.comment-form textarea:focus {
+    border-color: #e84738;
+    box-shadow: 0 0 0 2px rgba(232, 71, 56, .2);
+}
+
+.submit-btn {
+    width: fit-content;
+    padding: 10px 22px;
+    font-weight: bold;
+    background: #e84738;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.submit-btn:hover {
+    background: #c7382d;
+    transform: translateY(-2px);
+}
+
+/* ===== BAN & MUTE MESSAGE ===== */
+.mute-warning {
+    background: #ffe6e6;
+    border-left: 4px solid #cc0000;
+    padding: 12px;
+    border-radius: 6px;
+    color: #700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mute-warning i {
+    color: #cc0000;
+    font-size: 16px;
+}
+
+
+/* cooldown waiting message */
+#commentCooldownBox {
+    background: #fff4e6;
+    border-left: 4px solid #ff9900;
+    padding: 12px;
+    border-radius: 6px;
+    color: #a86400;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#commentCooldownBox i {
+    color: #ff9900;
+}
+
+
 
 .user-text {
   max-width: 600px;

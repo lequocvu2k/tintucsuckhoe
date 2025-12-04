@@ -1362,6 +1362,27 @@ form button {
   background: linear-gradient(135deg, #0cb77a, #066a49);
   transform: translateY(-2px);
 }
+.delete-btn, .delete-all-btn {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    background: #ff4d4d;
+    color: white;
+    transition: 0.3s;
+}
+
+.delete-btn:hover, .delete-all-btn:hover {
+    background: #d93636;
+    transform: scale(1.05);
+}
+
+.notification-header-actions {
+    text-align: right;
+    margin-bottom: 10px;
+}
 
 /* animation */
 @keyframes fadeIn {

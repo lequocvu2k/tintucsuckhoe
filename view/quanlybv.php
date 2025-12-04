@@ -100,7 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $noi_dung = $_POST['noi_dung'] ?? '';
         $ma_tac_gia = $_POST['ma_tac_gia'] ?: null;
         $ma_chuyen_muc = $_POST['ma_chuyen_muc'] ?: null;
-        $trang_thai = $_POST['trang_thai'] ?? 'draft';
+        // Tự động set trạng thái theo loại tài khoản
+        if ($_SESSION['user_role'] === 'NhanVien') {
+            $trang_thai = "pending"; // Nhân viên => chờ duyệt
+        } else {
+            $trang_thai = "published"; // Admin => duyệt tự động
+        }
+
         $danh_muc = $_POST['danh_muc'] ?? null;
 
         // Kiểm tra dữ liệu bài viết
@@ -143,10 +149,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$tieu_de, $duong_dan, $noi_dung, $anh_bv, $ma_tac_gia, $ma_chuyen_muc, $trang_thai, $danh_muc, $id_kh]);
 
 
-
-            $_SESSION['success'] = "✅ Thêm bài viết thành công!";
+            if ($_SESSION['user_role'] === 'NhanVien') {
+                $_SESSION['success'] = "⏳ Bài viết đã gửi — đang chờ Admin duyệt!";
+            } else {
+                $_SESSION['success'] = "✅ Thêm bài viết thành công!";
+            }
             header("Location: quanlybv.php");
             exit;
+
         } catch (PDOException $e) {
             $_SESSION['error'] = "❌ Lỗi khi thêm bài viết: " . $e->getMessage();
             header("Location: quanlybv.php");
@@ -194,7 +204,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE ma_bai_viet=?");
             $stmt->execute([$tieu_de, $duong_dan, $noi_dung, $anh_bv, $ma_tac_gia, $ma_chuyen_muc, $trang_thai, $danh_muc, $id]);
 
-            $_SESSION['success'] = "✏️ Cập nhật thành công!";
+            if ($_SESSION['user_role'] === 'NhanVien') {
+                $_SESSION['success'] = "✏️ Cập nhật — bài viết sẽ được duyệt lại!";
+            } else {
+                $_SESSION['success'] = "✏️ Cập nhật thành công!";
+            }
             header("Location: quanlybv.php");
             exit;
         } catch (PDOException $e) {
@@ -279,6 +293,17 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php include '../partials/header.php'; ?>
     <?php include '../partials/login.php'; ?>
     <h2 class="page-title">📰 Quản lý Bài Viết</h2>
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success"><?= $_SESSION['success']; ?></div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-error"><?= $_SESSION['error']; ?></div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
+
     <!-- FORM THÊM / SỬA -->
     <div class="card">
         <form method="POST" enctype="multipart/form-data">
@@ -361,14 +386,22 @@ $baiviet = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
 
                 <!-- Trạng thái -->
-                <div class="form-group">
-                    <label>Trạng thái</label>
-                    <select name="trang_thai">
-                        <option value="draft" <?= (isset($editPost['trang_thai']) && $editPost['trang_thai'] == 'draft') ? 'selected' : '' ?>>📝 Nháp</option>
-                        <option value="published" <?= (isset($editPost['trang_thai']) && $editPost['trang_thai'] == 'published') ? 'selected' : '' ?>>✅ Công khai</option>
-                        <option value="hidden" <?= (isset($editPost['trang_thai']) && $editPost['trang_thai'] == 'hidden') ? 'selected' : '' ?>>🚫 Ẩn</option>
-                    </select>
-                </div>
+                <?php if ($_SESSION['user_role'] !== 'NhanVien'): ?>
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select name="trang_thai">
+                            <option value="draft" <?= (isset($editPost['trang_thai']) && $editPost['trang_thai'] == 'draft') ? 'selected' : '' ?>>📝 Nháp</option>
+                            <option value="published" <?= (isset($editPost['trang_thai']) && $editPost['trang_thai'] == 'published') ? 'selected' : '' ?>>✅ Công khai</option>
+                            <option value="hidden" <?= (isset($editPost['trang_thai']) && $editPost['trang_thai'] == 'hidden') ? 'selected' : '' ?>>🚫 Ẩn</option>
+                        </select>
+                    </div>
+                <?php else: ?>
+                    <!-- Hiển thị cho vui -->
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <input type="text" value="⏳ Chờ duyệt bởi Admin" disabled style="opacity:0.7;">
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- TinyMCE cho phần nội dung -->

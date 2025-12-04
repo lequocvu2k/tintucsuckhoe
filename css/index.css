@@ -1129,6 +1129,80 @@ a {
   color: #ff6b6b;
   font-weight: bold;
 }
+/* ==== RECOMMENDATIONS giống RANKINGS & INTERVIEWS ==== */
+
+.recommendations h2 {
+    background: #e84738;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+/* Giống cấu trúc post-item của Rankings */
+.recommendations .post-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    transition: 0.25s ease;
+}
+
+.recommendations .post-item:hover {
+    transform: translateX(5px);
+    opacity: 0.9;
+}
+
+/* Ảnh */
+.recommendations .post-item img {
+    width: 170px;
+    height: 95px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Nội dung */
+.recommendations .post-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+/* Tiêu đề */
+.recommendations .post-item h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.recommendations .post-item h3:hover {
+    color: #e84738;
+}
+
+/* Meta */
+.recommendations .meta {
+    font-size: 13px;
+    color: #777;
+}
+
+.recommendations .meta b {
+    color: #444;
+}
+
+/* Link tổng */
+.recommendations .post-link {
+    display: flex;
+    gap: 15px;
+    text-decoration: none;
+    color: inherit;
+}
 
 /* ===========================
    🕒 THỜI GIAN – XÁM RÕ
@@ -1268,6 +1342,17 @@ a {
   text-transform: uppercase;
   color: #e74c3c;
   font-weight: bold;
+}
+.recommendations .tags {
+  margin-bottom: 4px;
+}
+
+.recommendations .tags .tag {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #e74c3c;
+  font-weight: bold;
+  letter-spacing: 0.5px;
 }
 
 /* TITLE */

@@ -8,13 +8,43 @@ body {
   min-height: 100vh;
 }
 table a {
-    color: #0073e6;
-    text-decoration: none;
-    font-weight: 600;
+  color: #0073e6;
+  text-decoration: none;
+  font-weight: 600;
 }
 table a:hover {
-    color: #005bb5;
-    text-decoration: underline;
+  color: #005bb5;
+  text-decoration: underline;
+}
+.alert {
+  padding: 12px;
+  margin: 15px 0;
+  border-radius: 6px;
+  font-weight: bold;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.alert-success {
+  background: #d4ffda;
+  border-left: 6px solid #28a745;
+  color: #155724;
+}
+
+.alert-error {
+  background: #ffe2e2;
+  border-left: 6px solid #dc3545;
+  color: #7b0000;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 📰 TIÊU ĐỀ TRANG */
@@ -419,25 +449,25 @@ table td:nth-child(4):hover {
 }
 /* Thông báo thành công */
 .message-success {
-    background-color: #4CAF50; /* Màu xanh lá cây cho thành công */
-    color: white;
-    padding: 15px;
-    margin: 20px 0;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: opacity 0.3s ease;
+  background-color: #4caf50; /* Màu xanh lá cây cho thành công */
+  color: white;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease;
 }
 
 .message-success i {
-    margin-right: 10px; /* Khoảng cách giữa biểu tượng và văn bản */
+  margin-right: 10px; /* Khoảng cách giữa biểu tượng và văn bản */
 }
 
 .message-success.hide {
-    opacity: 0;
-    visibility: hidden;
+  opacity: 0;
+  visibility: hidden;
 }
 .role-badge {
   background: linear-gradient(

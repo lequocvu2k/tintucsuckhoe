@@ -130,11 +130,13 @@ $pending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <img src="/php/<?= htmlspecialchars($post['anh_bv']) ?>" alt="Ảnh bài viết">
                     </td>
                     <td>
+                        <a class="btn view" href="xembaiviet.php?id=<?= $post['ma_bai_viet'] ?>" target="_blank">Xem bài viết</a>
                         <a class="btn approve"
                             href="hethongduyetbai.php?action=approve&id=<?= $post['ma_bai_viet'] ?>">Duyệt</a>
                         <a class="btn reject" href="hethongduyetbai.php?action=reject&id=<?= $post['ma_bai_viet'] ?>">Từ
                             chối</a>
                     </td>
+
                 </tr>
             <?php endforeach; ?>
         </tbody>
