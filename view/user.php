@@ -432,7 +432,7 @@ $xp = isset($user['xp']) ? (int) $user['xp'] : 0;
 $level = floor($xp / 100);
 
 // Xác định màu theo LEVEL
-if ($level >= 100) {
+if ($level >= 1) {
     echo 'rank-mythic';
 } elseif ($level >= 60) {
     echo 'rank-diamond';

@@ -1,7 +1,15 @@
 <?php
 session_start();
 require_once '../php/db.php';
+date_default_timezone_set("Asia/Ho_Chi_Minh");
+$pdo->exec("SET time_zone = '+07:00'");
+$user = null;
 
+if (isset($_SESSION['user_id'])) {
+    $stmt = $pdo->prepare("SELECT id_kh, ho_ten, xp, is_banned, is_muted, muted_until FROM khachhang WHERE id_kh = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 function formatDateVN($dateString)
 {
     if (!$dateString)
@@ -185,7 +193,8 @@ if (isset($_GET['sort'])) {
     }
 }
 $stmt_comments = $pdo->prepare("
-    SELECT c.*, kh.ho_ten, kh.avatar_url, kh.avatar_frame 
+SELECT c.*, kh.ho_ten, kh.avatar_url, kh.avatar_frame, kh.xp
+
     FROM binhluan c
     JOIN khachhang kh ON c.id_kh = kh.id_kh
     WHERE c.ma_bai_viet = ? $orderBy
@@ -328,9 +337,16 @@ $ma_dm = $post['ma_chuyen_muc'];
                     <div class="user-text">
 
                         <!-- TÊN TÁC GIẢ -->
+                        <?php
+                        $xp = $author['xp'] ?? 0;
+                        include "../partials/rank.php";
+                        ?>
+
                         <div class="author-name">
-                            <strong><?= htmlspecialchars($author_name) ?></strong>
+                            <strong class="<?= $nameClass ?>"><?= htmlspecialchars($author_name) ?></strong>
                         </div>
+
+
                         <br>
                         <!-- BIO -->
                         <div class="author-bio">
@@ -417,12 +433,14 @@ $ma_dm = $post['ma_chuyen_muc'];
 
                 <?php if (isset($_SESSION['user_id'])): ?>
 
-                    <?php if ($user['is_banned'] == 1): ?>
+                    <?php if ($user && isset($user['is_banned']) && $user['is_banned'] == 1): ?>
+
                         <div class="login-prompt" style="color:red; font-weight:bold;">
                             ⛔ Tài khoản của bạn đã bị BAN — không thể bình luận.
                         </div>
 
-                    <?php elseif ($user['is_muted'] == 1): ?>
+                    <?php elseif ($user && isset($user['is_muted']) && $user['is_muted'] == 1): ?>
+
 
                         <?php
                         // ===============================
@@ -590,7 +608,12 @@ $ma_dm = $post['ma_chuyen_muc'];
 
                                 <div class="comment-text">
                                     <br>
-                                    <strong><?= htmlspecialchars($comment['ho_ten']) ?></strong>
+                                    <?php
+                                    $xp = $comment['xp'] ?? 0;
+                                    include "../partials/rank.php";
+                                    ?>
+
+                                    <strong class="<?= $nameClass ?>"><?= htmlspecialchars($comment['ho_ten']) ?></strong>
 
                                     <span class="comment-time">
                                         <?= date("d/m/Y H:i", strtotime($comment['ngay_binhluan'])) ?>
@@ -610,14 +633,14 @@ $ma_dm = $post['ma_chuyen_muc'];
                             </div>
 
                             <br>
-                        </div>
-                        <?php
+
+                            <?php
                         endforeach;
                     else:
                         echo "<p>Chưa có bình luận nào.</p>";
                     endif;
                     ?>
-            </div>
+                </div>
             </div>
 
         </article>

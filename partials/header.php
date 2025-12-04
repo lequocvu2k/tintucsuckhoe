@@ -1,13 +1,24 @@
 <?php
 if (isset($_SESSION['user_id'])) {
+    
     require_once '../php/db.php';
-    $stmt = $pdo->prepare("SELECT * FROM khachhang WHERE id_kh = ?");
+
+    $stmt = $pdo->prepare("SELECT ho_ten, email, avatar_url, avatar_frame, xp FROM khachhang WHERE id_kh = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    include __DIR__ . '/rank.php'; // 🔥 load màu rank
+    // 🔥 Lấy XP — nhớ ép kiểu INT để tránh NULL
+    $xp = isset($user['xp']) ? intval($user['xp']) : 0;
+
+    // Load file rank.php (đúng bản có function)
+    require_once __DIR__ . '/rank1.php';
+
+    // 🔥 Gọi function trả về class
+    $nameClass = getRankClassFromXP($xp);
+
 }
 ?>
+
 
 <canvas class="fireworks"></canvas>
 <!-- Nút cuộn lên đầu trang -->
@@ -18,6 +29,7 @@ if (isset($_SESSION['user_id'])) {
 <button class="mission-btn" id="openMission">
     <i class="fa-solid fa-list-check"></i>
 </button>
+
 
 <!-- POPUP nhiệm vụ -->
 <div class="mission-popup" id="missionBox">

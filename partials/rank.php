@@ -1,8 +1,11 @@
-<?php
-if (!isset($user))
-    return; // đảm bảo có user
+<?php 
 
-$xp = isset($user['xp']) ? (int) $user['xp'] : 0;
+// Nếu không có dữ liệu XP thì rank mặc định
+if (!isset($xp)) {
+    $nameClass = 'rank-normal';
+    return;
+}
+
 $level = floor($xp / 100);
 
 // Gán class rank theo level
