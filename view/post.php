@@ -158,8 +158,9 @@ $author_email = $author && !empty($author['email']) ? htmlspecialchars($author['
 $author_avatar = $author && !empty($author['avatar_url']) ? htmlspecialchars($author['avatar_url']) : "../img/avt.jpg";
 $author_frame = $author && !empty($author['avatar_frame']) ? htmlspecialchars($author['avatar_frame']) : "";
 $author_bio = !empty($author['bio'])
-    ? nl2br(htmlspecialchars($author['bio']))
+    ? trim(strip_tags($author['bio']))
     : "Tác giả chưa có mô tả.";
+
 
 $author_role = $author['vai_tro'] ?? "user";
 // --- Lấy bài phổ biến ---

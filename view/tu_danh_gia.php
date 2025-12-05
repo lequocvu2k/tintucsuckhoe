@@ -536,7 +536,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php foreach ($recommend_posts as $p): ?>
                         <a class="recommend-item" href="./post.php?slug=<?= urlencode($p['duong_dan']) ?>">
                             <?php if (!empty($p['anh_bv'])): ?>
-                                <img src="<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
+                                <img src="/php/<?= htmlspecialchars($p['anh_bv']) ?>" alt="">
                             <?php endif; ?>
                             <div>
                                 <h4><?= htmlspecialchars($p['tieu_de']) ?></h4>

@@ -432,7 +432,7 @@ $xp = isset($user['xp']) ? (int) $user['xp'] : 0;
 $level = floor($xp / 100);
 
 // Xác định màu theo LEVEL
-if ($level >= 1) {
+if ($level >= 100) {
     echo 'rank-mythic';
 } elseif ($level >= 60) {
     echo 'rank-diamond';
@@ -983,18 +983,20 @@ ORDER BY t.created_at DESC
 
                                     <!-- ⭐ HIỆN NÚT ĐÁNH GIÁ -->
                                     <?php if (!empty($n['cau_tra_loi']) && $n['danh_gia'] === null): ?>
-                                        <form action="../controller/rate_answer.php" method="POST" class="rate-form">
-                                            <input type="hidden" name="id" value="<?= $n['id'] ?>">
-                                            <label>⭐ Đánh giá câu trả lời:</label>
-                                            <select name="rating" required>
-                                                <option value="1">⭐ (Kém)</option>
-                                                <option value="2">⭐⭐</option>
-                                                <option value="3">⭐⭐⭐ (Tốt)</option>
-                                                <option value="4">⭐⭐⭐⭐</option>
-                                                <option value="5">⭐⭐⭐⭐⭐ (Xuất sắc)</option>
-                                            </select>
-                                            <button type="submit">Gửi</button>
-                                        </form>
+                              <form action="../controller/rate_answer.php" method="POST" class="rate-form">
+    <input type="hidden" name="id" value="<?= $n['question_id'] ?>">
+
+    <label>⭐ Đánh giá câu trả lời:</label>
+    <select name="rating" required>
+        <option value="1">⭐ (Kém)</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐ (Tốt)</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5">⭐⭐⭐⭐⭐ (Xuất sắc)</option>
+    </select>
+    <button type="submit">Gửi</button>
+</form>
+
                                     <?php elseif ($n['danh_gia'] !== null): ?>
                                         <p>⭐ <b>Đánh giá của bạn: <?= $n['danh_gia'] ?>/5</b></p>
                                     <?php endif; ?>

@@ -66,7 +66,7 @@ include '../partials/menu.php';
                 <div class="advice-grid">
                     <?php foreach ($ketqua as $bv): ?>
                         <a class="advice-item" href="post.php?slug=<?= urlencode($bv['duong_dan']) ?>">
-                            <img src="<?= htmlspecialchars($bv['anh_bv']) ?>" alt="">
+                            <img src="/php/<?= htmlspecialchars($bv['anh_bv']) ?>" alt="">
                             <h3><?= htmlspecialchars($bv['tieu_de']) ?></h3>
 
                             <span class="tag-item"><?= htmlspecialchars($bv['ten_chuyen_muc']) ?></span>
