@@ -534,7 +534,7 @@ if ($level >= 100) {
                     </div>
                 </div>
 
-                <button class="logout-btn" onclick="window.location.href='logout.php'">Đăng xuất</button>
+                <button class="logout-btn" onclick="window.location.href='../controller/logout.php'">Đăng xuất</button>
 
             </div>
             <div class="frame-selection">
